@@ -24,19 +24,183 @@ The impetus for these models is the need to discern pressure volume curve parame
 
 Here we propose an improvement upon published protocols for pressure volume parameter estimation[@sack2011], which allows the automated estimation of the important inflection point around $\Psi_{tlp}$ . This script we have constructed has two primary assumptions: modulus of elasticity (\$\\epsilon\$) linearly declines above turgor loss point, and there are at least four points below turgor loss point. To estimate turgor loss point automatically, first we fit the linear relationship(using standard major axis) between inverse $\Psi_L$ and 100-RWC. The y-intercept here is the $\pi_O$ or \$\\Psi_s\$ when \$\\Psi_L=0\$. Multiplying $\pi_0$ by -1 is the maximum $\Psi_p$ because at full turgor $\Psi_L= 0$ or alternatively, $\Psi_s + \Psi_p =0$ . We fit $\Psi_L~(1-RWC)$ for the four driest points of the curve.
 
-Next, we calculate $\Psi_p$ for each
+Next, we calculate $\Psi_p$ for each water potential:
 
-```{r}
+```{r load data}
 
 #establish environment
 library(here)
-library(tidyr)
+library(tidyverse)
 library(smatr)
+library(readxl)
 
+#functions
+sma_slope<-function(x,#x variable often the water related variable
+                    y){# y variable often leaf water potential 
+  sd(x)/sd(y)
+  
+  }
+
+sma_intercept<-function(x, y,#x and y variables x=water, y=water potential
+                        slope){#single value estimated from the sma_slope function
+  mean(x)-slope*mean(y)
+}
+
+rwd_tlp_solve<-function(intercept, slope){
+  -(intercept/slope)
+}
+#load data
+pv_dat<-read_excel(here("pvldcurvedata_10042022.xlsx"))%>%
+  select(!c(fresh.weight.saturated, water.potential.bar, bag.weight,sp.leaf) )%>%
+  mutate(inv.water.potential=-1/water.potential)
+
+pp<-pv_dat%>%
+  dplyr::filter(species=="quag_gj")#testing the method with quag
+
+pp_leaf<-lapply(1:5, function(x) dplyr::filter(pp,leaf==x))#list of dfs, one for each leaf.
+
+```
+
+To estimate the saturated water content we use the intercept of the SMA relationship between leaf water and leaf water potential above and including tlp. The relationship is represented as: 
+
+$$
+Leaf~H_2O = \alpha * \Psi + b, 
+$$
+where $\alpha$ and b and the slope of the relationship estimated as: 
+
+$$
+\alpha=\frac{sd(leaf~water)}{sd(\Psi)}
+$$
+and, 
+
+$$
+b = mean(leaf~water)-\alpha*mean(\Psi)
+$$
+
+Relative water content(RWC) is then determined for each measurement as
+
+$$
+RWC=\frac{leaf~water}{SWC}
+$$
+```{r estimate SWC and RWC}
+
+#select the four driest points for each leaf. 
+pp_leaf_abovetlp<-lapply(1:5, function(x) pp_leaf[[x]]%>%
+                            dplyr::arrange(desc(water.potential))%>%
+                            slice_head(n=nrow(pp_leaf[[x]])-3))# doing three here because the line for SWC is often fit include the point right below TLP as well.
+
+pp_leaf_swc<-data.frame(species=character(), leaf=numeric(), a_slope=numeric(), b_intercept=numeric())
+
+
+for(leaf in 1:length(pp_leaf_abovetlp)){
+  
+  temp<-pp_leaf_abovetlp[[leaf]]  
+  
+  slope=sma_slope(x=temp$fresh.weight, y=temp$water.potential)
+  intercept=sma_intercept(x=temp$fresh.weight, y=temp$water.potential, slope=slope)
+
+  pp_leaf_swc[leaf,1]<-temp[1,1]
+  pp_leaf_swc[leaf,2]<-temp[1,2]
+  pp_leaf_swc[leaf,3]<-slope
+  pp_leaf_swc[leaf,4]<-intercept
+
+}
+
+head(pp_leaf_swc)
+
+#estimate relative water content 
+pp_leaf_rwc<- lapply(1:5, function(leaf) pp_leaf[[leaf]]<-pp_leaf[[leaf]]%>%
+                  mutate(saturated.water.content=pp_leaf_swc[leaf, "b_intercept"],
+                         relative.water.content=fresh.weight/saturated.water.content,
+                         relative.water.deficit=100-(relative.water.content*100)))
 
 
 ```
 
+We then estimate the osmotic potential at full turgor using the slope of the SMA relationship between negative inverse of leaf water potential and relative water deficit below and including tlp. The relationship is represented as: 
+
+$$
+Leaf~H_2O = \alpha * \Psi + b, 
+$$
+where $\alpha$ and b and the slope of the relationship estimated as: 
+
+$$
+\alpha=\frac{sd(leaf~water)}{sd(\Psi)}
+$$
+and, 
+
+$$
+b = mean(leaf~water)-\alpha*mean(\Psi)
+$$
+
+
+```{r estimate line parameters below tlp}
+
+##fit line to the points below TLP for 1/psiL vs 1-RWC
+
+#select the four driest points for each leaf. 
+pp_leaf_selectdry<-lapply(1:5, function(x) pp_leaf_rwc[[x]]%>%
+                            dplyr::arrange(desc(water.potential))%>%
+                            slice_tail(n=4))
+
+#establish dataframe and estimate sma 
+leaf_tlp_est<-data.frame(species=character(), leaf=numeric(), a_slope=numeric(), b_intercept=numeric())
+  
+for(leaf in 1:length(pp_leaf_selectdry)){
+  
+  temp<-pp_leaf_selectdry[[leaf]]  
+ 
+    slope=-sma_slope(x=temp$ inv.water.potential, y=temp$relative.water.deficit)
+  intercept=sma_intercept(x=temp$ inv.water.potential, y=temp$relative.water.deficit, slope=slope)
+
+  leaf_tlp_est[leaf,1]<-temp[1,1]
+  leaf_tlp_est[leaf,2]<-temp[1,2]
+  leaf_tlp_est[leaf,3]<-slope
+  leaf_tlp_est[leaf,4]<-intercept
+
+}
+
+pp_leaf_potentials<- lapply(1:5, function(leaf) pp_leaf_rwc[[leaf]]<-pp_leaf_rwc[[leaf]]%>%
+                  mutate(osm.pot.fullturgor=-1/leaf_tlp_est[leaf, "b_intercept"],
+                         max.pressure.potential=-osm.pot.fullturgor,
+                         osmotic.potential=-1/(leaf_tlp_est[leaf, "b_intercept"]+leaf_tlp_est[leaf, "a_slope"]*relative.water.deficit),
+                         pressure.potential=water.potential-osmotic.potential))
+  
+
+```
+
+```{r estimate tlp}
+
+##separate the above tlp points and estimate parameters for psi_p vs rwc
+pres_abovetlp<-lapply(1:5, function(x) pp_leaf_potentials[[x]]%>%
+                            dplyr::arrange(desc(water.potential))%>%
+                            slice_head(n=nrow(pp_leaf_potentials[[x]])-3))
+
+pres_param_abovetlp<-data.frame(species=character(), leaf=numeric(), a_slope=numeric(), b_intercept=numeric())
+  
+for(leaf in 1:length(pres_abovetlp)){
+  
+  temp<-pres_abovetlp[[leaf]]  
+ 
+    slope=sma_slope(x=temp$pressure.potential, y=temp$relative.water.deficit)
+    intercept=sma_intercept(x=temp$pressure.potential, y=temp$relative.water.deficit, slope=slope)
+
+  pres_param_abovetlp[leaf,1]<-temp[1,1]
+  pres_param_abovetlp[leaf,2]<-temp[1,2]
+  pres_param_abovetlp[leaf,3]<-slope
+  pres_param_abovetlp[leaf,4]<-intercept
+
+}
+
+##
+pp_leaf_tlps<- lapply(1:5, function(leaf) pp_leaf_potentials[[leaf]]<-pp_leaf_potentials[[leaf]]%>%
+                  mutate(relative.water.deficit.attlp=rwd_tlp_solve(pres_param_abovetlp[leaf, "b_intercept"], pres_param_abovetlp[leaf, "a_slope"]),
+                         relative.water.content.attlp=100-relative.water.deficit.attlp,
+                         leaf.water.potential.attlp=-1/(leaf_tlp_est[leaf, "a_slope"]*relative.water.deficit.attlp + leaf_tlp_est[leaf, "b_intercept"]),
+                         modulus=max.pressure.potential/((100-relative.water.content.attlp)/100)))
+  
+
+```
 ## Including Plots
 
 You can also embed plots, for example:
