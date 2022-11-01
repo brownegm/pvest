@@ -1,6 +1,6 @@
 ---
-title: "pvcurve_model"
-author: "me"
+title: "AutoPV"
+#author: "me"
 date: "`r Sys.Date()`"
 output: html_document
 bibliography: autopv.bib
@@ -26,7 +26,7 @@ Here we propose an improvement upon published protocols for pressure volume para
 
 Next, we calculate $\Psi_p$ for each water potential:
 
-```{r load data}
+```{r load data, include=FALSE}
 
 #establish environment
 library(here)
@@ -41,13 +41,13 @@ sma_slope<-function(x,#x variable often the water related variable
   
   }
 
-sma_intercept<-function(x, y,#x and y variables x=water, y=water potential
-                        slope){#single value estimated from the sma_slope function
-  mean(x)-slope*mean(y)
-}
+  sma_intercept<-function(x, y,#x and y variables x=water, y=water potential
+                          slope){#single value estimated from the sma_slope function
+    mean(x)-(slope*mean(y))
+  }
 
 rwd_tlp_solve<-function(intercept, slope){
-  -(intercept/slope)
+  -((intercept)/(slope))
 }
 #load data
 pv_dat<-read_excel(here("pvldcurvedata_10042022.xlsx"))%>%
@@ -150,7 +150,7 @@ for(leaf in 1:length(pp_leaf_selectdry)){
   
   temp<-pp_leaf_selectdry[[leaf]]  
  
-    slope=-sma_slope(x=temp$ inv.water.potential, y=temp$relative.water.deficit)
+    slope=-sma_slope(x=temp$ inv.water.potential, y=temp$relative.water.deficit)# note that this value is negative
   intercept=sma_intercept(x=temp$ inv.water.potential, y=temp$relative.water.deficit, slope=slope)
 
   leaf_tlp_est[leaf,1]<-temp[1,1]
@@ -169,7 +169,10 @@ pp_leaf_potentials<- lapply(1:5, function(leaf) pp_leaf_rwc[[leaf]]<-pp_leaf_rwc
 
 ```
 
-```{r estimate tlp}
+Then, estimate the relative water deficit at turgor loss point using the relationship between the relative water deficit and the pressure potential. The y intercept of this line is the relative water deficit where the pressure potential = 0, or turgor loss. 
+
+
+```{r estimate tlp, echo=FALSE}
 
 ##separate the above tlp points and estimate parameters for psi_p vs rwc
 pres_abovetlp<-lapply(1:5, function(x) pp_leaf_potentials[[x]]%>%
@@ -182,7 +185,7 @@ for(leaf in 1:length(pres_abovetlp)){
   
   temp<-pres_abovetlp[[leaf]]  
  
-    slope=sma_slope(x=temp$pressure.potential, y=temp$relative.water.deficit)
+    slope=-sma_slope(x=temp$pressure.potential, y=temp$relative.water.deficit)# note that this value is negative
     intercept=sma_intercept(x=temp$pressure.potential, y=temp$relative.water.deficit, slope=slope)
 
   pres_param_abovetlp[leaf,1]<-temp[1,1]
@@ -194,19 +197,20 @@ for(leaf in 1:length(pres_abovetlp)){
 
 ##
 pp_leaf_tlps<- lapply(1:5, function(leaf) pp_leaf_potentials[[leaf]]<-pp_leaf_potentials[[leaf]]%>%
-                  mutate(relative.water.deficit.attlp=rwd_tlp_solve(pres_param_abovetlp[leaf, "b_intercept"], pres_param_abovetlp[leaf, "a_slope"]),
+mutate(relative.water.deficit.attlp=-((pres_param_abovetlp[leaf, "b_intercept"])/(pres_param_abovetlp[leaf, "a_slope"])),
                          relative.water.content.attlp=100-relative.water.deficit.attlp,
                          leaf.water.potential.attlp=-1/(leaf_tlp_est[leaf, "a_slope"]*relative.water.deficit.attlp + leaf_tlp_est[leaf, "b_intercept"]),
                          modulus=max.pressure.potential/((100-relative.water.content.attlp)/100)))
   
+print(pp_leaf_tlps[[1]])
+print(pres_param_abovetlp)
+```
+```{r output_csv, eval=FALSE, include=FALSE}
+
+write.csv(pp_leaf_tlps[[1]], here("quag_1.csv"), row.names = F)
+
+write.csv(pres_abovetlp[[1]], here("quag_abvtlp_1.csv"), row.names = F)
+
+write.csv(pres_param_abovetlp, here("quag_abvtlpparam_1.csv"), row.names = F)
 
 ```
-## Including Plots
-
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
-```
-
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
