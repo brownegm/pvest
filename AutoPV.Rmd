@@ -150,7 +150,7 @@ for(leaf in 1:length(pp_leaf_selectdry)){
   
   temp<-pp_leaf_selectdry[[leaf]]  
  
-    slope=-sma_slope(x=temp$ inv.water.potential, y=temp$relative.water.deficit)# note that this value is negative
+    slope=-sma_slope(x=temp$inv.water.potential, y=temp$relative.water.deficit)# note that this value is negative
   intercept=sma_intercept(x=temp$ inv.water.potential, y=temp$relative.water.deficit, slope=slope)
 
   leaf_tlp_est[leaf,1]<-temp[1,1]
@@ -224,11 +224,13 @@ Now, estimate the other parameters from the previously estimated values.
 #already made a list of the leaf specific values above tlp but not that we have an estimate of TLP value we can include values specifically above and below the estimated TLP values for each leaf. 
 abovetlp<-lapply(1:5, function(x) pp_leaf_tlps[[x]]%>%
                             dplyr::arrange(desc(water.potential))%>%
-                            filter(water.potential>=leaf.water.potential.attlp))#filter values less negative than psi_tlp
+                            filter(water.potential>=leaf.water.potential.attlp)%>%
+                   mutate(slope.cap=sma_slope(x=relative.water.content, y=water.potential)))#filter values less negative than psi_tlp
 
 belowtlp<-lapply(1:5, function(x) pp_leaf_tlps[[x]]%>%
                             dplyr::arrange(desc(water.potential))%>%
-                            filter(water.potential<=leaf.water.potential.attlp))#filter values more negative than psi_tlp
+                            filter(water.potential<=leaf.water.potential.attlp)%>%
+                   mutate(slope.cap=sma_slope(x=relative.water.content, y=water.potential)))#filter values more negative than psi_tlp
 
 #some times there's less points above tlp than 4 or below....
 
@@ -245,8 +247,8 @@ for(leaf in 1:length(belowtlp)){
     # slope_above=-sma_slope(x=temp_above$pressure.potential, y=temp_above$relative.water.deficit)# note that this value is negative
     # intercept_above=sma_intercept(x=temp_above$pressure.potential, y=temp_above$relative.water.deficit, slope=slope)
     # 
-    slope_below=-sma_slope(x=temp_below$pressure.potential, y=temp_below$relative.water.deficit)# note that this value is negative
-    intercept_below=sma_intercept(x=temp_below$pressure.potential, y=temp_below$relative.water.deficit, slope=slope)
+    slope_below=-sma_slope(x=temp_below$inv.water.potential, y=temp_below$relative.water.deficit)# note that this value is negative
+    intercept_below=sma_intercept(x=temp_below$inv.water.potential, y=temp_below$relative.water.deficit, slope=slope_below)
   
     # param_a[leaf,1]<-temp_above[1,1]
     # param_a[leaf,2]<-temp_above[1,2]
@@ -264,15 +266,18 @@ leaf_pvparams<- lapply(1:5, function(leaf) pp_leaf_tlps[[leaf]]<-pp_leaf_tlps[[l
                         
                          mutate(apoplastic.fraction=100+(param_b[leaf, "b_intercept"]/param_b[leaf, "a_slope"]),
                                
-                               sym.rwc=(relative.water.content-(apoplastic.fraction/100))/(1-(apoplastic.fraction/100)), 
+                               sym.rwc=(relative.water.content-(apoplastic.fraction/100))/(1-(apoplastic.fraction/100))*100, 
                                
-                               #sym.rwd.tlp=-((sma_intercept(x=)   pres_param_abovetlp[leaf, "b_intercept"])/(pres_param_abovetlp[leaf, "a_slope"])),
+                               #sym.rwd.tlp=-((sma_intercept(x=)  pres_param_abovetlp[leaf, "b_intercept"])/(pres_param_abovetlp[leaf, "a_slope"])),
                                 
-                               capacitance.fullturgor=sma_slope(x=abovetlp[leaf]$relative.water.content, y=abovetlp[leaf]$water.potential),
+                               capacitance.fullturgor=rep(abovetlp[[leaf]][[1,"slope.cap"]], nrow(pp_leaf_tlps[[leaf]])),
                                
-                               capacitance.turgorloss=sma_slope(x=belowtlp[leaf]$relative.water.content, y=belowtlp[leaf]$water.potential))
+                               capacitance.turgorloss=belowtlp[[leaf]][[1,"slope.cap"]])
                        
                        )
+
+pp_leaf_tlps[[1]]<-pp_leaf_tlps[[1]]%>%
+  mutate(capacitance.fullturgor=abovetlp[[1]][[1,"slope.cap"]])
 # print(param_a)
 print(param_b)
 print(leaf_pvparams)
@@ -283,7 +288,7 @@ print(leaf_pvparams)
 
 leaf_pvparams<- lapply(1:5, function(leaf) pp_leaf_tlps[[leaf]]<-pp_leaf_tlps[[leaf]]%>%
                         mutate(apoplastic.fraction=100+(belowtlp[leaf, "b_intercept"]/pres_param_abovetlp[leaf, "a_slope"]), 
-                               )
+                               ))
 apoplastic.fraction=100+(intercept/slope)
 
 ```
