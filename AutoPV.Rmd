@@ -270,11 +270,13 @@ leaf_pvparams<- lapply(1:5, function(leaf) pp_leaf_tlps[[leaf]]<-pp_leaf_tlps[[l
                                
                                #sym.rwd.tlp=-((sma_intercept(x=)  pres_param_abovetlp[leaf, "b_intercept"])/(pres_param_abovetlp[leaf, "a_slope"])),
                                 
-                               capacitance.fullturgor=rep(abovetlp[[leaf]][[1,"slope.cap"]], nrow(pp_leaf_tlps[[leaf]])),
-                               
-                               capacitance.turgorloss=belowtlp[[leaf]][[1,"slope.cap"]])
-                       
-                       )
+                               # capacitance.fullturgor=rep(abovetlp[[leaf]][[1,"slope.cap"]], nrow(pp_leaf_tlps[[leaf]])),
+                               # 
+                               # capacitance.turgorloss=belowtlp[[leaf]][[1,"slope.cap"]])
+                               # 
+                       ))
+
+
 
 pp_leaf_tlps[[1]]<-pp_leaf_tlps[[1]]%>%
   mutate(capacitance.fullturgor=abovetlp[[1]][[1,"slope.cap"]])
