@@ -1,5 +1,7 @@
 #Contains functions for estimating the leaf osmotic parameters from the dataset with saturated and relative water content 
 #already determined. 
+#' Osmotic potential at full turgor estimate
+#' 
 #' @description Estimates the osmotic potential at full turgor from the linear relationship
 #'     between relative water deficit and inverse leaf water potential. 
 #'
@@ -30,6 +32,7 @@ OsmoticPotFullTurgor <- function(data, fw.index, wp.index) {
 
 NULL
 
+#' Osmotic and pressure parameter estimation
 #' @description Estimate the osmotic potential at full turgor, pressure potential at full turgor for leaves 
 #'     as well as the osmotic potential and pressure potential for each hydration state
 #'     

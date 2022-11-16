@@ -1,4 +1,4 @@
-#SWC, RWC and RWD estimations 
+#' SWC estimations 
 #' @description Estimate the saturated water content from the intercept of the
 #'     the relationship between leaf water mass and leaf water potential.
 #'
@@ -29,6 +29,7 @@ SaturatedWaterContent <- function(data, fw.index, wp.index) {
 }
 
 NULL
+#' RWC and RWD estimation
 #' @description Estimate the relative water content(RWC) and relative water deficit(RWD) based on the
 #'     saturated water content
 #'

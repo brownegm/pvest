@@ -1,4 +1,5 @@
 #Slope and intercept functions
+#' SMA intercept and slope
 #' @description Standard major axis(SMA) parameter estimation. The functions provided here
 #'    will estimate the slope and intercept of the SMA line for a given dataset.
 #' @param x x variable
@@ -16,7 +17,7 @@
 #' @export sma_intercept
 #' @export sma_slope
 #'
-#' @example
+#' @examples 
 #' x<-c(0.187,0.170,0.165,0.095)
 #' y<-c(-0.020, -0.150,-0.800,-1.520)
 #' slope<-sma_slope(x, y)

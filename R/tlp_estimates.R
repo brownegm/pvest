@@ -1,6 +1,4 @@
-
-
-
+#' Estimate parameters at turgor loss
 #' @description Estimate leaf water potential, relative water content at turgor loss point and modulus of elasticity
 #'    both bulk parameters and their symplastic counterparts
 #'

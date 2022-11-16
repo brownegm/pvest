@@ -12,7 +12,7 @@ capacitance_fttlp<-function(data, ft_tlp){
   cap.bulk=sma_slope(x=data$relative.water.content, y=data$water.potential)
   cap.sym=sma_slope(x=data$sym.rwc, y=data$water.potential)
 
-  if(ft_tlp="ft"){
+  if(ft_tlp=="ft"){
    
      data$cap.ft.bulk<-cap.bulk
      data$cap.ft.sym<-cap.sym
