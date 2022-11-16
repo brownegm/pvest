@@ -54,6 +54,8 @@ NULL
 #'     * maximum pressure potential 
 #'     * osmotic potential (for each hydration state)
 #'     * pressure potential (for each hydration state)
+#'     * apoplastic fraction
+#'     * symplastic relative water content(sym.rwc; for each hydration state)
 #'     
 #' @export OsmoticEstimates
 #'
@@ -66,6 +68,8 @@ OsmoticEstimates<- function(data, fw.index, wp.index) {
     data$max.psip <- data$osm.pot.fullturgor * -1
     data$osmotic.potential <- -1/(pi.o_list[2]+pi.o_list[1]*data$relative.water.deficit)
     data$pressure.potential <- data[,wp.index]-data$osmotic.potential
+    data$apoplastic.fraction<-100+(pi.o_list[2]/pi.o_list[1])
+    data$sym.rwc<-(data$relative.water.content-(data$apoplastic.fraction/100))/(1-(data$apoplastic.fraction/100))*100
     
     return(data)
 }

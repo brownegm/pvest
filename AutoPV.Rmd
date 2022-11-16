@@ -286,11 +286,3 @@ print(leaf_pvparams)
 
 ```
 
-```{r estimate other parameters}
-
-leaf_pvparams<- lapply(1:5, function(leaf) pp_leaf_tlps[[leaf]]<-pp_leaf_tlps[[leaf]]%>%
-                        mutate(apoplastic.fraction=100+(belowtlp[leaf, "b_intercept"]/pres_param_abovetlp[leaf, "a_slope"]), 
-                               ))
-apoplastic.fraction=100+(intercept/slope)
-
-```
