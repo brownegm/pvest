@@ -151,7 +151,7 @@ for(leaf in 1:length(pp_leaf_selectdry)){
   temp<-pp_leaf_selectdry[[leaf]]  
  
     slope=-sma_slope(x=temp$inv.water.potential, y=temp$relative.water.deficit)# note that this value is negative
-  intercept=sma_intercept(x=temp$ inv.water.potential, y=temp$relative.water.deficit, slope=slope)
+  intercept=sma_intercept(x=temp$inv.water.potential, y=temp$relative.water.deficit, slope=slope)
 
   leaf_tlp_est[leaf,1]<-temp[1,1]
   leaf_tlp_est[leaf,2]<-temp[1,2]

@@ -28,7 +28,7 @@ SaturatedWaterContent <- function(data, fw.index, wp.index) {
   return(saturated.water.content)
 }
 
-
+NULL
 #' @description Estimate the relative water content(RWC) and relative water deficit(RWD) based on the
 #'     saturated water content
 #'
