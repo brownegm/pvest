@@ -41,8 +41,8 @@ NULL
 #' @export RelativeWaterCD
 #' @family abovetlp
 
-RelativeWaterCD <- function(data, fw.index) {
-  saturated.water.content <- SaturatedWaterContent(data)
+RelativeWaterCD <- function(data, fw.index, wp.index) {
+  saturated.water.content <- SaturatedWaterContent(data, fw.index, wp.index)
 
   data$saturated.water.content <- saturated.water.content
   data$relative.water.content <- (data[, fw.index] / data$saturated.water.content) * 100
