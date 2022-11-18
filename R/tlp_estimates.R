@@ -9,7 +9,7 @@
 #' @return Returns data with new columns for the estimated parameters. 
 #' @export
 
-EstimateTlp<-function(data, fw.index, wp.index){
+EstimateTLP<-function(data, fw.index, wp.index){
 
   slope=-sma_slope(x=data$pressure.potential, y=data$relative.water.deficit)
   intercept=sma_intercept(x=data$pressure.potential, y=data$relative.water.deficit, slope=slope)

@@ -4,12 +4,14 @@
 \alias{RelativeWaterCD}
 \title{RWC and RWD estimation}
 \usage{
-RelativeWaterCD(data, fw.index)
+RelativeWaterCD(data, fw.index, wp.index)
 }
 \arguments{
 \item{data}{Data frame containing leaf fresh water mass and leaf water potentials}
 
 \item{fw.index}{Numeric value indicating the column number where the leaf water mass data is within data frame}
+
+\item{wp.index}{Numeric value indicating the column number where the leaf water potential data is within the data frame}
 }
 \value{
 Returns the input dataframe with two new columns containing the relative water content(RWC) for each measurement point and

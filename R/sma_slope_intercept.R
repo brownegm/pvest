@@ -14,8 +14,6 @@
 #'     with pressure(e.g., leaf water potential, and inverse of leaf water potential)
 #'
 #' @return Returns slope and intercept values for standard major axis regression
-#' @export sma_intercept
-#' @export sma_slope
 #'
 #' @examples 
 #' x<-c(0.187,0.170,0.165,0.095)
