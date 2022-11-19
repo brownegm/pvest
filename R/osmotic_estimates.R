@@ -18,9 +18,9 @@ OsmoticPotFullTurgor <- function(data, fw.index, wp.index) {
   
   output<-list()
   
-  slope <- sma_slope(x = data[, fw.index], y = data[, wp.index])
+  slope <- -sma_slope(x = data[, wp.index], y = data[, fw.index])
   
-  intercept <- sma_intercept(x = data[, fw.index], y = data[, wp.index], slope = -slope)
+  intercept <- sma_intercept(x = data[, wp.index], y = data[, fw.index], slope = slope)
   
   pi.o <- -1/intercept
   
@@ -65,14 +65,18 @@ NULL
 
 OsmoticEstimates<- function(data, fw.index, wp.index) {
    
-    pi.o_list <- OsmoticPotFullTurgor(data, fw.index, wp.index)
+   data_belowtlp<-data%>% 
+    dplyr::arrange(desc(water.potential))%>%
+    dplyr::slice_tail(n=4)%>%as.data.frame()
+  
+    pi.o_list <- OsmoticPotFullTurgor(data_belowtlp, fw.index, wp.index)
     
     data$osm.pot.fullturgor <- pi.o_list[3]
     data$max.psip <- data$osm.pot.fullturgor * -1
     data$osmotic.potential <- -1/(pi.o_list[2]+pi.o_list[1]*data$relative.water.deficit)
-    data$pressure.potential <- data[,wp.index]-data$osmotic.potential
+    data$pressure.potential <- data$water.potential-data$osmotic.potential
     data$apoplastic.fraction<-100+(pi.o_list[2]/pi.o_list[1])
-    data$sym.rwc<-(data$relative.water.content-(data$apoplastic.fraction/100))/(1-(data$apoplastic.fraction/100))*100
+    data$sym.rwc<-((data$relative.water.content-(data$apoplastic.fraction))/(100-(data$apoplastic.fraction)))*100
     
     return(data)
 }

@@ -42,11 +42,13 @@ NULL
 #' @family abovetlp
 
 RelativeWaterCD <- function(data, fw.index, wp.index) {
-  saturated.water.content <- SaturatedWaterContent(data, fw.index, wp.index)
+  #saturated.water.content <- SaturatedWaterContent(data, fw.index, wp.index)
 
-  data$saturated.water.content <- saturated.water.content
-  data$relative.water.content <- (data[, fw.index] / data$saturated.water.content) * 100
-  data$relative.water.deficit <- 100 - (data$relative.water.content)
+  #data$saturated.water.content <- saturated.water.content
+  relative.water.content <- (data[, fw.index] / data$saturated.water.content) * 100
+  relative.water.deficit <- 100 - (relative.water.content)
 
-  return(data)
+  rwc.rwd<-c(relative.water.content, relative.water.deficit)
+  
+  return(rwc.rwd)
 }

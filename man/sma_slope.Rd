@@ -2,7 +2,7 @@
 % Please edit documentation in R/sma_slope_intercept.R
 \name{sma_slope}
 \alias{sma_slope}
-\title{SMA intercept and slope}
+\title{SMA slope}
 \usage{
 sma_slope(x, y)
 }
@@ -14,7 +14,7 @@ sma_slope(x, y)
 \item{slope}{slope parameter estimated by the 'sma_slope' function}
 }
 \value{
-Returns slope and intercept values for standard major axis regression
+Returns slope value for standard major axis regression
 }
 \description{
 Standard major axis(SMA) parameter estimation. The functions provided here

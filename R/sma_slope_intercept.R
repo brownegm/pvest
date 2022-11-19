@@ -1,5 +1,5 @@
 #Slope and intercept functions
-#' SMA intercept and slope
+#' SMA slope
 #' @description Standard major axis(SMA) parameter estimation. The functions provided here
 #'    will estimate the slope and intercept of the SMA line for a given dataset.
 #' @param x x variable
@@ -13,8 +13,12 @@
 #'     variable(e.g., water content or leaf relative water content). Likewise, the y variable is often associated
 #'     with pressure(e.g., leaf water potential, and inverse of leaf water potential)
 #'
-#' @return Returns slope and intercept values for standard major axis regression
-#'
+#' @return Returns slope value for standard major axis regression
+#' 
+#' @export 
+#' 
+#' @importFrom stats sd
+#' 
 #' @examples 
 #' x<-c(0.187,0.170,0.165,0.095)
 #' y<-c(-0.020, -0.150,-0.800,-1.520)
@@ -25,6 +29,18 @@
 sma_slope <- function(x, y) {
   return(sd(x) / sd(y))
 }
+
+NULL
+
+#' SMA intercept estimation
+#'
+#' @param x x variable
+#' @param y y variable 
+#' @param slope slope parameter estimated by the 'sma_slope' function
+#'
+#' @return Returns slope and intercept values for standard major axis regression
+#' 
+#' @export
 
 sma_intercept <- function(x, y, slope) {
   return(mean(x) - (slope * mean(y)))

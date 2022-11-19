@@ -31,7 +31,6 @@ Next, we calculate $\Psi_p$ for each water potential:
 #establish environment
 library(here)
 library(tidyverse)
-library(smatr)
 library(readxl)
 
 #functions
