@@ -12,10 +12,10 @@
 
 
 #slope and intercept functions shouldn't be output 
-pp->data
-data<-data%>%select(!inv.water.potential)
-#save
-save(data,file=here("data.rds"))
+# pp->data
+# data<-data%>%select(!inv.water.potential)
+# #save
+# save(data,file=here("data.rds"))
 estParams<-function(data, fw.index, wp.index){
   
   #data<-as.data.frame(data)
@@ -45,9 +45,22 @@ estParams<-function(data, fw.index, wp.index){
     
     leaf_estimate<-OsmoticEstimates(data[data$unique_id==i,], fw.index = "relative.water.deficit",wp.index = "inv.water.potential")
   
-    data[i,]<-leaf_estimate
+    temp[[i]]<-leaf_estimate
     
     }
+
+  data_t<-as.data.frame(reduce(temp, rbind))
+  
+  for(i in unique_ids){
+    
+    leaf_estimate_tlps<-EstimateTLP(data_t[data_t$unique_id==i,], fw.index = "relative.water.deficit",wp.index = "inv.water.potential")
+    
+    temp[[i]]<-leaf_estimate_tlps
+    
+  }
+ 
+  data_tt<-as.data.frame(reduce(temp, rbind))
+  
   
   
 }

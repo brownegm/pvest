@@ -5,9 +5,9 @@
 #' @description Estimates the osmotic potential at full turgor from the linear relationship
 #'     between relative water deficit and inverse leaf water potential. 
 #'
-#' @param data 
-#' @param fw.index 
-#' @param wp.index 
+#' @param data a data frame. A data frame containing the data set of the last 4 hydration states for a given leaf 
+#' @param fw.index a double. Data frame index which contains the leaf water potential data
+#' @param wp.index a double. Data frame index which contains the leaf water potential data
 #'
 #' @return Numeric list containing the slope, intercept and osmotic potential at full turgor, in that order. 
 #'
@@ -48,8 +48,10 @@ NULL
 #'     Also, note that unlike in the saturated water content estimation the x values is inverse $\Psi_{leaf}$. 
 #'     
 #'
-#' @param data data frame containing the data set of the last 4 hydration states for a given leaf
-#' @param wp.index data frame index which contains the leaf water potential data
+#' @param data A data frame. A data frame containing the data set of the last 4 hydration states for a given leaf
+#' @param wp.index A double. A data frame index which contains the leaf water potential data
+#' @param fw.index A double. A data frame index which contains the leaf water potential data
+#' @param n_row A double. Value which indicates the number of rows for estimating parameters. Default to 4 rows. 
 #' @details The data frame must contain four points below turgor loss points. These values of relative water deficit
 #' 
 #' @return Returns data frame with new columns containing the osmotic and pressure potential variables namely: 
@@ -63,11 +65,11 @@ NULL
 #' @export OsmoticEstimates
 #'
 
-OsmoticEstimates<- function(data, fw.index, wp.index) {
+OsmoticEstimates<- function(data, fw.index, wp.index, n_row=4) {
    
    data_belowtlp<-data%>% 
     dplyr::arrange(desc(water.potential))%>%
-    dplyr::slice_tail(n=4)%>%as.data.frame()
+    dplyr::slice_tail(n=n_row)%>%as.data.frame()
   
     pi.o_list <- OsmoticPotFullTurgor(data_belowtlp, fw.index, wp.index)
     
