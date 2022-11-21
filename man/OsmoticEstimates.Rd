@@ -4,12 +4,16 @@
 \alias{OsmoticEstimates}
 \title{Osmotic and pressure parameter estimation}
 \usage{
-OsmoticEstimates(data, fw.index, wp.index)
+OsmoticEstimates(data, fw.index, wp.index, n_row = 4)
 }
 \arguments{
-\item{data}{data frame containing the data set of the last 4 hydration states for a given leaf}
+\item{data}{A data frame. A data frame containing the data set of the last 4 hydration states for a given leaf}
 
-\item{wp.index}{data frame index which contains the leaf water potential data}
+\item{fw.index}{A double. A data frame index which contains the leaf water potential data}
+
+\item{wp.index}{A double. A data frame index which contains the leaf water potential data}
+
+\item{n_row}{A double. Value which indicates the number of rows for estimating parameters. Default to 4 rows.}
 }
 \value{
 Returns data frame with new columns containing the osmotic and pressure potential variables namely:

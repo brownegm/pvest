@@ -3,6 +3,7 @@
 export(EstimateTLP)
 export(OsmoticEstimates)
 export(OsmoticPotFullTurgor)
+export(PsiPRWD_slopeint)
 export(RelativeWaterCD)
 export(capacitance_fttlp)
 export(sma_intercept)

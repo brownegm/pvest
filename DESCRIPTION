@@ -1,15 +1,15 @@
 Package: pvest
 Title: Estimate pressure volume curve parameters
 Version: 0.0.0.9000
-Authors@R: 
-    person("Marvin", "Browne", , "brownegm@gmail.com", role = c("aut", "cre"),
-           comment = c(ORCID = "YOUR-ORCID-ID"))
-    person("Lawren", "Sack", , "lawrensack@gmail.com", role = c("aut"),
-           comment = c(ORCID = "YOUR-ORCID-ID"))
+Author: Marvin Browne, Lawren Sack
+Maintainer: Marvin Browne <brownegm@gmail.com>
 Description: Provides functions for estimating parameters of a pressure volume curve
 License: AGPL (>= 3)
 Encoding: UTF-8
+LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.1
 Imports: 
     dplyr
+Depends: 
+    R (>= 2.10)
