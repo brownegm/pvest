@@ -2,7 +2,7 @@ Package: pvest
 Title: Estimate pressure volume curve parameters.
 Version: 0.0.0.9000
 Authors@R: 
-    person("First", "Last", , "first.last@example.com", role = c("aut", "cre"),
+    person("Marvin", "Browne", , "brownegm@gmail.com.com", role = c("aut", "cre"),
            comment = c(ORCID = "YOUR-ORCID-ID"))
 Description: Provides functions for estimating parameters of a pressure volume curve.
 License: AGPL (>= 3)
