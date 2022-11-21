@@ -61,7 +61,8 @@ NULL
 #'     * pressure potential (for each hydration state)
 #'     * apoplastic fraction
 #'     * symplastic relative water content(sym.rwc; for each hydration state)
-#'     
+#'
+#' @import 
 #' @export OsmoticEstimates
 #'
 
