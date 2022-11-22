@@ -22,10 +22,10 @@ capacitance_fttlp<-function(df, wp.index, wc.index, s_wc.index){
     dplyr::filter(water.potential<leaf.waterpotential.attlp)%>%as.data.frame()
   
   #estimate capacitance 
-  cap.ft.bulk=sma_slope(x=data_abovetlp[,wc.index], y=data_abovetlp[,wp.index])
-  cap.ft.sym=sma_slope(x=data_abovetlp[,s_wc.index], y=data_abovetlp[,wp.index])
-  cap.tlp.bulk=sma_slope(x=data_belowtlp[,wc.index], y=data_belowtlp[,wp.index])
-  cap.tlp.sym=sma_slope(x=data_belowtlp[,s_wc.index], y=data_belowtlp[,wp.index])
+  cap.ft.bulk=(sma_slope(x=data_abovetlp[,wc.index], y=data_abovetlp[,wp.index]))/100
+  cap.ft.sym=(sma_slope(x=data_abovetlp[,s_wc.index], y=data_abovetlp[,wp.index]))/100
+  cap.tlp.bulk=(sma_slope(x=data_belowtlp[,wc.index], y=data_belowtlp[,wp.index]))/100
+  cap.tlp.sym=(sma_slope(x=data_belowtlp[,s_wc.index], y=data_belowtlp[,wp.index]))/100
   
   output<-c(cap.ft.bulk, cap.ft.sym, cap.tlp.bulk, cap.tlp.sym)
   

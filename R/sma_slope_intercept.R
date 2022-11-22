@@ -18,7 +18,7 @@
 #' @export 
 #' 
 #' @importFrom stats sd
-#' 
+#'
 
 
 sma_slope <- function(x, y) {
