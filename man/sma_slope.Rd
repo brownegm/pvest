@@ -28,10 +28,3 @@ minus the SMA slope times the mean value of the y variable. Often in pressure vo
 variable(e.g., water content or leaf relative water content). Likewise, the y variable is often associated
 with pressure(e.g., leaf water potential, and inverse of leaf water potential)
 }
-\examples{
-x<-c(0.187,0.170,0.165,0.095)
-y<-c(-0.020, -0.150,-0.800,-1.520)
-slope<-sma_slope(x, y)
-intercept<-sma_intercept(x, y, slope)
-print(slope, intercept)
-}
