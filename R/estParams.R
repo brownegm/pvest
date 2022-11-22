@@ -1,24 +1,17 @@
-#create function where it takes the slope and intercept functions and estimates parameters
 
-# how to split above and below tlp? 
-#option 1: functional above and below
-
-# option 2: separate function which separates the data into two. input separator maybe a number for the error index or nrow 
-
-# opt3: tbd
-
-#the function saves the slopes and intercepts then estimates the above and below section. 
-
-
-
-#slope and intercept functions shouldn't be output 
-# pp->data
-# data<-data%>%select(!inv.water.potential)
-# #save
-# save(data,file=here("data.rds"))
+#' Estimate all pressure volume curve parameters for all leaves
+#' 
+#' @param data A data frame. Input data frame with the raw values 
+#' @param fw.index A numeric. Data frame index for the water content information. 
+#' @param wp.index A numeric. Indicates the index of the data frame including the water potential data
+#' 
+#' @details 
+#'     Data
+#' 
+#' @return Returns a data frame with the estimated parameters 
+#' @export
+#'
 estParams<-function(data, fw.index, wp.index){
-  
-  #data<-as.data.frame(data)
   
   #create unique ID and add inverse psi
   data$unique_id<-paste(data$species, data$leaf, sep="_")

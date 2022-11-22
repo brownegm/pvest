@@ -2,19 +2,23 @@
 % Please edit documentation in R/af_sym_cap.R
 \name{capacitance_fttlp}
 \alias{capacitance_fttlp}
-\title{Estimate the capacitance at full turgor and turgor loss point}
+\title{Estimate the capacitance at full turgor and turgor loss point for the symplast and total.}
 \usage{
-capacitance_fttlp(data, ft_tlp)
+capacitance_fttlp(df, wp.index, wc.index, s_wc.index)
 }
 \arguments{
-\item{data}{A data frame}
+\item{wp.index}{Water potential index}
 
-\item{ft_tlp}{A string. "ft" indicates capacitance at full turgor and "tlp"
-indicates leaf capacitance at turgor loss point}
+\item{wc.index}{Water content index. Here the expected value is total relative water content}
+
+\item{s_wc.index}{Symplastic water content index. Here symplastic relative water content is expected}
+
+\item{data}{A data frame}
 }
 \value{
-Returns data frame
+Returns vectors of estimated capacitance above and below turgor loss point
+and for bulk tissue values and symplastic quantities.
 }
 \description{
-Estimate the capacitance at full turgor and turgor loss point
+Estimate the capacitance at full turgor and turgor loss point for the symplast and total.
 }
