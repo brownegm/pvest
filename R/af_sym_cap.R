@@ -1,26 +1,34 @@
-#' Estimate the capacitance at full turgor and turgor loss point
+#' Estimate the capacitance at full turgor and turgor loss point for the symplast and total. 
 #'
 #' @param data A data frame
-#' @param ft_tlp A string. "ft" indicates capacitance at full turgor and "tlp" 
-#'     indicates leaf capacitance at turgor loss point
-#'
-#' @return Returns data frame 
+#' @param wp.index Water potential index
+#' @param wc.index Water content index. Here the expected value is total relative water content
+#' @param s_wc.index Symplastic water content index. Here symplastic relative water content is expected
+#' 
+#' @return Returns vectors of estimated capacitance above and below turgor loss point 
+#'     and for bulk tissue values and symplastic quantities.
+#' @import dplyr 
 #' @export 
 
-capacitance_fttlp<-function(data, ft_tlp){
+capacitance_fttlp<-function(df, wp.index, wc.index, s_wc.index){
   
-  cap.bulk=sma_slope(x=data$relative.water.content, y=data$water.potential)
-  cap.sym=sma_slope(x=data$sym.rwc, y=data$water.potential)
-
-  if(ft_tlp=="ft"){
-   
-     data$cap.ft.bulk<-cap.bulk
-     data$cap.ft.sym<-cap.sym
-    
-  }else{
-    
-    data$cap.tlp.bulk<-cap.bulk
-    data$cap.tlp.sym<-cap.sym
-    
-  }
+ #extract values above and below turgor loss point 
+  data_abovetlp<-df%>% 
+    dplyr::arrange(desc({{wp.index}}))%>%
+    dplyr::filter(water.potential>leaf.waterpotential.attlp)%>%as.data.frame()
+  
+  data_belowtlp<-df%>% 
+    dplyr::arrange(desc({{wp.index}}))%>%
+    dplyr::filter(water.potential<leaf.waterpotential.attlp)%>%as.data.frame()
+  
+  #estimate capacitance 
+  cap.ft.bulk=sma_slope(x=data_abovetlp[,wc.index], y=data_abovetlp[,wp.index])
+  cap.ft.sym=sma_slope(x=data_abovetlp[,s_wc.index], y=data_abovetlp[,wp.index])
+  cap.tlp.bulk=sma_slope(x=data_belowtlp[,wc.index], y=data_belowtlp[,wp.index])
+  cap.tlp.sym=sma_slope(x=data_belowtlp[,s_wc.index], y=data_belowtlp[,wp.index])
+  
+  output<-c(cap.ft.bulk, cap.ft.sym, cap.tlp.bulk, cap.tlp.sym)
+  
+  return(output)
+  
 }
