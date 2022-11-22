@@ -4,14 +4,14 @@
 \alias{EstimateTLP}
 \title{Estimate parameters at turgor loss}
 \usage{
-EstimateTLP(data, fw.index, wp.index)
+EstimateTLP(df, fw.index, wp.index, n_row = 4)
 }
 \arguments{
-\item{data}{A data frame}
-
 \item{fw.index}{Water associated variable}
 
 \item{wp.index}{Pressure associated variable}
+
+\item{data}{A data frame}
 }
 \value{
 Returns data with new columns for the estimated parameters.

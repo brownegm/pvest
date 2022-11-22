@@ -41,7 +41,10 @@ estParams<-function(data, fw.index, wp.index){
   
   }
   
+  temp<-list()
+  
   for(i in unique_ids){
+    
     
     leaf_estimate<-OsmoticEstimates(data[data$unique_id==i,], fw.index = "relative.water.deficit",wp.index = "inv.water.potential")
   
@@ -53,7 +56,7 @@ estParams<-function(data, fw.index, wp.index){
   
   for(i in unique_ids){
     
-    leaf_estimate_tlps<-EstimateTLP(data_t[data_t$unique_id==i,], fw.index = "relative.water.deficit",wp.index = "inv.water.potential")
+    leaf_estimate_tlps<-EstimateTLP(df=data_t[data_t$unique_id==i,], fw.index = "relative.water.deficit",wp.index = "inv.water.potential")
     
     temp[[i]]<-leaf_estimate_tlps
     

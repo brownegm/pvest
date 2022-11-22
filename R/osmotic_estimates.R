@@ -62,7 +62,7 @@ NULL
 #'     * apoplastic fraction
 #'     * symplastic relative water content(sym.rwc; for each hydration state)
 #'
-#' @import 
+#' @import dplyr 
 #' @export OsmoticEstimates
 #'
 
@@ -80,6 +80,7 @@ OsmoticEstimates<- function(data, fw.index, wp.index, n_row=4) {
     data$pressure.potential <- data$water.potential-data$osmotic.potential
     data$apoplastic.fraction<-100+(pi.o_list[2]/pi.o_list[1])
     data$sym.rwc<-((data$relative.water.content-(data$apoplastic.fraction))/(100-(data$apoplastic.fraction)))*100
+    data$sym.rwd<-100-data$sym.rwc
     
     return(data)
 }

@@ -5,9 +5,11 @@
 \title{Estimate the RWC and RWD at turgor loss point for using the relationship between leaf pressure potential and
 bulk and symplastic relative water deficit}
 \usage{
-PsiPRWD_slopeint(psip.index, rwd.index, sym_rwd.index)
+PsiPRWD_slopeint(data, psip.index, rwd.index, sym_rwd.index)
 }
 \arguments{
+\item{data}{A data frame. Must contain pressure potential and relative water deficit values.}
+
 \item{psip.index}{TBD}
 
 \item{rwd.index}{TBD}

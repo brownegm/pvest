@@ -17,6 +17,8 @@
 #' 
 #' @return Returns the saturated water content from the relationship between water mass and water potential
 #' @usage SaturatedWaterContent(data, fw.index, wp.index)
+#' 
+#' @export
 
 SaturatedWaterContent <- function(data, fw.index, wp.index) {
   slope <- sma_slope(x = data[, fw.index], y = data[, wp.index])
