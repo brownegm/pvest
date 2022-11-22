@@ -15,6 +15,9 @@
 #'     subsequent hydration state. 
 #' 
 #' @return Returns a data frame with the estimated parameters 
+#' 
+#' @importFrom purrr reduce
+#' @import dplyr
 #' @export
 #'
 estParams<-function(data, fw.index, wp.index){

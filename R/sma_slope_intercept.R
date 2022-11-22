@@ -19,12 +19,7 @@
 #' 
 #' @importFrom stats sd
 #' 
-#' @example
-#' {x<-c(0.187,0.170,0.165,0.095)
-#' y<-c(-0.020, -0.150,-0.800,-1.520)
-#' slope<-sma_slope(x, y)
-#' intercept<-sma_intercept(x, y, slope)
-#' print(slope, intercept)}
+
 
 sma_slope <- function(x, y) {
   return(sd(x) / sd(y))
