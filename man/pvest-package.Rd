@@ -6,6 +6,6 @@
 \alias{pvest-package}
 \title{pvest: Estimate pressure volume curve parameters}
 \description{
-Provides functions for estimating parameters of a pressure volume curve
+Provides functions for estimating parameters of a pressure volume curve. Includes functions for estimating specific parameters and computing all parameters.
 }
 \keyword{internal}

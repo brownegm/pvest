@@ -8,15 +8,14 @@
 #' 
 #' @import dplyr
 
-
 sumParams<-function(df,group_name){ 
   
-  df<-df%>% 
+  .df<-df%>% 
     dplyr::group_by({{group_name}})%>%
     dplyr::select(!c(leaf,dry.weight,water.potential, fresh.weight, unique_id, inv.water.potential,
               relative.water.content, relative.water.deficit, osmotic.potential, pressure.potential, sym.rwc, sym.rwd))%>%
-    dplyr::summarize(vars(is.numeric), avg=mean())
+    dplyr::summarize(across(where(is.numeric), mean))
   
-  return(df)
+  return(.df)
   
   }
