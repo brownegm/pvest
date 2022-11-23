@@ -1,8 +1,10 @@
 ---
 title: "AutoPV"
-#author: "me"
-date: "`r Sys.Date()`"
-output: html_document
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Overview}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 bibliography: autopv.bib
 ---
 

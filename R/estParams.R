@@ -24,7 +24,7 @@ estParams<-function(data, fw.index, wp.index){
   
   #create unique ID and add inverse psi
   data$unique_id<-paste(data$species, data$leaf, sep="_")
-  data$inv.water.potential<--(1/(data$water.potential))
+  data$inv.water.potential<--(1/(data[,wp.index]))
   
   unique_ids<-unique(data$unique_id)
 
@@ -33,13 +33,13 @@ estParams<-function(data, fw.index, wp.index){
     
     #first select the first for values and estimate SWC and RWC values 
     data_abovetlp<-data[data$unique_id==i,]%>% 
-      dplyr::arrange(desc(water.potential))%>%
+      dplyr::arrange(desc({{wp.index}}))%>%
       dplyr::slice_head(n=4)%>%as.data.frame()
     
     #fw.index=water mass, wp.index= water potential 
     data[data$unique_id==i,"saturated.water.content"]<-SaturatedWaterContent(data_abovetlp[data_abovetlp$unique_id==i,], fw.index = fw.index, wp.index = wp.index)
   
-    data[,c("relative.water.content","relative.water.deficit")]<-RelativeWaterCD(data, fw.index=5)
+    data[,c("relative.water.content","relative.water.deficit")]<-RelativeWaterCD(data, fw.index=fw.index)
   
   }
   
@@ -47,7 +47,7 @@ estParams<-function(data, fw.index, wp.index){
   
   for(i in unique_ids){
     
-    leaf_estimate<-OsmoticEstimates(data[data$unique_id==i,], fw.index = "relative.water.deficit",wp.index = "inv.water.potential")
+    leaf_estimate<-OsmoticEstimates(data[data$unique_id==i,], wc.index = "relative.water.deficit",wp.index = "inv.water.potential")
   
     temp[[i]]<-leaf_estimate
     
@@ -57,7 +57,7 @@ estParams<-function(data, fw.index, wp.index){
   
   for(i in unique_ids){
     
-    leaf_estimate_tlps<-EstimateTLP(df=data_t[data_t$unique_id==i,], fw.index = "relative.water.deficit",wp.index = "inv.water.potential")
+    leaf_estimate_tlps<-EstimateTLP(df=data_t[data_t$unique_id==i,], wc.index = "relative.water.deficit",wp.index = "inv.water.potential")
     
     temp[[i]]<-leaf_estimate_tlps
     

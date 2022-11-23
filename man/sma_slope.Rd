@@ -10,8 +10,6 @@ sma_slope(x, y)
 \item{x}{x variable}
 
 \item{y}{y variable}
-
-\item{slope}{slope parameter estimated by the 'sma_slope' function}
 }
 \value{
 Returns slope value for standard major axis regression

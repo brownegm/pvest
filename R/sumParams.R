@@ -13,8 +13,7 @@ sumParams<-function(df,group_name){
   
   group_summary<-df%>% 
     dplyr::group_by({{group_name}})%>%
-    dplyr::select(!c(leaf,dry.weight,water.potential, fresh.weight, unique_id, inv.water.potential,
-              relative.water.content, relative.water.deficit, osmotic.potential, pressure.potential, sym.rwc, sym.rwd))%>%
+    dplyr::select(!c(leaf, unique_id))%>%
     dplyr::summarize(across(where(is.numeric), mean))
   
   return(group_summary)
