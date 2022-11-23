@@ -10,14 +10,14 @@ PsiPRWD_slopeint(data, psip.index, rwd.index, sym_rwd.index)
 \arguments{
 \item{data}{A data frame. Must contain pressure potential and relative water deficit values.}
 
-\item{psip.index}{TBD}
+\item{psip.index}{A string or number.An indexing value for the vector in data for pressure potential.}
 
-\item{rwd.index}{TBD}
+\item{rwd.index}{A string or number.An indexing value for the vector in data for relative water deficit.}
 
-\item{sym_rwd.index}{TBD}
+\item{sym_rwd.index}{A string or number.An indexing value for the vector in data for symplastic relative water deficit.}
 }
 \value{
-Bulk and symplastic slopes and intercepts
+Bulk and symplastic slopes and intercepts.
 }
 \description{
 Estimate the RWC and RWD at turgor loss point for using the relationship between leaf pressure potential and

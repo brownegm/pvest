@@ -16,13 +16,13 @@
 #' @seealso \code{\link{sma_slope}}, \code{\link{sma_intercept}}
 #'
 
-OsmoticPotFullTurgor <- function(data, fw.index, wp.index) {
+OsmoticPotFullTurgor <- function(data, wc.index, wp.index) {
   
   output<-list()
   
-  slope <- -sma_slope(x = data[, wp.index], y = data[, fw.index])
+  slope <- -sma_slope(x = data[, wp.index], y = data[, wc.index])
   
-  intercept <- sma_intercept(x = data[, wp.index], y = data[, fw.index], slope = slope)
+  intercept <- sma_intercept(x = data[, wp.index], y = data[, wc.index], slope = slope)
   
   pi.o <- -1/intercept
   
@@ -70,13 +70,13 @@ NULL
 #' @export OsmoticEstimates
 #' @seealso [RelativeWaterCD()], [sma_intercept()]
 
-OsmoticEstimates<- function(data, fw.index, wp.index, n_row=4) {
+OsmoticEstimates<- function(data, wc.index, wp.index, n_row=4) {
    
    data_belowtlp<-data%>% 
     dplyr::arrange(desc(water.potential))%>%
     dplyr::slice_tail(n=n_row)%>%as.data.frame()
   
-    pi.o_list <- OsmoticPotFullTurgor(data_belowtlp, fw.index, wp.index)
+    pi.o_list <- OsmoticPotFullTurgor(data_belowtlp, wc.index, wp.index)
     
     data$osm.pot.fullturgor <- pi.o_list[3]
     data$max.psip <- data$osm.pot.fullturgor * -1

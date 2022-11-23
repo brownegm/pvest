@@ -2,11 +2,11 @@
 #'     bulk and symplastic relative water deficit
 #'
 #' @param data A data frame. Must contain pressure potential and relative water deficit values.
-#' @param psip.index TBD 
-#' @param rwd.index TBD
-#' @param sym_rwd.index TBD
+#' @param psip.index A string or number.An indexing value for the vector in data for pressure potential.
+#' @param rwd.index A string or number.An indexing value for the vector in data for relative water deficit.
+#' @param sym_rwd.index A string or number.An indexing value for the vector in data for symplastic relative water deficit.
 #'
-#' @return Bulk and symplastic slopes and intercepts
+#' @return Bulk and symplastic slopes and intercepts.
 #' @export
 #'
 PsiPRWD_slopeint <- function(data, psip.index, rwd.index, sym_rwd.index){
@@ -27,15 +27,16 @@ return(out)
 #'    both bulk parameters and their symplastic counterparts
 #'
 #' @param df A data frame
-#' @param fw.index Water associated variable
-#' @param wp.index Pressure associated variable
+#' @param wc.index An unquoted string indicating vector with water associated variable
+#' @param wp.index An unquoted string indicating vector with pressure associated variable
+#' @param n_row A double. Default to n_row=4 (i.e., 4 rows).Value which indicates the number of rows for estimating SMA line parameters. 
 #'
 #' @return Returns data with new columns for the estimated parameters. 
 #' 
 #' @import dplyr
 #' @export
 
-EstimateTLP<-function(df, fw.index, wp.index, n_row=4){
+EstimateTLP<-function(df, wc.index, wp.index, n_row=4){
 
   data_belowtlp<-df%>% 
     dplyr::arrange(desc({{wp.index}}))%>%
@@ -50,7 +51,7 @@ EstimateTLP<-function(df, fw.index, wp.index, n_row=4){
                                   rwd.index="relative.water.deficit",
                                   sym_rwd.index = "sym.rwd") #output is a list in order: slope, intercept, sym slope, sym intercept
   
-  pi.o_list<-OsmoticPotFullTurgor(data=data_belowtlp, fw.index, wp.index)[1:2]
+  pi.o_list<-OsmoticPotFullTurgor(data=data_belowtlp, wc.index, wp.index)[1:2]
      
     df$relative.water.deficit.attlp=-((psip.rwd_list[2])/(psip.rwd_list[1]))
     df$relative.water.content.attlp=100-df$relative.water.deficit.attlp
@@ -60,6 +61,5 @@ EstimateTLP<-function(df, fw.index, wp.index, n_row=4){
     df$modulus=df$max.psip/((100-df$relative.water.content.attlp)/100)
     df$modulus_sym=df$max.psip/((100-df$sym.rwc.attlp)/100)
     
-    #out<-c(df, psip.rwd_list)
     return(df)
 }
