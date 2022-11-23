@@ -11,11 +11,17 @@ sma_intercept(x, y, slope)
 
 \item{y}{y variable}
 
-\item{slope}{slope parameter estimated by the 'sma_slope' function}
+\item{slope}{slope parameter estimated by the \code{sma_slope} function}
 }
 \value{
 Returns slope and intercept values for standard major axis regression
 }
 \description{
 SMA intercept estimation
+}
+\details{
+Estimation of the intercept requires the estimation of the SMA slope. The intercept is estimated as the mean of the x variable
+minus the SMA slope times the mean value of the y variable. Often in pressure volume curves, the x variable is the water-associated
+variable(e.g., water content or leaf relative water content). Likewise, the y variable is often associated
+with pressure(e.g., leaf water potential, and inverse of leaf water potential)
 }

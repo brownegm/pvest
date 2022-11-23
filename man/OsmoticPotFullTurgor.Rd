@@ -9,9 +9,9 @@ OsmoticPotFullTurgor(data, fw.index, wp.index)
 \arguments{
 \item{data}{A data frame. A data frame containing the data set of the last 4 hydration states for a given leaf}
 
-\item{fw.index}{A double. Data frame index which contains the leaf water potential data}
-
 \item{wp.index}{A double. Data frame index which contains the leaf water potential data}
+
+\item{wc.index}{A double. Data frame index which contains the relative water content/deficit}
 }
 \value{
 Numeric list containing the slope, intercept and osmotic potential at full turgor, in that order.
