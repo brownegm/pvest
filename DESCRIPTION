@@ -1,6 +1,6 @@
 Package: pvest
 Title: Estimate pressure volume curve parameters
-Version: 0.0.0.9000
+Version: 0.0.0.9001
 Author: Marvin Browne, Lawren Sack
 Maintainer: Marvin Browne <brownegm@gmail.com>
 Description: Provides functions for estimating parameters of a pressure volume curve. 
