@@ -8,6 +8,7 @@ library(tidyverse)
 library(here)
 
 #load_data
+load("~/Documents/Research_UCLA/ITV-PV/data/itvdat_2022-07-16_.RData")
 pv_dat<-read_excel(here("inst","pvldcurvedata_10042022.xlsx"))%>%
   select(!c(dry.weight, fresh.weight.saturated, water.potential.bar, bag.weight,sp.leaf))%>%as.data.frame()
 
