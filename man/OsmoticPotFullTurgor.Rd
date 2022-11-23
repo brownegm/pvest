@@ -7,11 +7,11 @@
 OsmoticPotFullTurgor(data, fw.index, wp.index)
 }
 \arguments{
-\item{data}{a data frame. A data frame containing the data set of the last 4 hydration states for a given leaf}
+\item{data}{A data frame. A data frame containing the data set of the last 4 hydration states for a given leaf}
 
-\item{fw.index}{a double. Data frame index which contains the leaf water potential data}
+\item{fw.index}{A double. Data frame index which contains the leaf water potential data}
 
-\item{wp.index}{a double. Data frame index which contains the leaf water potential data}
+\item{wp.index}{A double. Data frame index which contains the leaf water potential data}
 }
 \value{
 Numeric list containing the slope, intercept and osmotic potential at full turgor, in that order.
@@ -19,4 +19,7 @@ Numeric list containing the slope, intercept and osmotic potential at full turgo
 \description{
 Estimates the osmotic potential at full turgor from the linear relationship
 between relative water deficit and inverse leaf water potential.
+}
+\seealso{
+\code{\link{sma_slope}}, \code{\link{sma_intercept}}
 }
