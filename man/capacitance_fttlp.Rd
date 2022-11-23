@@ -7,13 +7,13 @@
 capacitance_fttlp(df, wp.index, wc.index, s_wc.index)
 }
 \arguments{
+\item{df}{A data frame}
+
 \item{wp.index}{Water potential index}
 
 \item{wc.index}{Water content index. Here the expected value is total relative water content}
 
 \item{s_wc.index}{Symplastic water content index. Here symplastic relative water content is expected}
-
-\item{data}{A data frame}
 }
 \value{
 Returns vectors of estimated capacitance above and below turgor loss point
