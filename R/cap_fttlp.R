@@ -1,6 +1,6 @@
 #' Estimate the capacitance at full turgor and turgor loss point for the symplast and total. 
 #'
-#' @param data A data frame
+#' @param df A data frame
 #' @param wp.index Water potential index
 #' @param wc.index Water content index. Here the expected value is total relative water content
 #' @param s_wc.index Symplastic water content index. Here symplastic relative water content is expected

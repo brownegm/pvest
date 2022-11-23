@@ -26,7 +26,7 @@ return(out)
 #' @description Estimate leaf water potential, relative water content at turgor loss point and modulus of elasticity
 #'    both bulk parameters and their symplastic counterparts
 #'
-#' @param data A data frame
+#' @param df A data frame
 #' @param fw.index Water associated variable
 #' @param wp.index Pressure associated variable
 #'
