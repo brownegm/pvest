@@ -43,39 +43,29 @@ estParams<-function(data, fw.index, wp.index){
   
   }
   
-  temp<-list()
-  
+output_est<-list()
+
   for(i in unique_ids){
     
     leaf_estimate<-OsmoticEstimates(data[data$unique_id==i,], wc.index = "relative.water.deficit",wp.index = "inv.water.potential")
-  
-    temp[[i]]<-leaf_estimate
     
-    }
-
-  data_t<-as.data.frame(reduce(temp, rbind))
-  
-  for(i in unique_ids){
-    
-    leaf_estimate_tlps<-EstimateTLP(df=data_t[data_t$unique_id==i,], wc.index = "relative.water.deficit",wp.index = "inv.water.potential")
-    
-    temp[[i]]<-leaf_estimate_tlps
-    
-  }
- 
-  data_tt<-as.data.frame(reduce(temp, rbind))
+    leaf_estimate<-EstimateTLP(df=leaf_estimate, wc.index = "relative.water.deficit",wp.index = "inv.water.potential")
   
   #estimate other parameters:capacitance above and below tlp. 
-  
-  for(i in unique_ids){
     
-    leaf_estimate_cap<-capacitance_fttlp(df=data_tt[data_tt$unique_id==i,], wc.index = "relative.water.content", s_wc.index = "sym.rwc", wp.index = "water.potential")
+    leaf_estimate_cap<-capacitance_fttlp(df=leaf_estimate, wc.index = "relative.water.content", s_wc.index = "sym.rwc", wp.index = "water.potential")
     
-    data_tt[data_tt$unique_id==i, "cap.ft.bulk"]<-rep(leaf_estimate_cap[1], nrow(data_tt[data_tt$unique_id==i,]))
-    data_tt[data_tt$unique_id==i,"cap.ft.sym"]<-rep(leaf_estimate_cap[2], nrow(data_tt[data_tt$unique_id==i,]))
-    data_tt[data_tt$unique_id==i, "cap.tlp.bulk"]<-rep(leaf_estimate_cap[3], nrow(data_tt[data_tt$unique_id==i,]))
-    data_tt[data_tt$unique_id==i, 'cap.tlp.sym']<-rep(leaf_estimate_cap[4], nrow(data_tt[data_tt$unique_id==i,]))
+#check this but should maybe work
+    leaf_estimate[,"cap.ft.bulk"]<-rep(leaf_estimate_cap[1], nrow(leaf_estimate))
+    leaf_estimate[,"cap.ft.sym"]<-rep(leaf_estimate_cap[2], nrow(leaf_estimate))
+    leaf_estimate[, "cap.tlp.bulk"]<-rep(leaf_estimate_cap[3], nrow(leaf_estimate))
+    leaf_estimate[, 'cap.tlp.sym']<-rep(leaf_estimate_cap[4], nrow(leaf_estimate))
+
+output_est[i]<-leaf_estimate
+
   }
+#combine all leaf estimates into one data frame.
+output_df<-as.data.frame(reduce(output_est, rbind))
   
-  return(data_tt)
+  return(output_df)
 }
