@@ -21,9 +21,15 @@
 #' @export
 
 SaturatedWaterContent <- function(data, fw.index, wp.index) {
-  slope <- sma_slope(x = data[, fw.index], y = data[, wp.index])
+  
+  #first select the first for values and estimate SWC and RWC values 
+  data_abovetlp<-data%>% 
+    dplyr::arrange(desc({{wp.index}}))%>%
+    dplyr::slice_head(n=4)%>%as.data.frame()
+  
+  slope <- sma_slope(x = data_abovetlp[, fw.index], y = data_abovetlp[, wp.index])
 
-  intercept <- sma_intercept(x = data[, fw.index], y = data[, wp.index], slope = slope)
+  intercept <- sma_intercept(x = data_abovetlp[, fw.index], y = data_abovetlp[, wp.index], slope = slope)
 
   saturated.water.content <- intercept
 
