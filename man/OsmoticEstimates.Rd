@@ -35,12 +35,12 @@ This function estimates osmotic variables from the values \strong{below} turgor 
 last 4 hydration states all represent points below turgor loss point.
 
 It is implemented \strong{after} estimation of leaf saturated water content, relative water content and relative
-water deficit.See \code{\link{RelativeWaterCD}} \code{RelativeWaterCD} for information on the estimation of those parameters.
+water deficit.See \code{RelativeWaterCD} for information on the estimation of those parameters.
 
-Here, we estimate the osmotic potential at full turgor (\code{\pi_O}) as the x-intercept of the relationship between
+Here, we estimate the osmotic potential at full turgor as the x-intercept of the relationship between
 inverse leaf water potential and relative water deficit below turgor loss point. The slope needs to be negative
 within the sma_intercept function(\code{\link{sma_intercept}}) because of the negative inverse of leaf water potential.
-Also, note that unlike in the saturated water content estimation the x values is inverse \code{\Psi_leaf}.
+Also, note that unlike in the saturated water content estimation the x values is inverse.
 }
 \seealso{
 \code{\link[=RelativeWaterCD]{RelativeWaterCD()}}, \code{\link[=sma_intercept]{sma_intercept()}}

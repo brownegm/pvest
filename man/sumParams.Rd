@@ -4,12 +4,14 @@
 \alias{sumParams}
 \title{Summarize estimated pressure volume curve parameters by group}
 \usage{
-sumParams(df, group_name)
+sumParams(df, group_name, remove.cols = c("leaf", "unique_id"))
 }
 \arguments{
 \item{df}{A data frame. Data frame containing predicted parameters.}
 
 \item{group_name}{A string. Name of variable to group summary by.}
+
+\item{remove.cols}{A list. List of column names to be removed from using select. Default is leaf and unique_id}
 }
 \value{
 Returns a summarized data frame with the mean parameter values.

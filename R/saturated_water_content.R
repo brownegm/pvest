@@ -1,4 +1,4 @@
-#' SWC estimations 
+#' Saturated water content(SWC) estimation 
 #' @description Estimate the saturated water content from the intercept of the
 #'     the relationship between leaf water mass and leaf water potential.
 #'
@@ -9,9 +9,9 @@
 #' @details This function calculates the saturated water content as the standard major axis intercept.
 #'
 #' @seealso
-#' * [sma_intercept] Function used for estimating the SMA intercept
-#' * [sma_slope] Function used for estimating the SMA slope
-#' * [RelativeWaterCD] Estimates the relative water content and relative water deficit using the saturated water content estimate here
+#' * [sma_intercept()] Function used for estimating the SMA intercept
+#' * [sma_slope()] Function used for estimating the SMA slope
+#' * [RelativeWaterCD()] Estimates the relative water content and relative water deficit using the saturated water content estimate here
 #'
 #' @family abovetlp
 #' 
@@ -52,9 +52,6 @@ NULL
 #' @family abovetlp
 
 RelativeWaterCD <- function(data, fw.index, wp.index) {
-  #saturated.water.content <- SaturatedWaterContent(data, fw.index, wp.index)
-
-  #data$saturated.water.content <- saturated.water.content
   relative.water.content <- (data[, fw.index] / data$saturated.water.content) * 100
   relative.water.deficit <- 100 - (relative.water.content)
 

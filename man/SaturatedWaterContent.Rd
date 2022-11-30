@@ -2,7 +2,7 @@
 % Please edit documentation in R/saturated_water_content.R
 \name{SaturatedWaterContent}
 \alias{SaturatedWaterContent}
-\title{SWC estimations}
+\title{Saturated water content(SWC) estimation}
 \usage{
 SaturatedWaterContent(data, fw.index, wp.index)
 }
@@ -25,9 +25,9 @@ This function calculates the saturated water content as the standard major axis 
 }
 \seealso{
 \itemize{
-\item \link{sma_intercept} Function used for estimating the SMA intercept
-\item \link{sma_slope} Function used for estimating the SMA slope
-\item \link{RelativeWaterCD} Estimates the relative water content and relative water deficit using the saturated water content estimate here
+\item \code{\link[=sma_intercept]{sma_intercept()}} Function used for estimating the SMA intercept
+\item \code{\link[=sma_slope]{sma_slope()}} Function used for estimating the SMA slope
+\item \code{\link[=RelativeWaterCD]{RelativeWaterCD()}} Estimates the relative water content and relative water deficit using the saturated water content estimate here
 }
 
 Other abovetlp: 
