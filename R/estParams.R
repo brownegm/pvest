@@ -51,14 +51,14 @@ estParams<-function(data, fw.index, wp.index){
     #check this but should maybe work
     leaf_estimate[,"cap.ft.bulk"]<-rep(leaf_estimate_cap[1], nrow(leaf_estimate))
     leaf_estimate[,"cap.ft.sym"]<-rep(leaf_estimate_cap[2], nrow(leaf_estimate))
-    leaf_estimate[, "cap.tlp.bulk"]<-rep(leaf_estimate_cap[3], nrow(leaf_estimate))
-    leaf_estimate[, 'cap.tlp.sym']<-rep(leaf_estimate_cap[4], nrow(leaf_estimate))
+    leaf_estimate[,"cap.tlp.bulk"]<-rep(leaf_estimate_cap[3], nrow(leaf_estimate))
+    leaf_estimate[,"cap.tlp.sym"]<-rep(leaf_estimate_cap[4], nrow(leaf_estimate))
     
     output_est[[i]]<-leaf_estimate
     
   }
   #combine all leaf estimates into one data frame.
-  output_df<-as.data.frame(reduce(output_est, rbind))
+  output_df<-as.data.frame(purrr::reduce(output_est, rbind))
   
   return(output_df)
 }

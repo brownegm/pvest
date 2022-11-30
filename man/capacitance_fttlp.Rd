@@ -4,16 +4,21 @@
 \alias{capacitance_fttlp}
 \title{Estimate the capacitance at full turgor and turgor loss point for the symplast and total.}
 \usage{
-capacitance_fttlp(df, wp.index, wc.index, s_wc.index)
+capacitance_fttlp(
+  df,
+  wp.index = "water.potential",
+  wc.index = "relative.water.content",
+  s_wc.index = "sym.rwc"
+)
 }
 \arguments{
 \item{df}{A data frame}
 
-\item{wp.index}{Water potential index}
+\item{wp.index}{A string. Indicates water potential vectror in df. Default is "water.potential".}
 
-\item{wc.index}{Water content index. Here the expected value is total relative water content}
+\item{wc.index}{Water content index. Here the expected value is total relative water content. Default is "relative.water.content".}
 
-\item{s_wc.index}{Symplastic water content index. Here symplastic relative water content is expected}
+\item{s_wc.index}{Symplastic water content index. Here symplastic relative water content is expected. Default is "sym.rwc".}
 }
 \value{
 Returns vectors of estimated capacitance above and below turgor loss point
