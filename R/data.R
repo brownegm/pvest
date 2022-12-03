@@ -11,5 +11,5 @@
 #' \item{fresh.weight}{Leaf water weight in grams}
 #' }
 #' @examples
-#'   data
+#'   head(data)
 "data"

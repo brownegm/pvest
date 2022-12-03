@@ -21,6 +21,6 @@ data
 Pressure volume curve data for Quercus agrifolia
 }
 \examples{
-  data
+  head(data)
 }
 \keyword{datasets}
