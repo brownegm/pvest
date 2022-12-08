@@ -70,7 +70,7 @@ NULL
 #' @export OsmoticEstimates
 #' @seealso [RelativeWaterCD()], [sma_intercept()]
 
-OsmoticEstimates<- function(data, wc.index, wp.index, n_row=4) {
+OsmoticEstimates<- function(data, wc.index="relative.water.deficit", wp.index="inv.water.potential", n_row=4) {
    
    data_belowtlp<-data%>% 
     dplyr::arrange(desc(wp.index))%>%
