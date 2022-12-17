@@ -5,7 +5,7 @@
 #' @param data Data frame containing leaf fresh water mass and leaf water potentials
 #' @param fw.index Numeric value indicating the column number where the leaf water mass data is within data frame
 #' @param wp.index Numeric value indicating the column number where the leaf water potential data is within the data frame
-#'
+#' @param n_row A number. Indicates number of rows to estimate parameters from within data
 #' @details This function calculates the saturated water content as the standard major axis intercept.
 #'
 #' @seealso
@@ -20,12 +20,12 @@
 #' 
 #' @export
 
-SaturatedWaterContent <- function(data, fw.index, wp.index) {
+SaturatedWaterContent <- function(data, fw.index, wp.index, n_row=4) {
   
   #first select the first for values and estimate SWC and RWC values 
   data_abovetlp<-data%>% 
     dplyr::arrange(desc({{wp.index}}))%>%
-    dplyr::slice_head(n=4)%>%as.data.frame()
+    dplyr::slice_head(n=n_row)%>%as.data.frame()
   
   slope <- sma_slope(x = data_abovetlp[, fw.index], y = data_abovetlp[, wp.index])
 
