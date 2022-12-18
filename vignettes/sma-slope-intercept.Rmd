@@ -1,0 +1,90 @@
+---
+title: "SMA Slope and Intercept"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{SMA Slope and Intercept}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+bibliography: references.bib
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup, include=F}
+library(pvest)
+```
+
+# Overview
+
+Pressure volume (PV) curve parameter estimation relies on the estimation of points on standard major axis (SMA) regressions for water content and pressure (i.e., solute, pressure and leaf water potential). The SMA regression assumes that the primary error in estimating parameters in the y variable. In most cases with respect to the PV curve, this represent the pressure variable [@Warton2006]. The functions described here are used in the estimation of the saturated water content (SWC), osmotic potential at full turgor ($\pi_{o}$), apoplastic fraction (af), relative water content at turgor loss point (RWC~tlp~) and leaf water potential at turgor loss point ($\Psi_{tlp}$). Capacitance at full turgor and at turgor loss also use these functions only represent the relationship between pressure potential and relative water content. These functions are used primarily as utility functions to keep the rest of the functions clean. Throughout this package, the x and y variables are changed depending on the variable that is being estimated.
+
+## Estimate Standard Major Axis slope (`sma_slope`)
+
+The slope of the relationship is determined as the the standard deviation of the x variable divided by the standard deviation of the y variable [@Sack2011]:
+
+$$
+\alpha=\frac{\sigma(x)}{\sigma(y)}
+$$
+
+This is always the first parameter of the linear relationship to be estimated because it is used to estimate the intercept.
+
+### Usage 
+
+`sma_slope(x,y)`
+
+-   **x** *x variable*
+
+-   **y** *y variable*
+
+### Example
+
+```{r, estimate-slope}
+set.seed(1)# set seed for reproducibility
+
+#create x and y variable
+x<-rnorm(10)
+y<-rnorm(10)
+
+#estimate SMA slope
+slope=pvest::sma_slope(x=x, 
+                 y=y)
+
+#print slope
+slope
+```
+
+## Estimation of Standard Major Axis Intercept (`sma_intercept`)
+
+With the slope estimated, we can then estimate the intercept of the relationship. The intercept of the SMA relationship is estimated as the mean of the x variable minus the estimated SMA slope multiplied by the mean value of the y variable.
+
+$$
+b = mean(x)-\alpha*mean(y)
+$$
+
+### Usage
+
+`sma_intercept(x, y, slope)`
+
+-   **x** *x variable*
+
+-   **y** *y variable*
+
+-   **slope** *SMA slope*
+
+### Example
+
+```{r, estimate-intercept}
+#estimate SMA intercept
+intercept<-pvest::sma_intercept(x=x, 
+                     y=y,
+                     slope=slope)
+#print intercept
+intercept
+```
+
+## References
