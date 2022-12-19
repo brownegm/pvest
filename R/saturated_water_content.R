@@ -43,7 +43,6 @@ NULL
 #'
 #' @param data Data frame containing leaf fresh water mass and leaf water potentials
 #' @param fw.index Numeric value indicating the column number where the leaf water mass data is within data frame
-#' @param wp.index Numeric value indicating the column number where the leaf water potential data is within the data frame
 #'
 #' @return Returns the input dataframe with two new columns containing the relative water content(RWC) for each measurement point and
 #'    the relative water deficit(i.e, 100-RWC)
@@ -51,7 +50,7 @@ NULL
 #' @export RelativeWaterCD
 #' @family abovetlp
 
-RelativeWaterCD <- function(data, fw.index, wp.index) {
+RelativeWaterCD <- function(data, fw.index) {
   relative.water.content <- (data[, fw.index] / data$saturated.water.content) * 100
   relative.water.deficit <- 100 - (relative.water.content)
 
