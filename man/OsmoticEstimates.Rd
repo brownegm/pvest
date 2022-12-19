@@ -4,7 +4,12 @@
 \alias{OsmoticEstimates}
 \title{Osmotic and pressure parameter estimation}
 \usage{
-OsmoticEstimates(data, wc.index, wp.index, n_row = 4)
+OsmoticEstimates(
+  data,
+  wc.index = "relative.water.deficit",
+  wp.index = "inv.water.potential",
+  n_row = 4
+)
 }
 \arguments{
 \item{data}{A data frame. A data frame containing the data set of the last 4 hydration states for a given leaf}

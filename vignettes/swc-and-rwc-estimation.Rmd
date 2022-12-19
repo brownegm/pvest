@@ -1,0 +1,117 @@
+---
+title: "Estimation of Saturated and Relative Water Content"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Estimation of Saturated and Relative Water Content}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+bibliography: references.bib
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup, include=F}
+library(pvest)
+library(dplyr)
+```
+
+# Overview of `SaturatedWaterContent()` and `RelativeWaterCD()`
+
+This is a discussion of `SaturatedWaterContent()` and `RelativeWaterCD()` , which estimate the saturated water content (SWC), relative water deficit (RWD) and relative water content (RWC) respective for all values of water mass through dehydration for a given leaf (terms, units and definitions are tabled in Table 1). These functions take user measured leaf water mass and leaf water potential($\Psi_{leaf}$) and returns a data frame with the leaf specific SWC and RWCs.
+
+| Term (Abbreviation)                 | Units    | Definition                                                                                                                           |
+|----------------------|------------------|--------------------------------|
+| Saturated water content(SWC)        | g        | Mass of leaf water at full saturation. Estimated as the y intercept of leaf water potential\~leaf water.                             |
+| Relative water deficit (RWD)        | g\*g^-1^ | Mass of water loss relative total saturation.                                                                                        |
+| Relative water content (RWC)        | g\*g^-1^ | Mass of water relative to full saturation.                                                                                           |
+| Leaf water potential ($\Psi$~leaf~) | MPa      | Measured parameter which is an estimate of potential energy of water relative to pure water.                                         |
+| Leaf water mass(LWM)                | g        | Measured parameter estimated at the fresh mass of leaf minus dry mass and any other material weighed with leaf (e.g., whirlpak bag). |
+
+: Table 1. Terms, units and definitions
+
+## Saturated water content estimation(`SaturatedWaterContent()`)
+
+The first step in performing a pressure volume curve analysis is estimating the saturated water content. It is used to estimate the relative water deficit and subsequently, the relative water content. To estimate SWC, we use the intercept of the SMA relationship (see `sma_slope()` and `sma_intercept()`) of leaf water and $\Psi_{leaf}$ for the first four hydration states excluding any "plateau points". Plateau points represent measurements of oversaturation of water within the leaf. It is evident when there is minimal change in leaf water potential with decreasing water content (LWM) [@Kubiske1990]. The relationship is represented as:
+
+$$
+\Psi_{leaf}= \alpha * LWM + b, 
+$$ where $\alpha$ and $b$ represent the slope and intercept of the relationship:
+
+$$
+\alpha=\frac{\sigma(LWM)}{\sigma(\Psi_{leaf})}
+$$ and,
+
+$$
+b = mean(LWM)-\alpha*mean(\Psi_{leaf})
+$$
+
+### Usage
+
+`SaturatedWaterContent(data, fw.index, wp.index)`
+
+-   **data** a data frame containing leaf water potential and leaf water mass
+
+-   **fw.index** a numeric value indicating the column number where the leaf water mass data is within data frame
+
+-   **wp.index** a numeric value indicating the column number where the leaf water potential data is within data frame
+
+-   **NOTE:** Another important parameter is `n_row` . The default is `n_row=4` , meaning that the saturated water content will be estimated based on the first four hydration states (paired LWM and $\Psi_{leaf}$ ).
+
+### Example
+
+```{r swc-estimation}
+#load data for Quercus agrifolia
+quag1<-pvest::data%>%
+  filter(leaf==1)
+
+head(quag1)
+
+quag1_swc<- SaturatedWaterContent(data=quag1, 
+                                  fw.index = 5, 
+                                  wp.index = 4)
+quag1_swc
+```
+
+## Relative Water Content/Deficit Estimation (`RelativeWaterCD()`)
+
+Once, the saturated water content is estimated, we can then express each leaf water mass relative to the mass of the leaf at full saturation(i.e., relative water content). RWC is determined for each dehydration state as:
+
+$$
+RWC=\frac{LWM}{SWC}
+$$
+
+For estimates of the components of leaf water potential, we also need the relative water deficit. We will also estimate that value for each RWC as:
+
+$$
+RWD = 100- RWC
+$$
+
+Note that both RWC and RWD outputs from `RelativeWaterCD()` are expressed as percentages. `RelativeWaterCD()` takes as an input a data frame with a the saturated water content and leaf water mass and returns a data frame with RWC and RWD for further PV curve analysis.
+
+### Usage
+
+```{r rwc-rwd-estimation}
+#create a data frame with the estimated SWC 
+quag1_swc.df<-quag1
+
+#create column that contains the saturated water content
+quag1_swc.df$saturated.water.content<-rep(quag1_swc, nrow(quag1_swc.df))
+
+#view full data frame with the new column
+head(quag1_swc.df)
+
+#estimate RWC and RWD for the new data frame
+quag1_rwc[,c('relative.water.content', 'relative.water.deficit')]<-RelativeWaterCD(data=quag1_swc.df,
+                           fw.index = 5)
+
+quag1_rwc#output is a list check that!!!!!!
+```
+
+### Example
+
+## References
