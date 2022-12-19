@@ -6,7 +6,6 @@
 #' @return Stops evaluation of function 
 #' 
 #' @importFrom tibble is_tibble
-#' @export
 #'
 
 InputCheck<-function(data){
