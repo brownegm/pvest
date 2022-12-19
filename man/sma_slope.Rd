@@ -16,7 +16,8 @@ Returns slope value for standard major axis regression
 }
 \description{
 Standard major axis(SMA) parameter estimation. The functions provided here
-will estimate the slope and intercept of the SMA line for a given dataset.
+will estimate the slope and intercept of the SMA line for a given dataset. For a
+detailed explanation of the function see \code{vignette('sma-slope-intercept')}
 }
 \details{
 The slope of the relationship is determined as the the standard deviation of

@@ -1,7 +1,8 @@
 #Slope and intercept functions
 #' SMA slope
 #' @description Standard major axis(SMA) parameter estimation. The functions provided here
-#'    will estimate the slope and intercept of the SMA line for a given dataset.
+#'    will estimate the slope and intercept of the SMA line for a given dataset. For a 
+#'    detailed explanation of the function see \code{vignette('sma-slope-intercept')}
 #' @param x x variable
 #' @param y y variable
 #'
@@ -36,7 +37,8 @@ NULL
 #' @details  Estimation of the intercept \strong{requires} the estimation of the SMA slope. The intercept is estimated as the mean of the x variable
 #'     minus the SMA slope times the mean value of the y variable. Often in pressure volume curves, the x variable is the water-associated
 #'     variable(e.g., water content or leaf relative water content). Likewise, the y variable is often associated
-#'     with pressure(e.g., leaf water potential, and inverse of leaf water potential)
+#'     with pressure(e.g., leaf water potential, and inverse of leaf water potential). For a 
+#'     detailed explanation of the function see \code{vignette('sma-slope-intercept')}
 #'
 #' @export
 

@@ -20,7 +20,8 @@ Returns the saturated water content from the relationship between water mass and
 }
 \description{
 Estimate the saturated water content from the intercept of the
-the relationship between leaf water mass and leaf water potential.
+the relationship between leaf water mass and leaf water potential. For a
+detailed explanation of the function see \code{vignette('swc-and-rwc-estimation')}
 }
 \details{
 This function calculates the saturated water content as the standard major axis intercept.

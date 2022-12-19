@@ -1,6 +1,7 @@
 #' Saturated water content(SWC) estimation 
 #' @description Estimate the saturated water content from the intercept of the
-#'     the relationship between leaf water mass and leaf water potential.
+#'     the relationship between leaf water mass and leaf water potential. For a 
+#'     detailed explanation of the function see \code{vignette('swc-and-rwc-estimation')}
 #'
 #' @param data Data frame containing leaf fresh water mass and leaf water potentials
 #' @param fw.index Numeric value indicating the column number where the leaf water mass data is within data frame
@@ -39,7 +40,8 @@ SaturatedWaterContent <- function(data, fw.index, wp.index, n_row=4) {
 NULL
 #' RWC and RWD estimation
 #' @description Estimate the relative water content(RWC) and relative water deficit(RWD) based on the
-#'     saturated water content
+#'     saturated water content. For a 
+#'     detailed explanation of the function see \code{vignette('swc-and-rwc-estimation')}
 #'
 #' @param data Data frame containing leaf fresh water mass and leaf water potentials
 #' @param fw.index Numeric value indicating the column number where the leaf water mass data is within data frame

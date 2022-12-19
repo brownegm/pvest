@@ -12,12 +12,13 @@ RelativeWaterCD(data, fw.index)
 \item{fw.index}{Numeric value indicating the column number where the leaf water mass data is within data frame}
 }
 \value{
-Returns the input dataframe with two new columns containing the relative water content(RWC) for each measurement point and
+Returns a list of two containing the relative water content(RWC) for each measurement point and
 the relative water deficit(i.e, 100-RWC)
 }
 \description{
 Estimate the relative water content(RWC) and relative water deficit(RWD) based on the
-saturated water content
+saturated water content. For a
+detailed explanation of the function see \code{vignette('swc-and-rwc-estimation')}
 }
 \seealso{
 Other abovetlp: 

@@ -6,7 +6,6 @@ vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 bibliography: references.bib
-csl: plant-physiology.csl
 ---
 
 ```{r, include = FALSE}
@@ -26,7 +25,7 @@ library(dplyr)
 This is a discussion of `SaturatedWaterContent()` and `RelativeWaterCD()` , which estimate the saturated water content (SWC), relative water deficit (RWD) and relative water content (RWC) respective for all values of water mass through dehydration for a given leaf (terms, units and definitions are tabled in Table 1). These functions take user measured leaf water mass and leaf water potential($\Psi_{leaf}$) and returns a data frame with the leaf specific SWC and RWCs.
 
 | Term (Abbreviation)                 | Units    | Definition                                                                                                                           |
-|----------------------|-------------------|--------------------------------|
+|----------------------|-------------------|-------------------------------|
 | Saturated water content(SWC)        | g        | Mass of leaf water at full saturation. Estimated as the y intercept of leaf water potential\~leaf water.                             |
 | Relative water deficit (RWD)        | g\*g^-1^ | Mass of water loss relative total saturation.                                                                                        |
 | Relative water content (RWC)        | g\*g^-1^ | Mass of water relative to full saturation.                                                                                           |
