@@ -44,7 +44,7 @@ NULL
 #' @param data Data frame containing leaf fresh water mass and leaf water potentials
 #' @param fw.index Numeric value indicating the column number where the leaf water mass data is within data frame
 #'
-#' @return Returns the input dataframe with two new columns containing the relative water content(RWC) for each measurement point and
+#' @return Returns a list of two containing the relative water content(RWC) for each measurement point and
 #'    the relative water deficit(i.e, 100-RWC)
 #'
 #' @export RelativeWaterCD

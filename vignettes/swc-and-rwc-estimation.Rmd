@@ -6,6 +6,7 @@ vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 bibliography: references.bib
+csl: plant-physiology.csl
 ---
 
 ```{r, include = FALSE}
@@ -25,7 +26,7 @@ library(dplyr)
 This is a discussion of `SaturatedWaterContent()` and `RelativeWaterCD()` , which estimate the saturated water content (SWC), relative water deficit (RWD) and relative water content (RWC) respective for all values of water mass through dehydration for a given leaf (terms, units and definitions are tabled in Table 1). These functions take user measured leaf water mass and leaf water potential($\Psi_{leaf}$) and returns a data frame with the leaf specific SWC and RWCs.
 
 | Term (Abbreviation)                 | Units    | Definition                                                                                                                           |
-|----------------------|------------------|--------------------------------|
+|----------------------|-------------------|--------------------------------|
 | Saturated water content(SWC)        | g        | Mass of leaf water at full saturation. Estimated as the y intercept of leaf water potential\~leaf water.                             |
 | Relative water deficit (RWD)        | g\*g^-1^ | Mass of water loss relative total saturation.                                                                                        |
 | Relative water content (RWC)        | g\*g^-1^ | Mass of water relative to full saturation.                                                                                           |
@@ -95,6 +96,14 @@ Note that both RWC and RWD outputs from `RelativeWaterCD()` are expressed as per
 
 ### Usage
 
+`RelativeWaterCD(data,fw.index)`
+
+-   **data** a data frame containing leaf water potential and leaf water mass
+
+-   **fw.index** a numeric value indicating the column number where the leaf water mass data is within data frame
+
+### Example
+
 ```{r rwc-rwd-estimation}
 #create a data frame with the estimated SWC 
 quag1_swc.df<-quag1
@@ -105,13 +114,13 @@ quag1_swc.df$saturated.water.content<-rep(quag1_swc, nrow(quag1_swc.df))
 #view full data frame with the new column
 head(quag1_swc.df)
 
-#estimate RWC and RWD for the new data frame
-quag1_rwc[,c('relative.water.content', 'relative.water.deficit')]<-RelativeWaterCD(data=quag1_swc.df,
+#estimate RWC and RWD
+quag1_rwc.est<-quag1_swc.df
+
+quag1_rwc.est[,c("relative.water.content", "relative.water.deficit")]<-RelativeWaterCD(data=quag1_swc.df,
                            fw.index = 5)
 
-quag1_rwc#output is a list check that!!!!!!
+quag1_rwc.est
 ```
-
-### Example
 
 ## References
