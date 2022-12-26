@@ -80,7 +80,7 @@ OsmoticEstimates<- function(data, wc.index="relative.water.deficit", wp.index="i
     
     data$osm.pot.fullturgor <- pi.o_list[3]
     data$max.psip <- data$osm.pot.fullturgor * -1
-    data$osmotic.potential <- -1/(pi.o_list[2]+pi.o_list[1]*data$relative.water.deficit)
+    data$osmotic.potential <- -1/(pi.o_list[2]+(pi.o_list[1]*data$relative.water.deficit))
     data$pressure.potential <- data$water.potential-data$osmotic.potential
     data$apoplastic.fraction<-100+(pi.o_list[2]/pi.o_list[1])
     data$sym.rwc<-((data$relative.water.content-(data$apoplastic.fraction))/(100-(data$apoplastic.fraction)))*100
