@@ -1,0 +1,195 @@
+---
+title: "Estimation of Osmotic Variables"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Estimation of Osmotic Variables}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+editor_options: 
+  markdown: 
+    wrap: 72
+bibliography: references.bib
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup, include=F}
+library(pvest)
+library(dplyr)
+```
+
+The estimation of the osmotic variables (variables, units and symbols
+are presented in Table 1) is the second step **after** estimating the
+saturated water content and relative water content. These two
+parameters, especially relative water content, are used to estimate the
+osmotic variables using the linear relationship $\Psi_{leaf}=f(RWD)$.
+See `RelativeWaterCD` for information on the estimation of those
+parameters. The functions are an adaptation of the worksheet template
+from [@Sack2011] and relationships drawn in [@Bartlett2012].
+
+| Symbol         | Units    | Definition                                                                                                    |
+|------------------------|------------------------|------------------------|
+| $\pi_{o}$      | MPa      | Osmotic potential at full turgor.                                                                             |
+| Max $\Psi_{p}$ | MPa      | Maximum pressure potential                                                                                    |
+| $\Psi_s$       | MPa      | Osmotic potential for each hydration state                                                                    |
+| $\Psi_{p}$     | MPa      | Pressure potential                                                                                            |
+| $\Psi_{leaf}$  | MPa      | Leaf water potential. Sum of leaf osmotic and pressure potential                                              |
+| a~f~           | \%       | Percent of total leaf water in the outside of cytoplasm                                                       |
+| RWC~sym~       | g\*g^-1^ | Mass of water relative to full saturation within the symplast. Estimated with respect to apoplastic fraction. |
+
+: **Table 1.** Variables, units and symbols of osmotic estimates.
+
+## Estimate the $\pi_{o}$ and regression parameters with `OsmoticPotFullTurgor()`
+
+`OsmoticPotFullTurgor()` estimates the osmotic potential at full turgor
+from the linear relationship between relative water deficit and inverse
+leaf water potential. This function itself is only used within the
+`OsmoticEstimates()` function. This function estimates standard major
+axis(SMA) regression parameters from the values **below** turgor loss
+point. It assumes that your dataset is sufficient linear below turgor
+loss point to approximate osmotic potential at full turgor and a
+subsequent osmotic parameters. We assume that the data points at last
+four hydration states all represent points below turgor loss point and
+is the default.
+
+The regression parameters are estimated by the helper
+functions(`sma_slope` and `sma_intercept`). The relationship is
+represented as:
+
+$$
+\Psi_{leaf}= \alpha * RWD + b, 
+$$ where $\alpha$ and $b$ represent the slope and intercept of the
+relationship and RWD is the relative water deficit:
+
+$$
+-\alpha=\frac{\sigma(RWD}{\sigma(\Psi_{leaf})}
+$$ and,
+
+$$
+b = mean(RWD)-\alpha*mean(\Psi_{leaf})
+$$
+
+$$
+RWD= 100-Relative~Water~Content
+$$
+
+### Usage
+
+`OsmoticPotFullTurgor(data, fw.index, wp.index)`
+
+-   **data** a data frame containing leaf water potential and leaf water
+    mass
+
+-   **wc.index** a numeric value indicating the column number where the
+    relative water content data is within data frame
+
+-   **wp.index** a numeric value indicating the column number where the
+    leaf water potential(inverse) data is within data frame
+
+### Output
+
+The function outputs a list of three numbers: slope and intercept of the
+line, and osmotic potential at full turgor.
+
+## Estimate osmotic parameters using `OsmoticEstimates()`
+
+The `OsmoticEstimates()` function estimates the osmotic potential at
+full turgor ($\pi_{o}$) using `OsmoticPotFullTurgor()` and utilizes the
+slope and intercept values to estimate the other parameters (Table 1).
+
+The function first selects the subset of the last for values for a given
+leaf then calculates the osmotic potential at full turgor and the
+maximum pressure potential as :
+
+$$
+\pi_{o}= 1/intercept 
+$$
+
+$$
+max~ \Psi_{p}= \pi_{o} * -1
+$$
+
+Because the leaf water potential at full hydration(\$\\Psi\_{leaf}=0\$)
+is the sum of the osmotic potential at full turgor the maximum pressure
+potential, you can solve for the maximum pressure potential by solving
+for the $\Psi_{p}$ when $\Psi_{leaf}= 0$.
+
+The osmotic potential at a given hydration state is estimated by
+extrapolating the line of relative water deficit to inverse water
+potential:
+
+$$
+\Psi_{s}=\frac{-1}{intercept+ (slope* RWD)}
+$$
+
+The pressure potential is the difference of the leaf water potential and
+the leaf osmotic potential:
+
+$$
+\Psi_{p}=\Psi_{leaf}-\Psi_{s}
+$$
+
+Other parameters estimated are the apoplastic fraction and the
+symplastic relative water content and deficit:
+
+$$
+a_{f}= 100 +  \frac{intercept}{slope}
+$$
+
+$$
+RWC_{sym}=\frac{RWC-a_{f}}{100-a_{f}} *100
+$$
+
+$$
+RWD_{sym}=100-RWC_{sym}
+$$
+
+### Usage
+
+`OsmoticEstimate(data, wc.index, wp.index)`
+
+-   **data** a data frame containing leaf water potential and leaf water
+    mass
+
+-   **wc.index** a numeric value indicating the column number where the
+    relative water content data is within data frame
+
+-   **wp.index** a numeric value indicating the column number where the
+    inverse leaf water potential data is within data frame
+
+## Example
+
+```{r osm-estimation}
+#load data for Quercus agrifolia leaf 1 
+quag1<-pvest::data%>%
+  filter(leaf==1)%>%
+  mutate(inv.water.potential=-1/water.potential)
+
+quag1_swc<- SaturatedWaterContent(data=quag1, 
+                                  fw.index = 5, 
+                                  wp.index = 4)
+
+#create a data frame with the estimated SWC 
+quag1_swc.df<-quag1
+
+#create column that contains the saturated water content
+quag1_swc.df$saturated.water.content<-rep(quag1_swc, nrow(quag1_swc.df))
+
+#estimate RWC and RWD
+quag1_rwc.est<-quag1_swc.df
+
+quag1_rwc.est[,c("relative.water.content", "relative.water.deficit")]<-RelativeWaterCD(data=quag1_swc.df,
+                           fw.index = 5)
+
+q1_osm.est<-OsmoticEstimates(data=quag1_rwc.est, wc.index = "relative.water.deficit",wp.index = "inv.water.potential")
+
+head(q1_osm.est%>%select(4:6, 10:16))
+    
+```
+
+## References
