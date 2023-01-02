@@ -1,0 +1,99 @@
+---
+title: "Estimation of the Turgor Loss Point"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Estimation of the Turgor Loss Point}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup, include=FALSE}
+library(pvest)
+library(dplyr)
+```
+
+## Estimate osmotic parameters at turgor loss
+
+To estimate all the osmotic variables at turgor loss(i.e., relative water content/deficit at turgor loss and leaf water potential at turgor loss) for both the total and symplastic values, we start with predicting the line parameters for the $\Psi_{p}$ versus relative water deficit. This process is similar to the previously used functions( see `vignette("sma-slope-intercept")` and `vignette("swc-and-rwc-estimation")`). We are using the the same SMA slope and intercept functions but changing the x and y inputs in the function (`help("PsiPRWD_slopeint")`).
+
+Beyond that, we need to use the linear relationship below turgor loss so the function (`EstimateTLP()`) also sources `OsmoticPotFullTurgor()` to get the slope and intercept parameters. For more information on that that function see `help("OsmoticPotFullTurgor")` or `vignette('osmotic-estimates')`.
+
+`EstimateTLP()` first slices the head and tail of the data by the number of rows(`n_row`). The data above turgor loss is utilized as the data for `PsiPRWD_slopeint()` and the data below turgor loss used to estimate the parameters from `OsmoticPotFullTurgor`. Then, the turgor loss parameters and modulus are estimated as:
+
+$$
+RWD_{tlp}=-\frac{intercept}{slope}
+$$
+
+$$
+RWD_{sym,tlp}=-\frac{intercept}{slope}
+$$
+
+where the intercept and slope here are those estimated for the symplastic and total relative water deficit versus leaf pressure potential for the total and symplastic parameters, respectively. The respective relative water content values are estimated as $100-RWD$ . Leaf water potential at turgor loss point ($\Psi_{tlp}$) is estimate by solving for the water potential at the relative water deficit at turgor loss, for the total parameter:
+
+$$
+\Psi_{tlp}=\frac{-1}{slope*RWD_{tlp}+ intercept}
+$$
+
+where the slope and intercept here are those of the relationship between inverse leaf water potential and relative water deficit. Lastly, the symplastic and total modulus of elasticity are the quotient of the maximum pressure potential and relative water content at turgor loss point:
+
+$$
+\epsilon= \frac{\frac{max \Psi_{p}}{100-RWD_{tlp}}}{100}
+$$
+
+$$
+\epsilon_{sym}= \frac{\frac{max \Psi_{p}}{100-RWD_{sym,tlp}}}{100}
+$$
+
+### Usage
+
+`EstimateTLP(data, wc.index, wp.index, n_row=4)`
+
+**data** a data frame containing leaf water potential and leaf water mass
+
+**wc.index** a numeric value indicating the column number where the relative water content data is within data frame
+
+**wp.index** a numeric value indicating the column number where the inverse leaf water potential data is within data frame
+
+**n_row** a numeric value indicating the number of rows to filter above and below turgor loss
+
+### Example
+
+```{r tlp-estimation}
+#load data for Quercus agrifolia leaf 1 
+quag1<-pvest::data%>%
+  filter(leaf==1)%>%
+  mutate(inv.water.potential=-1/water.potential)
+
+quag1_swc<- SaturatedWaterContent(data=quag1, 
+                                  fw.index = 5, 
+                                  wp.index = 4)
+
+#create a data frame with the estimated SWC 
+quag1_swc.df<-quag1
+
+#create column that contains the saturated water content
+quag1_swc.df$saturated.water.content<-rep(quag1_swc, nrow(quag1_swc.df))
+
+#estimate RWC and RWD
+quag1_rwc.est<-quag1_swc.df
+
+quag1_rwc.est[,c("relative.water.content", "relative.water.deficit")]<-RelativeWaterCD(data=quag1_swc.df,
+                           fw.index = 5)
+
+q1_osm.est<-OsmoticEstimates(data=quag1_rwc.est, wc.index = "relative.water.deficit",wp.index = "inv.water.potential")
+
+q1_tlp.est<-EstimateTLP(q1_osm.est, wc.index = "relative.water.deficit",wp.index = "inv.water.potential")
+
+#summarize leaf level values 
+(q1_tlp.sum<-q1_tlp.est%>%
+  select(1,2,10,11,14,17:23)%>%
+  unique())
+
+```
