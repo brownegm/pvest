@@ -8,14 +8,14 @@
 #' @export
 #' 
 #' @import dplyr 
-#' @importFrom tidyselect where
+#' @importFrom tidyselect vars_select_helpers
 
 sumParams<-function(df,group_name, remove.cols=c("leaf", "unique_id")){ 
   
   group_summary<-df%>% 
     dplyr::group_by({{group_name}})%>%
     dplyr::select(!{{remove.cols}})%>%
-    dplyr::summarize(across(where(is.numeric), mean))
+    dplyr::summarize(across(tidyselect::vars_select_helpers$where(is.numeric), mean))
   
   return(group_summary)
   
