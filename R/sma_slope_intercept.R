@@ -18,7 +18,7 @@
 #' @export 
 #' 
 #' @importFrom stats sd
-#'
+
 
 
 sma_slope <- function(x, y) {
@@ -41,6 +41,8 @@ NULL
 #'     detailed explanation of the function see \code{vignette('sma-slope-intercept')}
 #'
 #' @export
+#' 
+
 
 sma_intercept <- function(x, y, slope) {
   return(mean(x) - (slope * mean(y)))
