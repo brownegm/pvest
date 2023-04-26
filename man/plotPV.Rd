@@ -4,7 +4,7 @@
 \alias{plotPV}
 \title{plotPV}
 \usage{
-plotPV(data, x, y, ...)
+plotPV(data, x, y, rows = 4, ...)
 }
 \arguments{
 \item{data}{}
@@ -12,6 +12,8 @@ plotPV(data, x, y, ...)
 \item{x}{}
 
 \item{y}{}
+
+\item{rows}{number of rows to select}
 
 \item{...}{}
 }
@@ -22,7 +24,8 @@ a plot
 plotPV
 }
 \examples{
+plotPV(data[1:4,"leaf"=5], x='fresh.weight', y='water.potential')
 
-plotPV(data\%>\%filter(leaf=="5"), x='fresh.weight', y='water.potential')
+  
 
 }
