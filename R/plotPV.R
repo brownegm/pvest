@@ -2,7 +2,21 @@
 
 
 
-library(ggplot2)
+
+#' plotPV
+#'
+#' @param data 
+#' @param x 
+#' @param y 
+#' @param ... 
+#'
+#' @return a plot
+#' @export
+#'
+#' @examples
+#' 
+#' plotPV(data%>%filter(leaf=="5"), x='fresh.weight', y='water.potential')
+#' 
 
 plotPV<-function(data, x, y,...){
   
@@ -12,14 +26,12 @@ plotPV<-function(data, x, y,...){
   l.x = seq(0, max(data[[x]]),length.out=length(data[[x]]))
   l.y = int-(slope*l.x)
 
-  plot(data[[x]]~abs(data[[y]]))
+  plot(data[[y]]~data[[x]], 
+       ylab=y, 
+       xlab=x)
   
   lines(x=l.x, y=l.y)
   
 }
 
 
-library(dplyr)
-
-
-plotPV(data%>%filter(leaf=="5"), x='fresh.weight', y='water.potential')
