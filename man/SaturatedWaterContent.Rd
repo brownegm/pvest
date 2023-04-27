@@ -13,6 +13,8 @@ SaturatedWaterContent(data, fw.index, wp.index, n_row)
 
 \item{wp.index}{Numeric value indicating the column number where the leaf water potential data is within the data frame}
 
+\item{dm.index}{Numeric value indicating the column number where the leaf dry mass is}
+
 \item{n_row}{A number. Indicates number of rows to estimate parameters from within data}
 }
 \value{

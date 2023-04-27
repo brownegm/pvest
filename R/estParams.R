@@ -36,7 +36,9 @@ estParams<-function(data, fw.index, wp.index){
     leaf_estimate<-data[data$unique_id==i,]
     
     #fw.index=water mass, wp.index= water potential 
-    leaf_estimate[,"saturated.water.content"]<-SaturatedWaterContent(leaf_estimate, fw.index = fw.index, wp.index = wp.index)
+    leaf_estimate[,"saturated.water.mass"]<-SaturatedWaterContent(leaf_estimate, fw.index = fw.index, wp.index = wp.index)[1]
+    
+    leaf_estimate[,"saturated.water.content"]<-SaturatedWaterContent(leaf_estimate, fw.index = fw.index, wp.index = wp.index)[2]
     
     leaf_estimate[,c("relative.water.content","relative.water.deficit")]<-RelativeWaterCD(leaf_estimate, fw.index=fw.index)
     
