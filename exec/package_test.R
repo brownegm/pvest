@@ -5,16 +5,40 @@
 library(tidyverse)
 library(here)
 library(readxl)
+library(readr)
 
 # load data ---------------------------------------------------------------
 
-#load("~/Documents/Research_UCLA/ITV-PV/data/itvdat_2022-07-16_.RData")
+## individual mass and pv data
 pv_dat<-read_excel(here("inst","extdata", "pvldcurvedata_10042022.xlsx"))%>%
   select(!c(fresh.weight.saturated, water.potential.bar, bag.weight,sp.leaf))%>%as.data.frame()
 
+pvsps<-pv_dat%>%transmute(sp_indiv=paste0(toupper(species),leaf))
+
+## paper data summarized
+itvpv <- read_csv("inst/extdata/pvdat.csv")
+
+itvpv<-itvpv%>%
+  filter(!grepl(c("PLRA|ENFA|BAGA|QUAG|RAIN|CEBE"), spcode))#filter these out for the moment they add complexity
+
+itvpv[itvpv$spcode=="CLLA","individual"]<-as.character(c(1:6))
+itvpv[itvpv$spcode=="CLLA","spcind"]<-paste0("CLLA", c(1:6))
+
+# match IDs of est output
+itvpv<-itvpv%>%
+  mutate(unique_id=paste(tolower(spcode),individual,sep = "_"), .before=swc)
+
+#only the unique ids (SPECIES{1:X}) for the data 
+unique.ids<-pvsps%>%filter(pvsps$sp_indiv%in%itvpv$spcind)%>%pull(1)%>%unique()
+
 # compute parameter estimates ---------------------------------------------
 
-pv_params<-estParams(pv_dat, fw.index = 5, wp.index = 4, dm.index = 3)
+# filter the unique ids that aren't in the summarized df
+pv_dat_fil<-pv_dat%>%
+  filter(paste0(toupper(species),leaf) %in% unique.ids)
+
+# compute
+pv_params<-estParams(pv_dat_fil, fw.index = 5, wp.index = 4, dm.index = 3)
 
 # summarize output --------------------------------------------------------
 
@@ -30,7 +54,35 @@ pv_leaf_uniques<-pv_params_byleaf%>%
   filter(unique_id%in%uniques)
 
 #summarize by species
-param_sum<-sumParams(pv_params, species)
+param_sum<-sumParams(pv_params, species)%>%select(species, saturated.water.content:cap.tlp.sym)
+itvpv_sum<-sumParams(itvpv, spcode)
+
+# combine measured and estimated ------------------------------------------
+com<-left_join(itvpv, pv_params_byleaf, by="unique_id", suffix = c("", "_est"))
+com_sp<-left_join(itvpv_sum, param_sum, by=species==, suffix = c("", "_est"))
+
+# plot things -------------------------------------------------------------
+pdf(file=here::here("inst/extdata", "pv_params_leaf.pdf"))
+
+plot(com$swc,com$saturated.water.content)
+
+plot(com$pi_o,com$osm.pot.fullturgor)
+
+plot(com$psi_tlp,com$leaf.waterpotential.attlp)
+
+plot(com$af,com$apoplastic.fraction)
+
+plot(com$rwc_tlp,com$relative.water.content.attlp)
+
+plot(com$modulus,com$modulus_est)
+
+plot(com$mod_sym,com$modulus_sym)
+
+plot(com$cap_ft,com$cap.ft.bulk)
+
+plot(com$cap_tlp,com$cap.tlp.bulk)
+
+dev.off()
 
 # output results ----------------------------------------------------------
 
