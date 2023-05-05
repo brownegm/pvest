@@ -48,7 +48,7 @@ pv_params_byleaf<-pv_params%>%
                                        relative.water.deficit.attlp:cap.tlp.sym)%>%
   group_by(unique_id)%>%summarize_if(is.numeric, unique)
 
-uniques<-read_excel(here("inst","extdata","summary_main.xlsx"), sheet = "uniques")%>%pull(unique_id)
+uniques<-read_excel(here("inst","extdata","summary_main.xlsx"), sheet = "unique_ids")%>%pull(unique_id)
 
 pv_leaf_uniques<-pv_params_byleaf%>%
   filter(unique_id%in%uniques)
@@ -59,7 +59,8 @@ itvpv_sum<-sumParams(itvpv, spcode)
 
 # combine measured and estimated ------------------------------------------
 com<-left_join(itvpv, pv_params_byleaf, by="unique_id", suffix = c("", "_est"))
-com_sp<-left_join(itvpv_sum, param_sum, by=species==, suffix = c("", "_est"))
+#figure this out!!!
+#com_sp<-left_join(itvpv_sum, param_sum, by=species==spcode, suffix = c("", "_est"))
 
 # plot things -------------------------------------------------------------
 pdf(file=here::here("inst/extdata", "pv_params_leaf.pdf"))
