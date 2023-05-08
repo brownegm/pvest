@@ -44,7 +44,15 @@ estParams<-function(data, fw.index, wp.index, dm.index){
     
     leaf_estimate[,c("relative.water.content","relative.water.deficit")]<-RelativeWaterCD(leaf_estimate, fw.index=fw.index)
     
-    leaf_estimate<-OsmoticEstimates(data=leaf_estimate, wc.index = "relative.water.deficit",wp.index = "inv.water.potential")
+    ## need to change the amount of points included for estimation after TLP is estimated. 
+    tlp_est<-OsmoticEstimates(data=leaf_estimate, wc.index = "relative.water.deficit",wp.index = "inv.water.potential")%>%
+      EstimateTLP(., wc.index = "relative.water.deficit",wp.index = "inv.water.potential")%>% 
+      pull(leaf.waterpotential.attlp)%>%unique
+   ## n rows above and below this tlp estimate
+    row_above_tlp<-nrow(dplyr::filter(leaf_estimate, wp.index>tlp_est))
+    row_below_tlp<-nrow(dplyr::filter(leaf_estimate, wp.index<tlp_est))
+    
+    leaf_estimate<-OsmoticEstimates(data=leaf_estimate, wc.index = "relative.water.deficit",wp.index = "inv.water.potential",n_row=nrow(dplyr::filter(leaf_estimate, wp.index<tlp_est)))
     
     leaf_estimate<-EstimateTLP(df=leaf_estimate, wc.index = "relative.water.deficit",wp.index = "inv.water.potential")
     
