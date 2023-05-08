@@ -20,12 +20,12 @@
 #' @import dplyr
 #' @export
 #'
-estParams<-function(data, fw.index, wp.index){
+estParams<-function(data, fw.index, wp.index, dm.index){
   
   #stopifnot()#add check if the data frame is a dataframe
   #create unique ID and add inverse psi
   data$unique_id<-paste(data$species, data$leaf, sep="_")
-  data$inv.water.potential<--(1/(data[,wp.index]))
+  data$inv.water.potential<--(1/(data[[wp.index]]))
   
   unique_ids<-unique(data$unique_id)
   
@@ -36,7 +36,9 @@ estParams<-function(data, fw.index, wp.index){
     leaf_estimate<-data[data$unique_id==i,]
     
     #fw.index=water mass, wp.index= water potential 
-    leaf_estimate[,"saturated.water.content"]<-SaturatedWaterContent(leaf_estimate, fw.index = fw.index, wp.index = wp.index)
+    leaf_estimate[,"saturated.water.mass"]<-SaturatedWaterContent(leaf_estimate, fw.index = fw.index, wp.index = wp.index, dm.index = dm.index)[1]
+    
+    leaf_estimate[,"saturated.water.content"]<-SaturatedWaterContent(leaf_estimate, fw.index = fw.index, wp.index = wp.index, dm.index = dm.index)[2]
     
     leaf_estimate[,c("relative.water.content","relative.water.deficit")]<-RelativeWaterCD(leaf_estimate, fw.index=fw.index)
     

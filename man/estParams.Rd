@@ -4,7 +4,7 @@
 \alias{estParams}
 \title{Estimate all pressure volume curve parameters for all leaves}
 \usage{
-estParams(data, fw.index, wp.index)
+estParams(data, fw.index, wp.index, dm.index)
 }
 \arguments{
 \item{data}{A data frame. Input data frame with the raw values}

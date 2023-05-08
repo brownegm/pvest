@@ -1,0 +1,294 @@
+﻿species,family,leaf habit,habitat,spcode,individual,spcind,swc,pi_o,psi_tlp,af,rwc_tlp,rwc_tlp_sym,modulus,mod_sym,cap_ft,cap_tlp,cap_ft_sym,cap_tlp_sym
+Acer negundo,Sapindaceae,D,Woodland,ACNE,1,ACNE1,4.269,-1.423,-1.613,-36.175,83.987,88.241,9.237,12.579,0.096,0.534,0.071,0.392
+Acer negundo,Sapindaceae,D,Woodland,ACNE,2,ACNE2,3.981,-1.368,-1.630,2.130,84.260,83.918,9.850,9.640,0.088,0.335,0.090,0.342
+Acer negundo,Sapindaceae,D,Woodland,ACNE,4,ACNE4,4.053,-1.326,-1.463,25.591,92.998,90.590,18.886,14.053,0.048,0.227,0.065,0.306
+Acer negundo,Sapindaceae,D,Woodland,ACNE,5,ACNE5,3.919,-1.529,-1.823,-4.269,83.176,83.865,11.124,11.599,0.079,0.321,0.076,0.308
+Acer negundo,Sapindaceae,D,Woodland,ACNE,6,ACNE6,6.508,-0.717,-1.807,8.427,44.764,39.680,1.475,1.351,0.287,0.125,0.314,0.136
+Alberta magna,Rubiaceae,E,Shrubland,ALMA,1,ALMA1,2.299,-1.373,-2.132,52.648,83.131,64.374,7.624,3.610,0.083,0.099,0.175,0.210
+Alberta magna,Rubiaceae,E,Shrubland,ALMA,2,ALMA2,2.140,-1.647,-2.307,39.069,82.568,71.391,9.010,5.490,0.078,0.138,0.128,0.226
+Alberta magna,Rubiaceae,E,Shrubland,ALMA,3,ALMA3,2.141,-1.202,-1.762,54.832,85.634,64.374,7.611,3.610,0.086,0.106,0.175,0.210
+Alberta magna,Rubiaceae,E,Shrubland,ALMA,4,ALMA4,2.496,-1.437,-1.984,38.552,83.076,72.459,8.179,5.026,0.088,0.157,0.143,0.255
+Alberta magna,Rubiaceae,E,Shrubland,ALMA,5,ALMA5,2.405,-1.341,-1.886,45.379,84.205,71.083,8.116,4.433,0.087,0.130,0.159,0.237
+Alberta magna,Rubiaceae,E,Shrubland,ALMA,6,ALMA6,2.685,-1.334,-1.754,39.735,85.546,76.016,7.941,4.786,0.092,0.158,0.153,0.263
+Alnus rhombifolia,Betulaceae,D,Woodland,ALRH,1,ALRH1,3.545,-1.174,-1.716,-56.025,50.668,68.382,2.190,3.417,0.288,0.420,0.185,0.269
+Alnus rhombifolia,Betulaceae,D,Woodland,ALRH,2,ALRH2,2.719,-1.104,-1.363,-11.961,78.698,80.973,5.009,5.608,0.161,0.222,0.144,0.198
+Alnus rhombifolia,Betulaceae,D,Woodland,ALRH,3,ALRH3,3.482,-1.110,-1.401,-57.250,67.252,79.175,3.537,5.562,0.225,0.547,0.143,0.348
+Alnus rhombifolia,Betulaceae,D,Woodland,ALRH,4,ALRH4,3.186,-1.191,-1.608,-24.426,67.674,74.020,3.396,4.226,0.212,0.349,0.170,0.281
+Alnus rhombifolia,Betulaceae,D,Woodland,ALRH,5,ALRH5,4.346,-1.232,-1.410,-104.216,74.280,87.405,4.972,10.154,0.176,0.995,0.086,0.487
+Alnus rhombifolia,Betulaceae,D,Woodland,ALRH,6,ALRH6,2.697,-1.628,-2.227,-66.261,55.338,73.137,3.592,5.972,0.198,0.367,0.119,0.221
+Angelique sp.,Dialioideae,E,Tropical wet forest,ANGE,H20_533_2,ANGEH20_533_2,1.432,-1.447,-2.099,-0.029,68.926,68.935,4.321,4.322,0.149,0.141,0.149,0.141
+Angelique sp.,Dialioideae,E,Tropical wet forest,ANGE,H20_533_1,ANGEH20_533_1,1.488,-1.274,-1.803,6.427,72.548,70.662,4.623,4.326,0.150,0.199,0.160,0.213
+Angelique sp.,Dialioideae,E,Tropical wet forest,ANGE,H21_39_3,ANGEH21_39_3,1.228,-1.206,-1.447,64.090,94.006,83.308,23.770,8.536,0.036,0.062,0.101,0.173
+Angelique sp.,Dialioideae,E,Tropical wet forest,ANGE,H20_350_1,ANGEH20_350_1,1.537,-1.281,-1.738,48.374,86.441,73.737,10.202,5.267,0.073,0.155,0.142,0.301
+Angelique sp.,Dialioideae,E,Tropical wet forest,ANGE,H20_350_2,ANGEH20_350_2,1.591,-1.350,-1.755,42.089,86.638,76.928,10.568,6.120,0.073,0.183,0.126,0.316
+Arctostaphylos bakeri,Ericaceae,E,Chaparral ,ARBA,1,ARBA1,1.199,-2.046,-2.626,50.545,89.083,77.925,19.756,9.771,0.040,0.118,0.081,0.239
+Arctostaphylos bakeri,Ericaceae,E,Chaparral ,ARBA,2,ARBA2,1.929,-1.633,-1.976,18.007,85.776,82.652,11.916,9.770,0.070,0.249,0.086,0.304
+Arctostaphylos bakeri,Ericaceae,E,Chaparral ,ARBA,3,ARBA3,1.350,-1.880,-2.357,35.420,86.937,79.772,15.492,10.005,0.052,0.178,0.081,0.276
+Arctostaphylos bakeri,Ericaceae,E,Chaparral ,ARBA,4,ARBA4,1.601,-1.889,-2.211,22.393,88.696,85.434,17.663,13.708,0.049,0.220,0.063,0.284
+Arctostaphylos bakeri,Ericaceae,E,Chaparral ,ARBA,5,ARBA5,1.471,-2.092,-2.531,4.166,83.390,82.668,13.130,12.583,0.063,0.276,0.066,0.289
+Arctostaphylos bakeri,Ericaceae,E,Chaparral ,ARBA,6,ARBA6,1.536,-1.879,-2.275,18.508,85.816,82.594,14.079,11.473,0.059,0.243,0.073,0.298
+Baccaurea ramiflora ,Phyllanthaceae,E,Woodland,BACCRA,306018,BACCRA306018,6.285,-0.665,-1.021,0.124,69.451,69.536,2.815,3.214,0.253,0.338,3.841,
+Baccaurea ramiflora ,Phyllanthaceae,E,Woodland,BACCRA,306018,BACCRA306018,3.341,-0.863,-1.028,-1.014,67.242,66.577,2.751,1.366,0.306,1.061,3.343,
+Baccaurea ramiflora ,Phyllanthaceae,E,Woodland,BACCRA,310035,BACCRA310035,3.256,-0.777,-1.094,-0.435,58.494,58.245,1.870,1.303,0.366,0.674,6.116,
+Baccaurea ramiflora ,Phyllanthaceae,E,Woodland,BACCRA,411167,BACCRA411167,5.012,-0.775,-0.919,0.041,84.960,84.995,6.099,6.362,0.144,0.608,1.916,
+Baccaurea ramiflora ,Phyllanthaceae,E,Woodland,BACCRA,715072,BACCRA715072,3.944,-1.073,-1.503,-0.436,58.905,58.654,2.692,1.875,0.260,0.479,4.135,
+Bauhinia galpinii,Fabaceae,D,Shrubland,BAGA,1,BAGA1,1.548,-0.996,-1.258,9.734,81.189,79.160,5.149,4.648,0.150,0.428,0.166,0.474
+Bauhinia galpinii,Fabaceae,D,Shrubland,BAGA,2,BAGA2,2.165,-1.235,-1.406,2.847,88.146,87.799,10.565,10.264,0.083,0.371,0.086,0.382
+Bauhinia galpinii,Fabaceae,D,Shrubland,BAGA,3,BAGA3,2.261,-1.146,-1.423,-1.205,80.318,80.552,6.736,6.818,0.124,0.346,0.122,0.342
+Bauhinia galpinii,Fabaceae,D,Shrubland,BAGA,4,BAGA4,3.340,-1.072,-1.339,3.873,80.822,80.050,6.531,6.278,0.127,0.329,0.132,0.342
+Bauhinia galpinii,Fabaceae,D,Shrubland,BAGA,5,BAGA5,2.082,-1.443,-1.636,12.356,89.637,88.176,13.949,12.226,0.063,0.285,0.072,0.325
+Bauhinia galpinii,Fabaceae,D,Shrubland,BAGA,6,BAGA6,2.700,-1.044,-1.391,-13.494,71.713,75.076,4.438,5.037,0.178,0.307,0.157,0.271
+Betula occidentalis,Betulaceae,D,Woodland,BEOC,1,BEOC1,1.721,-1.275,-1.663,53.462,89.143,76.671,10.799,5.026,0.068,0.127,0.147,0.272
+Betula occidentalis,Betulaceae,D,Woodland,BEOC,2,BEOC2,1.809,-1.264,-1.929,60.660,86.446,65.546,8.718,3.429,0.071,0.088,0.180,0.224
+Betula occidentalis,Betulaceae,D,Woodland,BEOC,3,BEOC3,1.783,-1.432,-2.065,35.891,80.334,69.324,7.301,4.680,0.094,0.148,0.146,0.231
+Betula occidentalis,Betulaceae,D,Woodland,BEOC,4,BEOC4,1.757,-1.188,-1.635,51.863,86.830,72.640,8.742,4.208,0.081,0.121,0.168,0.252
+Betula occidentalis,Betulaceae,D,Woodland,BEOC,5,BEOC5,2.215,-1.203,-1.549,43.315,87.367,77.715,8.892,5.041,0.086,0.154,0.151,0.271
+Camellia sasanqua,Theaceae,E,Woodland,CASA,1,CASA1,1.879,-1.560,-2.198,5.218,72.454,70.937,6.370,6.037,0.116,0.122,0.216,0.228
+Camellia sasanqua,Theaceae,E,Woodland,CASA,3,CASA3,1.676,-2.165,-2.735,-62.096,66.198,79.147,6.604,10.705,0.122,0.408,0.075,0.251
+Camellia sasanqua,Theaceae,E,Woodland,CASA,4,CASA4,1.744,-1.616,-2.084,4.941,78.651,77.541,7.745,7.363,0.100,0.282,0.106,0.297
+Camellia sasanqua,Theaceae,E,Woodland,CASA,5,CASA5,1.669,-1.462,-2.156,27.365,76.612,67.800,6.120,4.446,0.108,0.149,0.161,0.222
+Camellia sasanqua,Theaceae,E,Woodland,CASA,6,CASA6,1.734,-1.685,-2.138,-15.983,75.418,78.806,7.708,8.940,0.105,0.314,0.091,0.271
+Cercis occidentalis,Fabaceae,D,Woodland,CEOC,1,CEOC1,2.616,-1.649,-2.565,-56.756,43.990,64.269,2.883,4.519,0.220,0.312,0.140,0.199
+Cercis occidentalis,Fabaceae,D,Woodland,CEOC,2,CEOC2,3.909,-2.071,-2.561,-160.823,50.126,80.878,4.133,10.781,0.194,0.612,0.074,0.235
+Cercis occidentalis,Fabaceae,D,Woodland,CEOC,3,CEOC3,2.331,-1.480,-1.621,55.054,96.092,91.305,29.517,13.267,0.031,0.127,0.068,0.283
+Cercis occidentalis,Fabaceae,D,Woodland,CEOC,4,CEOC4,2.029,-1.755,-2.188,42.444,88.624,80.235,14.660,8.438,0.054,0.134,0.094,0.234
+Cercis occidentalis,Fabaceae,D,Woodland,CEOC,6,CEOC6,2.977,-1.565,-2.437,6.237,66.451,64.219,4.703,4.409,0.138,0.188,0.147,0.200
+Cercocarpus betuloides,Rosaceae,E,Chaparral ,CEBE_a,1,CEBE_a1,1.564,-1.722,-2.147,-13.349,77.535,80.181,6.416,7.273,0.119,0.163,0.105,0.144
+Cercocarpus betuloides,Rosaceae,E,Chaparral ,CEBE_a,2,CEBE_a2,1.593,-1.530,-2.280,-8.982,64.178,67.130,4.290,4.675,0.150,0.113,0.138,0.104
+Cercocarpus betuloides,Rosaceae,E,Chaparral ,CEBE_a,3,CEBE_a3,1.610,-1.578,-1.959,-9.722,78.680,80.569,6.649,7.295,0.117,0.161,0.107,0.147
+Cercocarpus betuloides,Rosaceae,E,Chaparral ,CEBE_a,5,CEBE_a5,1.477,-1.653,-2.012,-20.296,78.521,82.145,8.792,10.576,0.097,0.341,0.080,0.284
+Cercocarpus betuloides,Rosaceae,E,Chaparral ,CEBE_a,6,CEBE_a6,1.676,-1.528,-1.960,-3.345,77.253,77.989,6.895,7.126,0.113,0.227,0.110,0.220
+Cercocarpus betuloides,Rosaceae,E,Woodland,CEBE,4,CEBE4,0.771,-1.444,-2.388,63.423,85.534,60.451,9.248,3.383,0.060,0.066,0.165,0.181
+Cercocarpus betuloides,Rosaceae,E,Woodland,CEBE,8,CEBE8,0.837,-1.609,-2.529,54.657,83.496,63.601,8.500,3.854,0.068,0.089,0.150,0.196
+Cercocarpus betuloides,Rosaceae,E,Woodland,CEBE,9,CEBE9,0.827,-1.644,-2.569,63.550,86.881,64.008,10.860,3.959,0.053,0.067,0.144,0.183
+Cercocarpus betuloides,Rosaceae,E,Woodland,CEBE,2,CEBE2,0.800,-1.707,-2.603,61.925,86.890,65.567,11.779,4.485,0.051,0.071,0.134,0.186
+Cercocarpus betuloides,Rosaceae,E,Woodland,CEBE,3,CEBE3,0.731,-1.745,-2.570,53.480,85.080,67.928,10.956,5.097,0.058,0.105,0.125,0.225
+Clematis lasiantha,Ranunculaceae,E,Chaparral ,CLLA,1.1,CLLA1.1,4.584,-0.956,-1.294,-12.643,70.583,73.885,3.062,3.449,0.236,0.491,0.210,0.436
+Clematis lasiantha,Ranunculaceae,E,Chaparral ,CLLA,1.2,CLLA1.2,3.368,-1.180,-1.570,34.785,83.814,75.180,7.018,4.577,0.105,0.219,0.161,0.336
+Clematis lasiantha,Ranunculaceae,E,Chaparral ,CLLA,2.0,CLLA2,4.718,-0.845,-1.376,42.911,77.971,61.413,4.380,4.184,0.150,0.175,0.262,0.306
+Clematis lasiantha,Ranunculaceae,E,Chaparral ,CLLA,2.1,CLLA2.1,4.593,-0.801,-1.120,51.950,86.292,71.472,5.241,2.518,0.133,0.170,0.276,0.353
+Clematis lasiantha,Ranunculaceae,E,Chaparral ,CLLA,4.0,CLLA4,4.352,-0.928,-1.167,31.151,85.900,79.520,6.894,4.746,0.117,0.214,0.169,0.311
+Clematis lasiantha,Ranunculaceae,E,Chaparral ,CLLA,4.1,CLLA4.1,5.061,-0.926,-1.258,23.003,79.688,73.620,4.662,3.590,0.159,0.282,0.206,0.366
+Clematis ligusticifolia,Ranunculaceae,E,Chaparral ,CLLI,1,CLLI1,6.482,-1.256,-1.431,11.568,89.197,87.784,12.655,11.191,0.070,0.379,0.079,0.429
+Clematis ligusticifolia,Ranunculaceae,E,Chaparral ,CLLI,2,CLLI2,4.515,-1.250,-1.461,-4.014,85.001,85.580,8.750,9.102,0.098,0.426,0.095,0.410
+Clematis ligusticifolia,Ranunculaceae,E,Chaparral ,CLLI,3,CLLI3,5.539,-1.207,-1.357,-0.616,88.844,88.912,11.774,11.847,0.076,0.509,0.076,0.505
+Clematis ligusticifolia,Ranunculaceae,E,Chaparral ,CLLI,4,CLLI4,4.499,-1.225,-1.476,32.356,88.501,83.001,10.807,7.311,0.077,0.261,0.113,0.386
+Clematis ligusticifolia,Ranunculaceae,E,Chaparral ,CLLI,5,CLLI5,5.581,-1.196,-1.435,-7.764,82.018,83.313,7.178,7.736,0.118,0.410,0.020,0.380
+Clematis ligusticifolia,Ranunculaceae,E,Chaparral ,CLLI,6,CLLI6,4.437,-0.974,-1.286,62.110,90.798,75.715,11.400,4.319,0.068,0.142,0.179,0.375
+Cleome isomeris,Capparaceae,E,Desert,CLIS,1,CLIS1,7.756,-0.755,-1.043,-24.410,65.727,72.452,2.126,2.645,0.331,0.295,0.266,0.237
+Cleome isomeris,Capparaceae,E,Desert,CLIS,2,CLIS2,8.484,-0.936,-1.141,-8.881,80.422,82.019,4.950,5.390,0.167,0.324,0.153,0.297
+Cleome isomeris,Capparaceae,E,Desert,CLIS,3,CLIS3,5.807,-1.137,-1.421,-20.037,75.964,79.976,4.969,5.965,0.162,0.520,0.135,0.433
+Cleome isomeris,Capparaceae,E,Desert,CLIS,4,CLIS4,5.170,-1.458,-1.887,-52.989,65.271,77.300,3.882,5.939,0.191,0.392,0.125,0.256
+Cleome isomeris,Capparaceae,E,Desert,CLIS,5,CLIS5,8.154,-0.953,-1.180,-8.788,79.061,80.753,4.556,4.956,0.177,0.308,0.163,0.283
+Cleome isomeris,Capparaceae,E,Desert,CLIS,6,CLIS6,7.350,-1.020,-1.316,-27.104,71.388,77.490,3.042,3.866,0.245,0.396,0.193,0.311
+Comarostaphylis diversifolia,Ericaceae,E,Desert,CODI,1,CODI1,0.943,-2.654,-3.228,26.678,86.959,82.214,20.933,15.348,0.039,0.109,0.054,0.149
+Comarostaphylis diversifolia,Ericaceae,E,Desert,CODI,2,CODI2,0.961,-2.452,-2.964,51.459,91.625,39.009,28.285,29.123,0.029,0.087,0.028,0.085
+Comarostaphylis diversifolia,Ericaceae,E,Desert,CODI,3,CODI3,1.074,-2.184,-2.792,39.590,86.844,45.971,17.055,17.531,0.063,0.105,0.045,0.102
+Comarostaphylis diversifolia,Ericaceae,E,Desert,CODI,4,CODI4,0.976,-2.048,-2.612,54.870,90.245,34.474,20.885,21.430,0.038,0.132,0.037,0.078
+Comarostaphylis diversifolia,Ericaceae,E,Desert,CODI,5,CODI5,0.947,-1.744,-2.339,63.608,90.748,26.520,18.965,16.989,0.040,0.071,0.039,0.070
+Comarostaphylis diversifolia,Ericaceae,E,Desert,CODI,6,CODI6,0.866,-2.330,-2.933,43.215,88.311,88.644,17.586,18.102,0.044,0.098,0.043,0.095
+Comarostaphylis diversifolia,Ericaceae,E,Woodland,CODI,1,CODI1.1,0.731,-1.391,-2.574,61.716,82.404,54.039,7.135,2.732,0.071,0.048,0.186,0.124
+Comarostaphylis diversifolia,Ericaceae,E,Woodland,CODI,4,CODI4.1,0.711,-1.695,-2.269,71.888,92.879,74.669,22.545,6.338,0.032,0.060,0.116,0.213
+Comarostaphylis diversifolia,Ericaceae,E,Woodland,CODI,5,CODI5.1,0.641,-2.808,-3.699,48.288,87.540,75.905,19.890,10.286,0.037,0.094,0.072,0.181
+Encelia californica,Asteraceae,E,Chaparral ,ENCA,1,ENCA1,6.721,-1.035,-1.446,30.956,80.370,71.568,5.677,3.919,0.127,0.256,0.185,0.370
+Encelia californica,Asteraceae,E,Chaparral ,ENCA,3,ENCA3,8.066,-0.895,-1.288,27.713,77.927,69.465,4.146,2.997,0.165,0.317,0.228,0.439
+Encelia californica,Asteraceae,E,Chaparral ,ENCA,4,ENCA4,9.323,-0.833,-1.247,38.564,79.621,66.829,3.892,2.391,0.164,0.251,0.267,0.409
+Encelia californica,Asteraceae,E,Chaparral ,ENCA,5,ENCA5,6.025,-1.072,-1.441,22.504,80.151,74.387,5.419,4.199,0.137,0.289,0.176,0.373
+Encelia californica,Asteraceae,E,Chaparral ,ENCA,6,ENCA6,6.628,-0.998,-1.480,32.236,77.961,67.477,4.917,3.332,0.140,0.237,0.207,0.349
+Encelia farinosa,Asteraceae,D,Desert,ENFA,1,ENFA1,5.639,-1.076,-1.379,32.236,85.092,78.000,7.887,5.344,0.101,0.275,0.149,0.406
+Encelia farinosa,Asteraceae,D,Desert,ENFA,2,ENFA2,4.512,-1.382,-1.730,16.188,83.145,79.889,7.750,6.495,0.101,0.214,0.121,0.256
+Encelia farinosa,Asteraceae,D,Desert,ENFA,3,ENFA3,8.568,-1.056,-1.328,27.181,85.101,79.540,6.489,4.725,0.119,0.194,0.164,0.266
+Encelia farinosa,Asteraceae,D,Desert,ENFA,4,ENFA4,9.890,-1.062,-1.402,23.716,81.499,75.748,6.430,4.905,0.120,0.190,0.158,0.250
+Encelia farinosa,Asteraceae,D,Desert,ENFA,5,ENFA5,6.095,-1.253,-1.530,4.854,82.764,81.885,6.681,6.357,0.120,0.269,0.126,0.283
+Encelia farinosa,Asteraceae,D,Desert,ENFA,6,ENFA6,5.137,-1.287,-1.634,22.321,83.512,78.774,7.770,6.036,0.101,0.191,0.130,0.245
+Encelia farinosa,Asteraceae,E,Chaparral ,ENFA_a,1,ENFA_a1,5.961,-0.754,-1.125,59.841,86.748,67.002,5.732,2.302,0.114,0.155,0.283,0.386
+Encelia farinosa,Asteraceae,E,Chaparral ,ENFA_a,2,ENFA_a2,7.904,-0.780,-0.982,25.972,84.725,79.366,5.863,4.340,0.140,0.471,0.189,0.636
+Encelia farinosa,Asteraceae,E,Chaparral ,ENFA_a,4,ENFA_a4,6.149,-0.927,-1.171,49.576,89.497,79.171,8.627,4.350,0.092,0.264,0.182,0.524
+Encelia farinosa,Asteraceae,E,Chaparral ,ENFA_a,5,ENFA_a5,6.780,-0.814,-0.971,15.805,86.409,83.858,6.644,5.594,0.129,0.602,0.006,0.716
+Encelia farinosa,Asteraceae,E,Chaparral ,ENFA_a,6,ENFA_a6,6.050,-1.183,-1.453,33.881,87.748,81.470,9.386,6.206,0.087,0.267,0.131,0.405
+Eschweilera coriacea,Lecythidaceae,E,Tropical wet forest,ESCO,G21_422_2,ESCOG21_422_2,1.343,-1.445,-1.613,-25.463,86.940,89.590,11.862,14.882,0.076,0.601,0.061,0.479
+Eschweilera coriacea,Lecythidaceae,E,Tropical wet forest,ESCO,G21_422_1,ESCOG21_422_1,1.397,-1.362,-1.495,-36.736,87.794,91.073,12.271,16.779,0.075,0.604,0.055,0.442
+Eschweilera coriacea,Lecythidaceae,E,Tropical wet forest,ESCO,G21_312_1,ESCOG21_312_1,1.590,-1.233,-1.450,-9.858,83.570,85.044,7.873,8.649,0.109,0.412,0.099,0.375
+Eschweilera coriacea,Lecythidaceae,E,Tropical wet forest,ESCO,G21_040_1,ESCOG21_040_1,1.474,-1.350,-1.510,-31.063,86.152,89.434,10.703,14.028,0.085,0.446,0.065,0.340
+Eschweilera coriacea,Lecythidaceae,E,Tropical wet forest,ESCO,G21_040_3,ESCOG21_040_3,1.387,-1.405,-1.563,-45.991,85.240,89.890,11.645,17.001,0.079,0.697,0.054,0.477
+Fraxinus dipetala,Oleaceae,D,Woodland,FRDI,2,FRDI2,2.762,-1.973,-2.549,-56.857,64.551,77.400,6.066,9.514,0.129,0.398,0.082,0.254
+Fraxinus dipetala,Oleaceae,D,Woodland,FRDI,3,FRDI3,2.438,-1.525,-1.910,-24.690,74.855,79.834,6.096,7.602,0.133,0.359,0.107,0.288
+Fraxinus dipetala,Oleaceae,D,Woodland,FRDI,4,FRDI4,1.967,-1.271,-1.614,-4.460,77.838,78.785,5.939,6.204,0.133,0.277,0.128,0.265
+Fraxinus dipetala,Oleaceae,D,Woodland,FRDI,5,FRDI5,1.827,-1.894,-2.332,7.413,82.631,81.240,10.057,9.311,0.079,0.250,0.085,0.270
+Fraxinus dipetala,Oleaceae,D,Woodland,FRDI,6,FRDI6,2.583,-2.093,-2.581,-105.368,61.145,81.080,5.110,10.494,0.156,0.540,0.076,0.263
+Goupia glabra,Goupiaceae,E,Tropical wet forest,GOGL,G21_303_2,GOGLG21_303_2,1.533,-1.016,-1.366,29.664,81.989,74.393,6.103,4.292,0.125,0.197,0.178,0.280
+Goupia glabra,Goupiaceae,E,Tropical wet forest,GOGL,G21_303_1,GOGLG21_303_1,1.548,-1.437,-1.684,21.721,88.520,85.334,12.136,9.500,0.071,0.233,0.090,0.297
+Goupia glabra,Goupiaceae,E,Tropical wet forest,GOGL,G20_294_2,GOGLG20_294_2,1.304,-1.833,-2.285,9.334,82.074,80.228,10.957,9.934,0.075,0.178,0.082,0.196
+Goupia glabra,Goupiaceae,E,Tropical wet forest,GOGL,G20_294_3,GOGLG20_294_3,1.309,-1.530,-1.895,24.987,85.553,80.741,11.376,8.534,0.072,0.200,0.096,0.267
+Goupia glabra,Goupiaceae,E,Tropical wet forest,GOGL,H20_362_2,GOGLH20_362_2,2.003,-1.489,-1.795,-4.386,82.242,82.988,10.000,10.439,0.086,0.274,0.083,0.263
+Hedera canariensis,Araliaceae,E,Woodland,HECA,1,HECA1,2.794,-1.566,-2.097,56.387,88.947,74.658,13.260,5.783,0.055,0.085,0.127,0.195
+Hedera canariensis,Araliaceae,E,Woodland,HECA,2,HECA2,2.960,-1.443,-1.891,59.885,90.494,76.303,12.734,5.108,0.057,0.092,0.142,0.229
+Hedera canariensis,Araliaceae,E,Woodland,HECA,3,HECA3,2.645,-1.703,-2.179,63.255,91.969,78.143,16.187,5.948,0.045,0.071,0.123,0.193
+Hedera canariensis,Araliaceae,E,Woodland,HECA,4,HECA4,2.666,-1.336,-1.906,64.367,89.349,70.110,12.781,4.554,0.056,0.080,0.156,0.225
+Hedera canariensis,Araliaceae,E,Woodland,HECA,5,HECA5,3.191,-1.289,-1.597,57.162,91.745,80.729,12.176,5.216,0.063,0.117,0.147,0.273
+Hedera canariensis,Araliaceae,E,Woodland,HECA,6,HECA6,2.612,-1.626,-2.218,50.295,86.731,73.305,11.112,5.523,0.064,0.113,0.129,0.226
+Helianthus annuus  ,Asteraceae,D,Grassland,HEAN,1,HEAN1,11.608,-0.931,-1.195,53.647,89.763,77.914,8.149,3.777,0.093,0.202,0.201,0.437
+Helianthus annuus  ,Asteraceae,D,Grassland,HEAN,2,HEAN2,14.710,-0.944,-1.148,20.481,85.864,82.223,5.964,4.743,0.135,0.393,0.170,0.494
+Helianthus annuus  ,Asteraceae,D,Grassland,HEAN,3,HEAN3,9.407,-0.668,-1.012,48.754,82.601,66.048,4.120,2.112,0.163,0.275,0.319,0.536
+Helianthus annuus  ,Asteraceae,D,Grassland,HEAN,5,HEAN5,11.370,-0.831,-1.094,14.356,79.364,75.905,3.606,3.089,0.203,0.501,0.237,0.585
+Helianthus annuus  ,Asteraceae,D,Grassland,HEAN,6,HEAN6,10.650,-0.492,-0.621,35.055,86.534,79.265,3.800,2.468,0.210,0.632,0.323,0.972
+Heteromeles arbutifolia,Rosaceae,E,Chaparral ,HEAR,1,HEAR1,1.261,-2.058,-2.456,22.310,87.426,83.815,15.630,12.143,0.053,0.120,0.068,0.155
+Heteromeles arbutifolia,Rosaceae,E,Chaparral ,HEAR,2,HEAR2,1.424,-2.058,-2.471,29.849,88.295,83.314,16.511,11.583,0.050,0.136,0.071,0.194
+Heteromeles arbutifolia,Rosaceae,E,Chaparral ,HEAR,3,HEAR3,1.325,-2.449,-2.914,9.169,85.507,84.044,17.216,15.637,0.049,0.143,0.054,0.158
+Heteromeles arbutifolia,Rosaceae,E,Chaparral ,HEAR,4,HEAR4,1.267,-1.917,-2.431,38.868,87.073,78.854,15.010,9.176,0.052,0.115,0.085,0.188
+Heteromeles arbutifolia,Rosaceae,E,Chaparral ,HEAR,5,HEAR5,1.618,-1.941,-2.390,38.823,88.512,81.222,17.637,10.790,0.046,0.114,0.076,0.186
+Heteromeles arbutifolia,Rosaceae,E,Chaparral ,HEAR,6,HEAR6,1.372,-1.571,-2.039,47.873,88.032,77.040,12.559,6.547,0.060,0.101,0.115,0.193
+Knema globularia,Myristicaceae,E,Woodland,KNEMGL,202030,KNEMGL202030,2.057,-1.139,-1.311,0.068,87.814,87.873,10.541,11.315,0.084,0.466,0.668,
+Knema globularia,Myristicaceae,E,Woodland,KNEMGL,511010,KNEMGL511010,2.134,-0.780,-0.964,0.591,92.195,92.737,9.724,23.752,0.083,0.208,0.615,-0.773
+Knema globularia,Myristicaceae,E,Woodland,KNEMGL,617080,KNEMGL617080,2.051,-1.190,-1.467,0.027,81.639,81.660,6.719,6.904,0.120,0.456,1.057,
+Knema globularia,Myristicaceae,E,Woodland,KNEMGL,921108,KNEMGL921108,2.141,-1.391,-1.931,0.089,74.476,74.541,5.705,6.259,0.127,0.469,1.122,
+Knema globularia,Myristicaceae,E,Woodland,KNEMGL,1021024,KNEMGL1021024,2.222,-1.070,-1.329,0.324,86.857,87.136,8.089,11.967,0.099,0.288,0.828,
+Knema globularia,Myristicaceae,E,Woodland,KNEMGL,1124153,KNEMGL1124153,1.761,-1.054,-1.345,0.557,90.404,90.905,9.659,21.805,0.078,0.143,0.567,
+Lantana camara,Verbenaceae,E,Tropical wet forest,LACA,1,LACA1,2.625,-1.132,-1.342,-74.875,72.641,84.355,4.142,7.244,0.204,0.884,0.117,0.505
+Lantana camara,Verbenaceae,E,Tropical wet forest,LACA,2,LACA2,2.678,-1.194,-1.470,-8.402,79.603,81.184,5.857,6.350,0.139,0.515,0.128,0.475
+Lantana camara,Verbenaceae,E,Tropical wet forest,LACA,3,LACA3,2.976,-1.153,-1.437,-35.802,73.166,80.240,4.297,5.835,0.186,0.468,0.137,0.345
+Lantana camara,Verbenaceae,E,Tropical wet forest,LACA,4,LACA4,3.135,-0.940,-1.220,34.352,84.897,76.995,5.388,3.537,0.137,0.316,0.209,0.481
+Lantana camara,Verbenaceae,E,Tropical wet forest,LACA,5,LACA5,2.253,-1.074,-1.388,10.745,79.815,77.385,4.558,4.068,0.165,0.419,0.185,0.469
+Licania alba,Chrysobalanaceae,E,Tropical wet forest,LIAL,H20_417_3,LIALH20_417_3,1.207,-1.458,-1.715,31.293,89.711,85.024,14.407,9.899,0.059,0.264,0.086,0.384
+Licania alba,Chrysobalanaceae,E,Tropical wet forest,LIAL,H20_417_1,LIALH20_417_1,1.146,-1.696,-1.905,22.643,91.522,89.041,23.362,18.072,0.039,0.307,0.050,0.397
+Licania alba,Chrysobalanaceae,E,Tropical wet forest,LIAL,H20_329_1,LIALH20_329_1,0.804,-1.881,-2.136,50.355,94.079,88.073,28.123,13.962,0.031,0.144,0.062,0.290
+Licania alba,Chrysobalanaceae,E,Tropical wet forest,LIAL,H20_329_2,LIALH20_329_2,0.878,-2.167,-2.331,35.659,95.488,92.988,38.654,24.871,0.024,0.194,0.037,0.302
+Licania alba,Chrysobalanaceae,E,Tropical wet forest,LIAL,H20_280_1,LIALH20_280_1,0.401,-1.658,-2.057,-2.669,80.047,80.566,7.072,7.261,0.110,0.318,0.107,0.310
+Licania alba,Chrysobalanaceae,E,Tropical wet forest,LIAL,H20_280_2,LIALH20_280_2,0.857,-1.547,-1.843,64.549,94.311,83.953,23.644,8.382,0.035,0.115,0.098,0.324
+Magnolia grandiflora,Magnoliaceae,E,Woodland,MAGR,1,MAGR1,1.580,-1.355,-2.080,64.531,87.644,65.163,10.767,3.819,0.060,0.042,0.169,0.118
+Magnolia grandiflora,Magnoliaceae,E,Woodland,MAGR,2,MAGR2,1.640,-1.439,-2.029,67.565,90.566,70.913,15.131,4.908,0.046,0.083,0.143,0.255
+Magnolia grandiflora,Magnoliaceae,E,Woodland,MAGR,3,MAGR3,1.301,-1.524,-1.995,66.101,92.003,76.410,16.818,5.701,0.044,0.098,0.129,0.289
+Magnolia grandiflora,Magnoliaceae,E,Woodland,MAGR,4,MAGR4,1.229,-1.423,-1.907,68.920,92.104,74.594,16.440,5.109,0.044,0.088,0.142,0.283
+Magnolia grandiflora,Magnoliaceae,E,Woodland,MAGR,5,MAGR5,1.603,-1.428,-2.071,65.546,89.303,68.954,11.787,4.061,0.056,0.083,0.151,0.241
+Magnolia grandiflora,Magnoliaceae,E,Woodland,MAGR,6,MAGR6,1.620,-1.385,-2.292,60.642,84.421,60.417,9.137,3.596,0.067,0.046,0.170,0.117
+Malosma laurina,Anacardiaceae,E,Chaparral ,MALA,1,MALA1,1.648,-2.212,-2.368,-57.650,89.613,93.411,21.172,33.377,0.044,0.397,0.028,0.252
+Malosma laurina,Anacardiaceae,E,Chaparral ,MALA,2,MALA2,1.575,-2.402,-2.632,-24.937,89.093,91.270,20.771,25.951,0.044,0.211,0.035,0.169
+Malosma laurina,Anacardiaceae,E,Chaparral ,MALA,3,MALA3,1.591,-2.329,-2.507,-26.596,91.020,92.906,24.061,30.460,0.038,0.249,0.030,0.197
+Malosma laurina,Anacardiaceae,E,Chaparral ,MALA,4,MALA4,1.625,-2.144,-2.549,12.777,86.145,84.115,16.046,13.995,0.053,0.200,0.060,0.229
+Malosma laurina,Anacardiaceae,E,Chaparral ,MALA,5,MALA5,2.054,-2.361,-2.842,-8.213,81.697,83.086,14.127,15.287,0.060,0.219,0.055,0.202
+Malosma laurina,Anacardiaceae,E,Chaparral ,MALA,6,MALA6,1.476,-2.318,-2.813,-15.799,79.620,82.401,12.287,14.229,0.068,0.172,0.059,0.148
+Monardella macrantha,Lamiaceae,E,Chaparral ,MOMA,1,MOMA1,6.439,-0.681,-0.802,59.230,93.834,84.875,11.075,4.515,0.076,0.155,0.187,0.380
+Monardella macrantha,Lamiaceae,E,Chaparral ,MOMA,3,MOMA3,4.294,-0.989,-1.228,11.549,82.818,80.575,7.271,6.431,0.118,0.381,0.133,0.431
+Monardella macrantha,Lamiaceae,E,Chaparral ,MOMA,4,MOMA4,7.537,-0.906,-1.132,16.294,83.256,79.997,6.341,5.307,0.130,0.403,0.156,0.482
+Monardella macrantha,Lamiaceae,E,Chaparral ,MOMA,5,MOMA5,5.342,-0.863,-0.983,13.721,89.486,87.814,8.895,7.675,0.100,0.446,0.116,0.517
+Monardella macrantha,Lamiaceae,E,Chaparral ,MOMA,6,MOMA6,6.676,-1.053,-1.343,19.526,82.631,78.417,5.631,5.118,0.140,0.415,0.135,0.516
+Monardella villosa,Lamiaceae,E,Chaparral ,MOVI,1,MOVI1,4.243,-0.974,-1.165,25.775,87.842,83.620,7.874,5.844,0.106,0.311,0.142,0.419
+Monardella villosa,Lamiaceae,E,Chaparral ,MOVI,2,MOVI2,5.016,-0.550,-0.967,77.426,90.252,56.819,6.360,1.436,0.097,0.079,0.429,0.348
+Monardella villosa,Lamiaceae,E,Chaparral ,MOVI,3,MOVI3,6.472,-1.043,-1.185,-81.143,78.355,88.051,4.473,8.102,0.195,0.937,0.108,0.517
+Monardella villosa,Lamiaceae,E,Chaparral ,MOVI,4,MOVI4,5.270,-0.860,-1.017,23.966,88.249,84.546,8.459,6.432,0.103,0.399,0.135,0.525
+Monardella villosa,Lamiaceae,E,Chaparral ,MOVI,6,MOVI6,5.433,-0.824,-1.020,55.598,91.454,80.752,11.259,4.999,0.075,0.179,0.169,0.403
+Platanus racemosa,Platanaceae,D,Woodland,PLRA,1,PLRA1,3.426,-0.926,-1.211,26.273,82.670,76.494,6.225,4.589,0.128,0.337,0.173,0.457
+Platanus racemosa,Platanaceae,D,Woodland,PLRA,2,PLRA2,2.946,-0.852,-1.044,48.835,90.619,81.665,8.773,4.489,0.092,0.179,0.242,0.472
+Platanus racemosa,Platanaceae,D,Woodland,PLRA,3,PLRA3,3.529,-0.753,-0.956,50.601,89.516,78.777,7.427,3.669,0.106,0.258,0.215,0.523
+Platanus racemosa,Platanaceae,D,Woodland,PLRA,4,PLRA4,3.468,-0.833,-1.039,46.190,89.328,80.167,7.509,4.040,0.106,0.268,0.196,0.498
+Platanus racemosa,Platanaceae,D,Woodland,PLRA,6,PLRA6,2.944,-0.965,-1.358,49.403,89.226,71.082,6.810,3.446,0.106,0.201,0.209,0.398
+Platanus racemosa,Platanaceae,D,Woodland,PLRA_a,1,PLRA_a1,2.368,-1.244,-1.461,-6.570,84.126,85.105,7.547,8.043,0.114,0.184,0.107,0.173
+Platanus racemosa,Platanaceae,D,Woodland,PLRA_a,2,PLRA_a2,1.879,-1.734,-2.176,-10.470,77.566,79.693,8.869,9.798,0.093,0.219,0.084,0.198
+Platanus racemosa,Platanaceae,D,Woodland,PLRA_a,3,PLRA_a3,2.822,-1.989,-2.303,-74.563,76.200,86.366,9.786,17.082,0.090,0.335,0.052,0.192
+Platanus racemosa,Platanaceae,D,Woodland,PLRA_a,4,PLRA_a4,1.925,-1.520,-1.675,9.553,91.636,90.753,16.395,14.829,0.055,0.163,0.061,0.181
+Platanus racemosa,Platanaceae,D,Woodland,PLRA_a,5,PLRA_a5,2.961,-1.092,-1.392,-21.401,73.867,78.474,5.333,6.474,0.154,0.203,0.127,0.167
+Platanus racemosa,Platanaceae,D,Woodland,PLRA_a,6,PLRA_a6,2.368,-1.244,-1.461,-6.570,84.126,85.105,7.547,8.043,0.114,0.184,0.107,0.173
+Prunus ilicifolia,Rosaceae,E,Chaparral ,PRIL ,1,PRIL 1,1.472,-1.663,-1.988,-46.433,76.091,83.673,7.636,11.181,0.111,0.334,0.076,0.228
+Prunus ilicifolia,Rosaceae,E,Chaparral ,PRIL ,3,PRIL 3,2.001,-2.081,-2.498,-30.593,78.236,83.335,11.637,15.197,0.074,0.263,0.057,0.202
+Prunus ilicifolia,Rosaceae,E,Chaparral ,PRIL ,4,PRIL 4,1.586,-1.976,-2.149,-82.534,85.268,91.929,13.498,24.638,0.068,0.343,0.037,0.188
+Prunus ilicifolia,Rosaceae,E,Chaparral ,PRIL ,5,PRIL 5,1.584,-1.030,-1.403,0.960,73.636,73.380,5.394,5.342,0.150,0.180,0.152,0.181
+Prunus ilicifolia,Rosaceae,E,Chaparral ,PRIL ,6,PRIL 6,1.934,-2.112,-2.538,-8.614,81.786,83.231,12.399,13.467,0.067,0.140,0.062,0.129
+Qualea rosea,Vochysiaceae,E,Tropical wet forest,QURO,H20_396_1,QUROH20_396_1,1.394,-1.817,-2.126,0.909,85.581,85.449,11.419,11.315,0.074,0.305,0.075,0.308
+Qualea rosea,Vochysiaceae,E,Tropical wet forest,QURO,G21_373_1,QUROG21_373_1,2.085,-1.281,-1.664,19.050,81.372,76.988,9.478,7.673,0.088,0.175,0.109,0.216
+Qualea rosea,Vochysiaceae,E,Tropical wet forest,QURO,G21_373_2,QUROG21_373_2,2.085,-1.281,-1.664,19.050,81.372,76.988,9.478,7.673,0.088,0.175,0.109,0.216
+Qualea rosea,Vochysiaceae,E,Tropical wet forest,QURO,H20_475_1,QUROH20_475_1,1.641,-2.391,-2.986,25.199,85.085,80.060,15.361,11.490,0.052,0.140,0.069,0.187
+Qualea rosea,Vochysiaceae,E,Tropical wet forest,QURO,H20_475_2,QUROH20_475_2,1.442,-1.605,-2.207,58.012,88.551,72.733,14.376,6.036,0.051,0.083,0.121,0.199
+Quercus agrifolia,Fagaceae,E,Woodland,QUAG,1,QUAG1,0.905,-1.947,-2.722,65.921,90.292,71.513,15.697,5.350,0.042,0.052,0.124,0.154
+Quercus agrifolia,Fagaceae,E,Woodland,QUAG,2,QUAG2,0.898,-2.441,-3.300,38.301,83.948,73.984,14.024,8.653,0.052,0.092,0.084,0.150
+Quercus agrifolia,Fagaceae,E,Woodland,QUAG,3,QUAG3,0.975,-2.569,-3.208,24.548,84.975,80.086,17.134,12.928,0.047,0.102,0.062,0.135
+Quercus agrifolia,Fagaceae,E,Woodland,QUAG,4,QUAG4,0.917,-1.980,-2.700,70.538,92.146,73.342,22.398,6.599,0.032,0.026,0.108,0.089
+Quercus agrifolia,Fagaceae,E,Woodland,QUAG,5,QUAG5,0.913,-2.660,-3.288,12.104,83.226,80.916,17.253,15.165,0.048,0.130,0.055,0.148
+Quercus agrifolia,Fagaceae,E,Woodland,QUAG,6,QUAG6,0.948,-2.261,-2.795,50.952,90.626,80.889,20.793,10.199,0.038,0.081,0.077,0.165
+Quercus agrifolia,Fagaceae,E,Chaparral ,QUAG_a,1,QUAG_a1,1.011,-2.102,-2.747,-24.487,70.777,76.525,8.516,10.602,0.092,0.243,0.074,0.195
+Quercus agrifolia,Fagaceae,E,Chaparral ,QUAG_a,2,QUAG_a2,1.365,-2.092,-3.035,-20.828,62.484,68.951,5.081,6.139,0.132,0.220,0.109,0.182
+Quercus agrifolia,Fagaceae,E,Chaparral ,QUAG_a,3,QUAG_a3,1.492,-2.046,-2.981,51.066,84.657,68.645,13.397,6.556,0.050,0.065,0.103,0.132
+Quercus agrifolia,Fagaceae,E,Chaparral ,QUAG_a,4,QUAG_a4,1.094,-2.198,-2.700,-31.277,75.610,81.421,8.753,11.490,0.092,0.295,0.070,0.225
+Quercus agrifolia,Fagaceae,E,Chaparral ,QUAG_a,5,QUAG_a5,0.856,-2.454,-3.508,13.702,74.072,69.955,8.689,7.499,0.077,0.090,0.090,0.104
+Quercus berberidifolia,Fagaceae,E,Chaparral ,QUBE,1,QUBE1,1.007,-1.155,-1.904,20.919,68.874,60.641,4.137,3.272,0.152,0.078,0.192,0.099
+Quercus berberidifolia,Fagaceae,E,Chaparral ,QUBE,2,QUBE2,1.225,-1.031,-2.259,13.468,52.979,45.660,1.844,1.595,0.220,0.070,0.255,0.081
+Quercus berberidifolia,Fagaceae,E,Chaparral ,QUBE,4,QUBE4,1.430,-2.016,-3.120,2.834,65.620,64.617,6.114,5.940,0.110,0.090,0.113,0.093
+Quercus berberidifolia,Fagaceae,E,Chaparral ,QUBE,5,QUBE5,1.267,-1.179,-1.946,-11.701,55.961,60.575,2.651,2.961,0.217,0.179,0.194,0.161
+Quercus berberidifolia,Fagaceae,E,Chaparral ,QUBE,6,QUBE6,1.007,-1.182,-2.658,1.894,45.526,44.475,2.416,2.370,0.193,0.066,0.197,0.067
+Quercus engelmannii,Fagaceae,E,Woodland,QUEN,1,QUEN1,1.405,-1.663,-2.105,-10.919,76.725,79.016,6.613,7.335,0.116,0.209,0.105,0.188
+Quercus engelmannii,Fagaceae,E,Woodland,QUEN,2,QUEN2,1.713,-1.630,-2.178,-34.411,66.167,74.828,4.576,6.151,0.155,0.273,0.115,0.203
+Quercus engelmannii,Fagaceae,E,Woodland,QUEN,3,QUEN3,1.515,-1.818,-2.246,-21.695,76.813,80.947,7.165,8.720,0.111,0.260,0.091,0.213
+Quercus engelmannii,Fagaceae,E,Woodland,QUEN,4,QUEN4,1.572,-1.831,-2.313,-15.591,75.944,79.189,8.445,9.761,0.095,0.203,0.083,0.176
+Quercus engelmannii,Fagaceae,E,Woodland,QUEN,5,QUEN5,1.367,-2.244,-2.782,-39.395,73.075,80.684,8.117,11.315,0.098,0.273,0.071,0.196
+Quercus engelmannii,Fagaceae,E,Woodland,QUEN,6,QUEN6,1.849,-1.727,-2.568,-64.492,46.142,67.258,3.240,5.329,0.197,0.303,0.120,0.184
+Raphiolepis indica,Rosaceae,E,Woodland,RAIN,1,RAIN1,1.463,-1.847,-2.550,62.996,89.804,72.447,18.303,6.773,0.040,0.079,0.108,0.212
+Raphiolepis indica,Rosaceae,E,Woodland,RAIN,2,RAIN2,1.444,-1.520,-2.004,72.118,93.270,75.863,19.508,5.439,0.038,0.071,0.146,0.256
+Raphiolepis indica,Rosaceae,E,Woodland,RAIN,3,RAIN3,1.465,-0.954,-1.400,82.627,94.459,68.104,14.910,2.590,0.044,0.047,0.252,0.270
+Raphiolepis indica,Rosaceae,E,Woodland,RAIN,4,RAIN4,1.380,-1.035,-1.619,74.566,99.053,96.278,10.352,2.633,0.061,0.059,0.238,0.232
+Raphiolepis indica,Rosaceae,E,Woodland,RAIN,5,RAIN5,1.315,-1.232,-1.735,70.598,91.481,71.025,13.366,3.930,0.052,0.068,0.177,0.232
+Raphiolepis indica,Rosaceae,E,Woodland,RAIN,6,RAIN6,1.588,-1.692,-2.402,48.745,84.850,70.443,11.232,5.757,0.063,0.123,0.121,0.237
+Rhus integrifolia,Anacardiaceae,E,Chaparral ,RHIN,1,RHIN1,1.818,-2.478,-3.433,-12.228,68.790,72.191,7.239,8.125,0.093,0.174,0.083,0.155
+Rhus integrifolia,Anacardiaceae,E,Chaparral ,RHIN,2,RHIN2,1.582,-1.075,-1.781,42.088,77.052,60.375,5.964,3.454,0.117,0.086,0.203,0.148
+Rhus integrifolia,Anacardiaceae,E,Chaparral ,RHIN,3,RHIN3,1.564,-2.932,-3.691,-28.744,73.521,79.433,11.039,14.212,0.071,0.197,0.055,0.153
+Rhus integrifolia,Anacardiaceae,E,Chaparral ,RHIN,4,RHIN4,1.749,-0.559,-0.777,47.108,85.132,71.890,3.108,1.644,0.212,0.126,0.401,0.239
+Rhus integrifolia,Anacardiaceae,E,Chaparral ,RHIN,5,RHIN5,1.585,-2.456,-3.184,-23.915,71.669,77.136,9.554,11.839,0.082,0.164,0.067,0.132
+Romneya coulteri,Papaveraceae,E,Chaparral ,ROCO,1,ROCO1,2.747,-0.955,-1.317,53.361,87.184,72.522,5.638,2.629,0.119,0.165,0.254,0.354
+Romneya coulteri,Papaveraceae,E,Chaparral ,ROCO,2,ROCO2,2.653,-1.075,-1.486,54.036,87.288,72.343,7.086,3.257,0.097,0.169,0.212,0.212
+Romneya coulteri,Papaveraceae,E,Chaparral ,ROCO,4,ROCO4,2.664,-0.886,-1.278,61.606,88.219,69.315,6.849,2.630,0.099,0.130,0.257,0.338
+Romneya coulteri,Papaveraceae,E,Chaparral ,ROCO,5,ROCO5,2.666,-0.803,-1.265,68.040,88.321,63.458,6.505,2.079,0.095,0.101,0.298,0.317
+Romneya coulteri,Papaveraceae,E,Chaparral ,ROCO,6,ROCO6,2.658,-0.976,-1.373,57.822,87.792,71.055,6.690,2.822,0.100,0.159,0.238,0.378
+Ruscus aculeatus,Asparagaceae,E,Woodland,RUAC,1,RUAC1,1.802,-1.003,-1.543,83.599,94.260,65.001,16.315,2.676,0.039,0.043,0.236,0.265
+Ruscus aculeatus,Asparagaceae,E,Woodland,RUAC,2,RUAC2,1.287,-1.177,-1.569,60.957,90.252,75.034,11.507,4.493,0.064,0.123,0.164,0.316
+Ruscus aculeatus,Asparagaceae,E,Woodland,RUAC,3,RUAC3,1.415,-1.496,-1.941,51.526,88.877,77.052,14.365,6.963,0.054,0.162,0.112,0.334
+Ruscus aculeatus,Asparagaceae,E,Woodland,RUAC,4,RUAC4,2.020,-1.754,-2.209,67.407,93.286,79.400,25.757,8.395,0.031,0.092,0.094,0.283
+Ruscus aculeatus,Asparagaceae,E,Woodland,RUAC,5,RUAC5,1.434,-1.312,-1.930,59.575,87.058,67.986,9.946,4.021,0.068,0.105,0.169,0.260
+Ruscus aculeatus,Asparagaceae,E,Woodland,RUAC,6,RUAC6,1.404,-1.393,-1.854,61.851,90.513,75.133,14.862,5.670,0.051,0.112,0.133,0.293
+Salvia apiana,Lamiaceae,E,Chaparral ,SAAP,1,SAAP1,5.879,-0.868,-1.060,-5.175,81.019,81.953,5.577,5.865,0.153,0.648,0.146,0.616
+Salvia apiana,Lamiaceae,E,Chaparral ,SAAP,2,SAAP2,5.221,-0.924,-1.135,8.908,83.057,81.400,6.504,5.925,0.130,0.502,0.143,0.552
+Salvia apiana,Lamiaceae,E,Chaparral ,SAAP,3,SAAP3,5.689,-0.942,-1.163,-2.580,80.541,81.031,5.779,5.928,0.147,0.524,0.143,0.510
+Salvia apiana,Lamiaceae,E,Chaparral ,SAAP,4,SAAP4,6.077,-0.754,-0.936,10.409,82.532,80.502,5.447,4.880,0.155,0.551,0.174,0.615
+Salvia apiana,Lamiaceae,E,Chaparral ,SAAP,5,SAAP5,4.745,-0.881,-1.064,16.567,85.665,82.819,7.186,5.995,0.119,0.495,0.007,0.593
+Salvia apiana,Lamiaceae,E,Chaparral ,SAAP,6,SAAP6,4.809,-0.987,-1.158,18.500,87.947,85.211,9.018,7.349,0.096,0.413,0.118,0.506
+Salvia canariensis,Lamiaceae,E,Chaparral ,SACA,1,SACA1,4.882,-1.031,-1.396,20.815,79.269,73.819,5.210,4.125,0.141,0.322,0.178,0.407
+Salvia canariensis,Lamiaceae,E,Chaparral ,SACA,2,SACA2,5.116,-1.033,-1.300,23.087,84.218,79.481,6.266,4.820,0.125,0.298,0.162,0.388
+Salvia canariensis,Lamiaceae,E,Chaparral ,SACA,3,SACA3,5.356,-0.908,-1.133,20.262,84.179,80.159,5.774,4.604,0.137,0.381,0.172,0.478
+Salvia canariensis,Lamiaceae,E,Chaparral ,SACA,4,SACA4,5.037,-0.769,-0.978,29.162,84.845,78.607,5.183,3.672,0.151,0.368,0.214,0.519
+Salvia canariensis,Lamiaceae,E,Chaparral ,SACA,5,SACA5,5.525,-0.940,-1.197,15.325,81.822,78.532,5.011,4.243,0.154,0.383,0.182,0.452
+Salvia canariensis,Lamiaceae,E,Chaparral ,SACA,6,SACA6,5.488,-0.862,-1.089,23.188,84.000,79.170,5.487,4.215,0.144,0.187,0.328,0.427
+Salvia leucophylla,Lamiaceae,E,Chaparral ,SALE,1,SALE1,3.343,-0.844,-1.169,-35.496,62.360,72.221,1.871,2.536,0.365,0.414,0.270,0.305
+Salvia leucophylla,Lamiaceae,E,Chaparral ,SALE,2,SALE2,4.045,-0.603,-1.201,4.893,52.614,50.176,1.051,1.000,0.418,0.229,0.440,0.240
+Salvia leucophylla,Lamiaceae,E,Chaparral ,SALE,3,SALE3,3.806,-0.945,-1.234,-11.567,73.891,76.598,4.224,4.713,0.189,0.294,0.170,0.263
+Salvia leucophylla,Lamiaceae,E,Chaparral ,SALE,4,SALE4,4.046,-0.740,-1.160,-11.413,59.635,63.770,1.881,2.095,0.343,0.295,0.308,0.264
+Salvia leucophylla,Lamiaceae,E,Chaparral ,SALE,5,SALE5,3.785,-0.871,-1.259,6.144,71.080,69.186,2.868,2.692,0.253,0.261,0.270,0.278
+Salvia leucophylla,Lamiaceae,E,Chaparral ,SALE,6,SALE6,3.502,-0.795,-1.205,2.544,66.857,65.992,1.961,1.911,0.321,0.299,0.330,0.307
+Salvia mellifera,Lamiaceae,E,Chaparral ,SAME,1,SAME1,5.986,-1.036,-1.205,-4.375,85.308,85.924,8.663,9.042,0.104,0.648,0.099,0.621
+Salvia mellifera,Lamiaceae,E,Chaparral ,SAME,2,SAME2,5.675,-1.004,-1.146,21.722,90.303,87.612,11.644,9.115,0.077,0.487,0.098,0.623
+Salvia mellifera,Lamiaceae,E,Chaparral ,SAME,3,SAME3,6.184,-1.035,-1.218,21.413,88.177,84.955,9.859,7.748,0.088,0.417,0.112,0.530
+Salvia mellifera,Lamiaceae,E,Chaparral ,SAME,5,SAME5,6.668,-1.003,-1.146,17.754,89.748,87.535,11.183,9.198,0.080,0.481,0.013,0.585
+Salvia mellifera,Lamiaceae,E,Chaparral ,SAME,6,SAME6,19.769,-0.960,-1.050,-25.499,89.311,91.483,10.349,12.988,0.090,0.820,0.071,0.653
+Saprosma ternata ,Rubiaceae,E,Tropical wet forest,SAPRTE,604071,SAPRTE604071,2.687,-0.891,-1.085,0.003,82.169,82.171,5.372,5.385,0.156,0.399,0.500,
+Saprosma ternata ,Rubiaceae,E,Tropical wet forest,SAPRTE,1409175,SAPRTE1409175,2.805,-1.221,-1.422,-0.057,85.065,85.017,9.324,8.819,0.094,0.292,0.773,
+Saprosma ternata ,Rubiaceae,E,Tropical wet forest,SAPRTE,1509057,SAPRTE1509057,2.850,-1.056,-1.233,0.032,86.161,86.188,7.632,7.881,0.112,0.515,0.949,
+Saprosma ternata ,Rubiaceae,E,Tropical wet forest,SAPRTE,1509076,SAPRTE1509076,3.210,-1.059,-1.172,-0.469,85.232,84.838,8.067,5.490,0.114,0.977,0.972,
+Saprosma ternata ,Rubiaceae,E,Tropical wet forest,SAPRTE,1509082,SAPRTE1509082,3.184,-1.119,-1.334,-0.687,72.734,72.244,4.174,2.474,0.200,0.827,1.954,
+Sloanea tomentosa,Elaeaocarpaceae,E,Tropical wet forest,SLOATO,408117,SLOATO408117,2.062,-1.312,-1.667,0.101,80.825,80.906,7.346,8.169,0.108,0.144,0.889,
+Sloanea tomentosa,Elaeaocarpaceae,E,Tropical wet forest,SLOATO,617094,SLOATO617094,1.349,-1.052,-1.405,0.336,83.307,83.584,5.458,8.216,0.132,0.272,0.862,
+Sloanea tomentosa,Elaeaocarpaceae,E,Tropical wet forest,SLOATO,719191,SLOATO719191,1.496,-1.070,-1.471,0.296,80.803,81.040,5.751,8.167,0.125,0.281,0.708,
+Sloanea tomentosa,Elaeaocarpaceae,E,Tropical wet forest,SLOATO,920024,SLOATO920024,1.320,-1.085,-1.499,-0.032,71.516,71.493,4.364,4.228,0.173,0.284,1.300,
+Sloanea tomentosa,Elaeaocarpaceae,E,Tropical wet forest,SLOATO,1020023,SLOATO1020023,1.704,-0.977,-1.232,0.246,84.406,84.611,6.873,9.110,0.118,0.340,0.582,
+Sloanea tomentosa,Elaeaocarpaceae,E,Tropical wet forest,SLOATO,1511057,SLOATO1511057,1.292,-1.208,-1.447,0.324,88.860,89.145,10.550,15.600,0.079,0.165,0.468,
+Umbellularia californica,Lauraceae,E,Woodland,UMCA,1,UMCA1,1.640,-2.324,-2.561,-13.988,89.485,90.776,22.033,25.115,0.041,0.289,0.036,0.253
+Umbellularia californica,Lauraceae,E,Woodland,UMCA,2,UMCA2,1.537,-2.043,-2.333,-10.607,86.252,87.570,15.155,16.762,0.058,0.162,0.052,0.147
+Umbellularia californica,Lauraceae,E,Woodland,UMCA,3,UMCA3,1.606,-2.156,-2.476,-26.181,83.655,87.047,11.511,14.525,0.074,0.313,0.059,0.248
+Umbellularia californica,Lauraceae,E,Woodland,UMCA,4,UMCA4,1.585,-2.139,-2.456,7.385,88.038,87.084,14.725,13.637,0.057,0.208,0.062,0.225
+Umbellularia californica,Lauraceae,E,Woodland,UMCA,5,UMCA5,1.610,-1.950,-2.235,16.710,89.393,87.265,15.404,12.830,0.055,0.177,0.066,0.212
+Umbellularia californica,Lauraceae,E,Woodland,UMCA,6,UMCA6,1.652,-1.950,-2.284,4.037,85.972,85.382,11.275,10.820,0.073,0.189,0.076,0.197
+Vitis californica,Vitaceae,D,Woodland,VICA,2,VICA2,8.530,-0.518,-0.716,41.256,83.730,72.303,3.169,1.861,0.226,0.309,0.385,0.526
+Vitis californica,Vitaceae,D,Woodland,VICA,3,VICA3,5.554,-0.561,-0.833,61.604,87.437,67.281,4.097,1.573,0.160,0.178,0.417,0.462
+Vitis californica,Vitaceae,D,Woodland,VICA,4,VICA4,3.294,-0.659,-0.821,60.944,92.293,80.266,9.115,3.560,0.089,0.170,0.227,0.436
+Vitis californica,Vitaceae,D,Woodland,VICA,5,VICA5,4.790,-0.392,-0.613,60.489,85.758,63.954,3.093,1.222,0.210,0.205,0.532,0.519
+Vitis californica,Vitaceae,D,Woodland,VICA,6,VICA6,4.599,-0.868,-1.168,20.036,79.453,74.304,4.650,3.719,0.165,0.289,0.207,0.362
+Vitis giradiana,Vitaceae,D,Woodland,VIGI,1,VIGI1,3.770,-0.884,-1.199,46.848,86.459,73.780,6.602,3.399,0.116,0.249,0.225,0.454
+Vitis giradiana,Vitaceae,D,Woodland,VIGI,2,VIGI2,2.839,-1.055,-1.421,74.042,93.309,74.224,15.745,4.087,0.047,0.088,0.253,0.338
+Vitis giradiana,Vitaceae,D,Woodland,VIGI,3,VIGI3,2.929,-1.191,-1.607,50.217,87.120,74.129,8.766,4.364,0.083,0.157,0.167,0.315
+Vitis giradiana,Vitaceae,D,Woodland,VIGI,4,VIGI4,3.414,-1.208,-1.505,56.644,91.452,80.285,14.289,6.195,0.056,0.176,0.130,0.407
+Vitis giradiana,Vitaceae,D,Woodland,VIGI,5,VIGI5,2.312,-1.083,-1.379,67.747,93.090,78.574,17.308,5.582,0.047,0.122,0.144,0.379

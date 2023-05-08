@@ -6,6 +6,7 @@
 #' @param data Data frame containing leaf fresh water mass and leaf water potentials
 #' @param fw.index Numeric value indicating the column number where the leaf water mass data is within data frame
 #' @param wp.index Numeric value indicating the column number where the leaf water potential data is within the data frame
+#' @param dm.index Numeric value indicating the column number where the leaf dry mass is
 #' @param n_row A number. Indicates number of rows to estimate parameters from within data
 #' @details This function calculates the saturated water content as the standard major axis intercept.
 #'
@@ -21,7 +22,7 @@
 #' 
 #' @export
 
-SaturatedWaterContent <- function(data, fw.index, wp.index, n_row=4) {
+SaturatedWaterContent <- function(data, fw.index, wp.index, dm.index,  n_row=4) {
   
   #first select the first for values and estimate SWC and RWC values 
   data_abovetlp<-data%>% 
@@ -32,9 +33,11 @@ SaturatedWaterContent <- function(data, fw.index, wp.index, n_row=4) {
 
   intercept <- sma_intercept(x = data_abovetlp[, fw.index], y = data_abovetlp[, wp.index], slope = slope)
 
-  saturated.water.content <- intercept
+  saturated.water.mass <- intercept
+  
+  saturated.water.content <- intercept / unique(data_abovetlp[,dm.index])
 
-  return(saturated.water.content)
+  return(list(saturated.water.mass,saturated.water.content))
 }
 
 NULL
@@ -53,7 +56,7 @@ NULL
 #' @family abovetlp
 
 RelativeWaterCD <- function(data, fw.index) {
-  relative.water.content <- (data[, fw.index] / data$saturated.water.content) * 100
+  relative.water.content <- (data[, fw.index] / data$saturated.water.mass) * 100
   relative.water.deficit <- 100 - (relative.water.content)
 
   rwc.rwd<-c(relative.water.content, relative.water.deficit)
