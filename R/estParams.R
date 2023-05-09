@@ -38,23 +38,23 @@ estParams<-function(data, fw.index, wp.index, dm.index){
     #fw.index=water mass, wp.index= water potential 
     swc_swm_est<-SaturatedWaterContent(leaf_estimate, fw.index = fw.index, wp.index = wp.index, dm.index = dm.index)
     
-    leaf_estimate[,"saturated.water.mass"]<-swc_swm_est[1]
+    leaf_estimate[,"saturated.water.mass"]<-swc_swm_est[[1]]
     
-    leaf_estimate[,"saturated.water.content"]<-swc_swm_est[2]
+    leaf_estimate[,"saturated.water.content"]<-swc_swm_est[[2]]
     
     leaf_estimate[,c("relative.water.content","relative.water.deficit")]<-RelativeWaterCD(leaf_estimate, fw.index=fw.index)
     
-    ## need to change the amount of points included for estimation after TLP is estimated. 
+  ## need to change the amount of points included for estimation after TLP is estimated. 
     tlp_est<-OsmoticEstimates(data=leaf_estimate, wc.index = "relative.water.deficit",wp.index = "inv.water.potential")%>%
       EstimateTLP(., wc.index = "relative.water.deficit",wp.index = "inv.water.potential")%>% 
-      pull(leaf.waterpotential.attlp)%>%unique
+      dplyr::pull(leaf.waterpotential.attlp)%>%unique
    ## n rows above and below this tlp estimate
-    row_above_tlp<-nrow(dplyr::filter(leaf_estimate, wp.index>tlp_est))
-    row_below_tlp<-nrow(dplyr::filter(leaf_estimate, wp.index<tlp_est))
+    row_above_tlp<-leaf_estimate%>%dplyr::filter(.[,wp.index]>tlp_est)%>%nrow()
+    row_below_tlp<-leaf_estimate%>%dplyr::filter(.[,wp.index]<tlp_est)%>%nrow()
     
-    leaf_estimate<-OsmoticEstimates(data=leaf_estimate, wc.index = "relative.water.deficit",wp.index = "inv.water.potential",n_row=nrow(dplyr::filter(leaf_estimate, wp.index<tlp_est)))
+    leaf_estimate<-OsmoticEstimates(data=leaf_estimate, wc.index = "relative.water.deficit",wp.index = "inv.water.potential",n_row=row_below_tlp)# osmotic variables are estimated based on inv.psi vs RWD below TLP
     
-    leaf_estimate<-EstimateTLP(df=leaf_estimate, wc.index = "relative.water.deficit",wp.index = "inv.water.potential")
+    leaf_estimate<-EstimateTLP(df=leaf_estimate, wc.index = "relative.water.deficit",wp.index = "inv.water.potential", n_row_above=row_above_tlp, n_row_below=row_below_tlp)
     
     #estimate other parameters:capacitance above and below tlp. 
     

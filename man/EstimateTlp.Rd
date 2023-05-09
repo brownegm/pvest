@@ -4,7 +4,7 @@
 \alias{EstimateTLP}
 \title{Estimate parameters at turgor loss}
 \usage{
-EstimateTLP(df, wc.index, wp.index, n_row = 4)
+EstimateTLP(df, wc.index, wp.index, n_row_above = 4, n_row_below = 4)
 }
 \arguments{
 \item{df}{A data frame}
@@ -13,7 +13,9 @@ EstimateTLP(df, wc.index, wp.index, n_row = 4)
 
 \item{wp.index}{An unquoted string indicating vector with pressure associated variable}
 
-\item{n_row}{A double. Default to n_row=4 (i.e., 4 rows).Value which indicates the number of rows for estimating SMA line parameters.}
+\item{n_row_above}{Double; Default to 4 rows.Value which indicates the number of rows above TLP for estimating SMA line parameters.}
+
+\item{n_row_below}{Double; Default to 4 rows.Value which indicates the number of rows below TLP for estimating SMA line parameters.}
 }
 \value{
 Returns data with new columns for the estimated parameters.
