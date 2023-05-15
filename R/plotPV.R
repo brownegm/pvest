@@ -33,4 +33,27 @@ plotPV<-function(data, x, y, rows=4, ...){
   
 }
 
+#other thoughts using ggplot
+library(ggplot2)
+
+plot_points_lines_lm <- function(x, y, x2 = NULL, color1 = "blue", color2 = "red") {
+  # create data frame with the x and y coordinates
+  data <- data.frame(x = x, y = y)
+  
+  # create linear model and extract slope and intercept
+  lm_model <- lm(y ~ x, data = data)
+  slope <- lm_model$coefficients[2]
+  intercept <- lm_model$coefficients[1]
+  
+  # create basic plot with points
+  plot <- ggplot(data, aes(x, y)) +
+    geom_point(color = color1)
+  
+  # add line representing linear model
+  line_data <- data.frame(x = range(x))
+  line_data$y <- intercept + slope * line_data$x
+  plot <- plot + geom_line(data = line_data, aes(x, y), color = color2)
+  
+  return(plot)
+}
 
