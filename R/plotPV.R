@@ -36,18 +36,39 @@ plotPV<-function(data, x, y, rows=4, ...){
 #other thoughts using ggplot
 library(ggplot2)
 
-plot_points_lines_lm <- function(x, y, x2 = NULL, color1 = "blue", color2 = "red") {
-  # create data frame with the x and y coordinates
-  data <- data.frame(x = x, y = y)
+var1<-"relative.water.deficit"
+var2<-"inv.water.potential"
+group_var<-unique_id
+group_name<-"magr_2"
+rows=4
+
+plot_points_lines <- function(data, 
+                              var1, var2,
+                              group_var,group_name,
+                              x2 = NULL,
+                              color1 = "black", color2 = "#a9b79a", 
+                              rows=4,...) {
   
-  # create linear model and extract slope and intercept
-  lm_model <- lm(y ~ x, data = data)
-  slope <- lm_model$coefficients[2]
-  intercept <- lm_model$coefficients[1]
+  # create data frame with the x and y coordinates
+  plot.df <- pv_params%>%
+    dplyr::filter(unique_id=={{group_name}})
+  
+  row_below_tlp<-plot.df%>%dplyr::filter(.[,"water.potential"]<leaf.waterpotential.attlp)%>%nrow()
+  plot.df.btlp<-plot.df%>%slice_tail(n=row_below_tlp)
+  #estimate slope and intercept
+  slope <- pvest::sma_slope(plot.df.btlp[,var1], plot.df.btlp[,var2])
+  
+  intercept <- pvest::sma_intercept(plot.df.btlp[[var1]], plot.df.btlp[[var2]], slope)
   
   # create basic plot with points
-  plot <- ggplot(data, aes(x, y)) +
-    geom_point(color = color1)
+  plot <- ggplot(plot.df, aes(x=.data[[var1]], .data[[var2]])) +
+    geom_point(shape=21,color = color1,fill=color2, size = 5)+
+    geom_abline(slope=-0.016425336, intercept = 0.6196721)+
+    annotate("text", "topright")
+    theme_base()
+  plot
+  
+    
   
   # add line representing linear model
   line_data <- data.frame(x = range(x))
