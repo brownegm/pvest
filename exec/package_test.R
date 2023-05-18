@@ -116,47 +116,56 @@ pred_interval.Ds <- predict(model.ols.Ds, newdata=data.frame(Dsestimated=newy), 
 pdf(file=here::here("inst/extdata", "pv_params_leaf.pdf"))
 
 plot(com$swc,com$saturated.water.content, 
-     pch=21, col="black",bg= "green")
+     pch=21,cex=2,
+     col="black",bg= "#4f8359")
 
 abline(a=0, b=1, lwd=2)
 
 plot(com$pi_o,com$osm.pot.fullturgor, 
-     pch=21, col="black",bg= "green")
+     pch=21,cex=2,
+     col="black",bg= "#4f8359")
 
 abline(a=0, b=1, lwd=2)
 
 plot(com$psi_tlp,com$leaf.waterpotential.attlp, 
-     pch=21, col="black",bg= "green")
+     pch=21,cex=2,
+     col="black",bg= "#4f8359")
 
 abline(a=0, b=1, lwd=2)
 
 plot(com$af,com$apoplastic.fraction, 
-     pch=21, col="black",bg= "green")
+     pch=21,cex=2,
+     col="black",bg= "#4f8359")
 
 abline(a=0, b=1, lwd=2)
 
 plot(com$rwc_tlp,com$relative.water.content.attlp, 
-     pch=21, col="black",bg= "green")
+     pch=21,cex=2,
+     col="black",bg= "#4f8359")
 
 abline(a=0, b=1, lwd=2)
 
 plot(com$modulus,com$modulus_est, 
-     pch=21, col="black",bg= "green")
+     pch=21,cex=2,
+     col="black",bg= "#4f8359")
 
 abline(a=0, b=1, lwd=2)
 
 plot(com$mod_sym,com$modulus_sym, 
-     pch=21, col="black",bg= "green")
+     pch=21,cex=2,
+     col="black",bg= "#4f8359")
 
 abline(a=0, b=1, lwd=2)
 
 plot(com$cap_ft,com$cap.ft.bulk, 
-     pch=21, col="black",bg= "green")
+     pch=21,cex=2,
+     col="black",bg= "#4f8359")
 
 abline(a=0, b=1, lwd=2)
 
 plot(com$cap_tlp,com$cap.tlp.bulk, 
-     pch=21, col="black",bg= "green")
+     pch=21,cex=2,
+     col="black",bg= "#4f8359")
 
 abline(a=0, b=1, lwd=2)
 
