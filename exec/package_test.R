@@ -63,7 +63,7 @@ com<-left_join(itvpv, pv_params_byleaf, by="unique_id", suffix = c("", "_est"))
 #figure this out!!!
 #com_sp<-left_join(itvpv_sum, param_sum, by=species==spcode, suffix = c("", "_est"))
 
-
+clis3<-pv_dat_fil[pv_dat_fil$species=="clis"&pv_dat_fil$leaf==3,]
 # Estimate prediction fits and intervals ----------------------------------
 
 og_vars<-names(com)[9:20]
