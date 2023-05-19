@@ -25,7 +25,7 @@ library(dplyr)
 This is a discussion of `SaturatedWaterContent()` and `RelativeWaterCD()` , which estimate the saturated water content (SWC), relative water deficit (RWD) and relative water content (RWC) respective for all values of water mass through dehydration for a given leaf (terms, units and definitions are tabled in Table 1). These functions take user measured leaf water mass and leaf water potential($\Psi_{leaf}$) and returns a data frame with the leaf specific SWC and RWCs.
 
 | Term (Abbreviation)                 | Units    | Definition                                                                                                                           |
-|-------------------------------------|----------|--------------------------------------------------------------------------------------------------------------------------------------|
+|-------------|-------------|----------------------------------------------|
 | Saturated water content(SWC)        | g        | Mass of leaf water at full saturation. Estimated as the y intercept of leaf water potential\~leaf water.                             |
 | Relative water deficit (RWD)        | g\*g^-1^ | Mass of water loss relative total saturation.                                                                                        |
 | Relative water content (RWC)        | g\*g^-1^ | Mass of water relative to full saturation.                                                                                           |
@@ -52,13 +52,15 @@ $$
 
 ### Usage
 
-`SaturatedWaterContent(data, fw.index, wp.index)`
+`SaturatedWaterContent(data, fw.index, wp.index, dm.index)`
 
 -   **data** a data frame containing leaf water potential and leaf water mass
 
 -   **fw.index** a numeric value indicating the column number where the leaf water mass data is within data frame
 
 -   **wp.index** a numeric value indicating the column number where the leaf water potential data is within data frame
+
+-   **dm.index** a numeric value indicating the column number where the leaf dry mass data is within data frame
 
 -   **NOTE:** Another important parameter is `n_row` . The default is `n_row=4` , meaning that the saturated water content will be estimated based on the first four hydration states (paired LWM and $\Psi_{leaf}$ ).
 
@@ -71,10 +73,11 @@ quag1<-pvest::data%>%
 
 head(quag1)
 
-quag1_swc<- SaturatedWaterContent(data=quag1, 
+swm_swc<- SaturatedWaterContent(data=quag1, 
                                   fw.index = 5, 
-                                  wp.index = 4)
-quag1_swc
+                                  wp.index = 4, 
+                                  dm.index = 3)
+swm_swc # output list of saturated water mass and content 
 ```
 
 ## Relative Water Content/Deficit Estimation (`RelativeWaterCD()`)
@@ -104,22 +107,19 @@ Note that both RWC and RWD outputs from `RelativeWaterCD()` are expressed as per
 ### Example
 
 ```{r rwc-rwd-estimation}
-#create a data frame with the estimated SWC 
-quag1_swc.df<-quag1
 
-#create column that contains the saturated water content
-quag1_swc.df$saturated.water.content<-rep(quag1_swc, nrow(quag1_swc.df))
+#create column that contains the saturated water content and mass
+quag1[,c("saturated.water.mass", "saturated.water.content")]<-swm_swc
 
 #view full data frame with the new column
-head(quag1_swc.df)
+head(quag1)
 
-#estimate RWC and RWD
-quag1_rwc.est<-quag1_swc.df
-
-quag1_rwc.est[,c("relative.water.content", "relative.water.deficit")]<-RelativeWaterCD(data=quag1_swc.df,
+#estimate RWC and RWD and add to data frame
+quag1[,c("relative.water.content", "relative.water.deficit")]<-RelativeWaterCD(data=quag1,
                            fw.index = 5)
 
-quag1_rwc.est
+quag1[,c("relative.water.content", "relative.water.deficit")]
+
 ```
 
 ## References

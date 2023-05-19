@@ -37,7 +37,7 @@ SaturatedWaterContent <- function(data, fw.index, wp.index, dm.index,  n_row=4) 
   
   saturated.water.content <- intercept / unique(data_abovetlp[,dm.index])
 
-  return(list(saturated.water.mass,saturated.water.content))
+  return(list("SWM"=saturated.water.mass,"SWC"=saturated.water.content))
 }
 
 NULL
@@ -59,7 +59,7 @@ RelativeWaterCD <- function(data, fw.index) {
   relative.water.content <- (data[, fw.index] / data$saturated.water.mass) * 100
   relative.water.deficit <- 100 - (relative.water.content)
 
-  rwc.rwd<-list(relative.water.content, relative.water.deficit)
+  rwc.rwd<-c(relative.water.content, relative.water.deficit)
   
   return(rwc.rwd)
 }
