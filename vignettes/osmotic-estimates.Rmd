@@ -165,30 +165,27 @@ $$
 ## Example
 
 ```{r osm-estimation}
-#load data for Quercus agrifolia leaf 1 
-quag1<-pvest::data%>%
+#load data for Quercus agrifolia leaf 1 (QUAG 1) 
+quag1.df<-pvest::data%>%
   filter(leaf==1)%>%
-  mutate(inv.water.potential=-1/water.potential)
+  mutate(inv.water.potential=-1/water.potential)# calculate the inverse of water potential for RWC estimation
 
-quag1_swc<- SaturatedWaterContent(data=quag1, 
+# estimate saturated water mass and saturated water content for QUAG 1 
+swc<- SaturatedWaterContent(data=quag1.df, 
                                   fw.index = 5, 
-                                  wp.index = 4)
+                                  wp.index = 4, 
+                                  dm.index = 3)
 
-#create a data frame with the estimated SWC 
-quag1_swc.df<-quag1
-
-#create column that contains the saturated water content
-quag1_swc.df$saturated.water.content<-rep(quag1_swc, nrow(quag1_swc.df))
+#create columns that contain the saturated water mass and saturated water content
+quag1.df[,c("saturated.water.mass"," saturated.water.content")]<-swc
 
 #estimate RWC and RWD
-quag1_rwc.est<-quag1_swc.df
+quag1.df[,c("relative.water.content", "relative.water.deficit")]<-RelativeWaterCD(data=quag1.df,
+                                                                                      fw.index = 5)
 
-quag1_rwc.est[,c("relative.water.content", "relative.water.deficit")]<-RelativeWaterCD(data=quag1_swc.df,
-                           fw.index = 5)
+q1_osm.est<-OsmoticEstimates(data=quag1.df, wc.index = "relative.water.deficit", wp.index = "inv.water.potential")
 
-q1_osm.est<-OsmoticEstimates(data=quag1_rwc.est, wc.index = "relative.water.deficit",wp.index = "inv.water.potential")
-
-head(q1_osm.est%>%select(4:6, 10:16))
+head(q1_osm.est%>%select(11:16))# show the estimated osmotic variables
     
 ```
 
