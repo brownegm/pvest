@@ -16,6 +16,9 @@ pv_dat<-read_excel(here("inst","extdata", "pvldcurvedata_10042022.xlsx"))%>%
 
 pvsps<-pv_dat%>%transmute(sp_indiv=paste0(toupper(species),leaf))
 
+#only the unique ids (SPECIES{1:X}) for the data 
+unique.ids<-pvsps%>%filter(pvsps$sp_indiv%in%itvpv$spcind)%>%pull(1)%>%unique()
+
 ## paper data summarized
 itvpv <- read_csv("inst/extdata/pvdat.csv")
 
@@ -28,9 +31,6 @@ itvpv[itvpv$spcode=="CLLA","spcind"]<-paste0("CLLA", c(1:6))
 # match IDs of est output
 itvpv<-itvpv%>%
   mutate(unique_id=paste(tolower(spcode),individual,sep = "_"), .before=swc)
-
-#only the unique ids (SPECIES{1:X}) for the data 
-unique.ids<-pvsps%>%filter(pvsps$sp_indiv%in%itvpv$spcind)%>%pull(1)%>%unique()
 
 # compute parameter estimates ---------------------------------------------
 
@@ -59,11 +59,11 @@ param_sum<-sumParams(pv_params, species)%>%select(species, saturated.water.conte
 itvpv_sum<-sumParams(itvpv, spcode)
 
 # combine measured and estimated ------------------------------------------
-com<-left_join(itvpv, pv_params_byleaf, by="unique_id", suffix = c("", "_est"))
+com<-right_join(itvpv, pv_params_byleaf, by="unique_id", suffix = c("", "_est"))
+
 #figure this out!!!
 #com_sp<-left_join(itvpv_sum, param_sum, by=species==spcode, suffix = c("", "_est"))
 
-clis3<-pv_dat_fil[pv_dat_fil$species=="clis"&pv_dat_fil$leaf==3,]
 # Estimate prediction fits and intervals ----------------------------------
 
 og_vars<-names(com)[9:20]
@@ -71,42 +71,32 @@ pred_vars<-names(com)[c(22:24, 26, 28:35)]
 #reorder pred_vars to match og_vars
 pred_vars<-pred_vars[c(1,2,6,3:5,7:8,9,11,10,12)]
 
+#linear models
+pv_lms<-purrr::map2(og_vars, pred_vars,~lm(com[[.x]]~com[[.y]])) #compute linear models for each variable pair
 
-pv_lms<-purrr::map2(og_vars, pred_vars, \(og,pred) lm(as.formula(og~pred), data = com))
+pv_lms_summary<-purrr::map(pv_lms,\(lm) summary(lm)) #save lm summaries 
 
-pv_lms<-mapply(og_vars, pred_vars, \(og,pred) lm(as.formula(og~pred), data = com))
+#prep for prediction intervals
+#see ?predict.lm
+#predictions<-predict(test, interval="prediction")
 
-model.ols.Dt <- lm(Dtobserved~Dtestimated-1, data=data.trichome.surface.factor)
-summary(model.ols.Dt)
+pv_preds<-map2(pv_lms,og_vars,
+               ~predict(.x, newdata=data.frame(pred_var=seq(0, max(com[[.y]]), length.out=nrow(com)),
+                                    interval="prediction")%>%
+                 as.data.frame))
 
-model.ols.Ds <- lm(Dsoberved~Dsestimated-1, data=data.trichome.surface.factor)
-summary(model.ols.Ds)
+#pv_pred.df<-map(pv_preds,\(preds)  )
 
-newdata <- data.frame(data.trichome.surface.factor$Dtestimated)
+#create dataset with original data and prediction intervals
+og_preds<-cbind(com, predictions)
+
+newdata <- data.frame(com$swc)
 newdataDs <- data.frame(data.trichome.surface.factor$Dsestimated)
 
 newx <- seq(0, 450, by=1)
 newy <- seq(0, 900, by=1)
 
-Dtestimated <- data.trichome.surface.factor$Dtestimated
-Dsestimated <- data.trichome.surface.factor$Dsestimated
-
-pred_interval.Dt <- predict(model.ols.Dt, newdata=data.frame(Dtestimated=newx), interval="prediction", level=0.95)
-pred_interval.Ds <- predict(model.ols.Ds, newdata=data.frame(Dsestimated=newy), interval="prediction", level=0.95)
-model.ols.Dt <- lm(Dtobserved~Dtestimated-1, data=data.trichome.surface.factor)
-summary(model.ols.Dt)
-
-
-model.ols.Ds <- lm(Dsoberved~Dsestimated-1, data=data.trichome.surface.factor)
-summary(model.ols.Ds)
-
-newdata <- data.frame(data.trichome.surface.factor$Dtestimated)
-newdataDs <- data.frame(data.trichome.surface.factor$Dsestimated)
-
-newx <- seq(0, 450, by=1)
-newy <- seq(0, 900, by=1)
-
-Dtestimated <- data.trichome.surface.factor$Dtestimated
+Dtestimated <- com$swc
 Dsestimated <- data.trichome.surface.factor$Dsestimated
 
 pred_interval.Dt <- predict(model.ols.Dt, newdata=data.frame(Dtestimated=newx), interval="prediction", level=0.95)
@@ -120,6 +110,8 @@ plot(com$swc,com$saturated.water.content,
      col="black",bg= "#4f8359")
 
 abline(a=0, b=1, lwd=2)
+
+lines(pv_preds[[1]][2])
 
 plot(com$pi_o,com$osm.pot.fullturgor, 
      pch=21,cex=2,
