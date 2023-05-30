@@ -1,10 +1,8 @@
 ---
 title: "SMA Slope and Intercept"
 output: rmarkdown::html_vignette
-vignette: >
-  %\VignetteIndexEntry{SMA Slope and Intercept}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
+vignette: "%\\VignetteIndexEntry{SMA Slope and Intercept} %\\VignetteEngine{knitr::rmarkdown}
+  %\\VignetteEncoding{UTF-8}\n"
 bibliography: references.bib
 ---
 
