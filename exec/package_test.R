@@ -20,7 +20,7 @@ pvsps<-pv_dat%>%transmute(sp_indiv=paste0(toupper(species),leaf))
 unique.ids<-pvsps%>%filter(pvsps$sp_indiv%in%itvpv$spcind)%>%pull(1)%>%unique()
 
 ## paper data summarized
-itvpv <- read_csv(here("inst/extdata/pvdat.csv"))
+itvpv <- readr::read_csv(here("inst/extdata/pvdat.csv"))
 
 itvpv<-itvpv%>%
   filter(!grepl(c("PLRA|ENFA|BAGA|QUAG|RAIN|CEBE"), spcode))#filter these out for the moment they add complexity
@@ -83,28 +83,37 @@ pred_vars<-names(com)[c(22:24, 26, 28:35)]
 pred_vars<-pred_vars[c(1,2,6,3:5,7:8,9,11,10,12)]
 pred_vars_index<-which(names(com)%in%pred_vars)[c(1,2,6,3:5,7:8,9,11,10,12)] # as index numbers
 
-
 # estimate linear models and summaries
 pv_lms<-purrr::map2(og_vars, pred_vars,~lm(com[[.x]]~com[[.y]])) #compute linear models for each variable pair
+
 pv_lms.v2<-purrr::map2(c(9:20),pred_vars_index, 
                        ~lm(as.formula(paste(names(com)[.x], "~", names(com)[.y])), data=com)) #compute linear models for each variable pair
 
 pv_lms_summary<-purrr::map(pv_lms,\(lm) summary(lm)) #save lm summaries 
 
+
+pv_lms.origin<-purrr::map2(c(9:20),pred_vars_index, 
+                       ~lm(as.formula(paste(names(com)[.x], "~", "0+", names(com)[.y])), data=com)) #compute linear models for each variable pair
+
 #prep for prediction intervals
 #see ?predict.lm
 #predictions<-predict(test, interval="prediction")
 
-f(com, "saturated.water.content")
+# f(com, "saturated.water.content")
 
 pv_<-map(pred_vars_index, \(coln) f(data=com, names(com)[coln]))# use function f to create "newdata" dataframes for each variable
 
 # estimate prediction intervals
-pv_pred_intervals<-map2(pv_lms.v2, pv_,
-                 ~predict(.x, newdata=.y,interval="prediction")%>%
-                 as.data.frame)
+pv_pred_intervals <- map2(pv_lms.v2,
+                          pv_,
+                          ~ predict(.x, newdata = .y, interval = "prediction") %>%
+                            as.data.frame)
 
-# 
+pv_pred_intervals.origin <- map2(pv_lms.origin,
+                                 pv_,
+                                 ~ predict(.x, newdata = .y, interval = "prediction") %>%
+                                    as.data.frame)
+
 # new_preds<-com%>%transmute(saturated.water.content=seq(0,max(com$saturated.water.content), length.out=nrow(com)))
 # 
 # newx <- seq(0,max(com$saturated.water.content), length.out=nrow(newdata))
@@ -129,6 +138,9 @@ abline(pv_lms.v2[[1]], col="#4f8359", lwd=3)
 lines(pv_[[1]][[1]], pv_pred_intervals[[1]][[3]], col="orangered", lty="dashed", lwd=2)#upper
 lines(pv_[[1]][[1]], pv_pred_intervals[[1]][[2]], col="orangered", lty="dashed", lwd=2)#lower
 
+lines(pv_[[1]][[1]], pv_pred_intervals.origin[[1]][[3]], col="orangered", lty="dashed", lwd=2)#upper
+lines(pv_[[1]][[1]], pv_pred_intervals.origin[[1]][[2]], col="orangered", lty="dashed", lwd=2)#lower
+
 legend("bottomright", legend=c("1:1", "OLS", "Pred.Int"), lty=c(1,1,2), col=c("black", "#4f8359", "orangered"), lwd=2, bty="n")
 
 plot(com$osm.pot.fullturgor, com$pi_o,
@@ -139,8 +151,13 @@ abline(a=0, b=1, lwd=2)
 
 abline(pv_lms.v2[[2]], col="#4f8359", lwd=3)
 
+abline(pv_lms.origin[[2]], col="#4f8359", lwd=3)
+
 lines(pv_[[2]][[1]], pv_pred_intervals[[2]][[3]], col="orangered", lty="dashed", lwd=2)#upper
 lines(pv_[[2]][[1]], pv_pred_intervals[[2]][[2]], col="orangered", lty="dashed", lwd=2)#lower
+
+lines(pv_[[2]][[1]], pv_pred_intervals.origin[[2]][[3]], col="orangered", lty="dashed", lwd=2)#upper
+lines(pv_[[2]][[1]], pv_pred_intervals.origin[[2]][[2]], col="orangered", lty="dashed", lwd=2)#lower
 
 legend("bottomright", legend=c("1:1", "OLS", "Pred.Int"), lty=c(1,1,2), col=c("black", "#4f8359", "orangered"), lwd=2, bty="n")
 
@@ -155,6 +172,9 @@ abline(pv_lms.v2[[3]], col="#4f8359", lwd=3)
 lines(pv_[[3]][[1]], pv_pred_intervals[[3]][[3]], col="orangered", lty="dashed", lwd=2)#upper
 lines(pv_[[3]][[1]], pv_pred_intervals[[3]][[2]], col="orangered", lty="dashed", lwd=2)#lower
 
+lines(pv_[[3]][[1]], pv_pred_intervals.origin[[3]][[3]], col="orangered", lty="dashed", lwd=2)#upper
+lines(pv_[[3]][[1]], pv_pred_intervals.origin[[3]][[2]], col="orangered", lty="dashed", lwd=2)#lower
+
 legend("bottomright", legend=c("1:1", "OLS", "Pred.Int"), lty=c(1,1,2), col=c("black", "#4f8359", "orangered"), lwd=2, bty="n")
 
 plot(com$apoplastic.fraction, com$af,
@@ -167,6 +187,9 @@ abline(pv_lms.v2[[4]], col="#4f8359", lwd=3)
 
 lines(pv_[[4]][[1]], pv_pred_intervals[[4]][[3]], col="orangered", lty="dashed", lwd=2)#upper
 lines(pv_[[4]][[1]], pv_pred_intervals[[4]][[2]], col="orangered", lty="dashed", lwd=2)#lower
+
+lines(pv_[[4]][[1]], pv_pred_intervals.origin[[4]][[3]], col="orangered", lty="dashed", lwd=2)#upper
+lines(pv_[[4]][[1]], pv_pred_intervals.origin[[4]][[2]], col="orangered", lty="dashed", lwd=2)#lower
 
 legend("bottomright", legend=c("1:1", "OLS", "Pred.Int"), lty=c(1,1,2), col=c("black", "#4f8359", "orangered"), lwd=2, bty="n")
 
@@ -181,6 +204,9 @@ abline(pv_lms.v2[[5]], col="#4f8359", lwd=3)
 lines(pv_[[5]][[1]], pv_pred_intervals[[5]][[3]], col="orangered", lty="dashed", lwd=2)#upper
 lines(pv_[[5]][[1]], pv_pred_intervals[[5]][[2]], col="orangered", lty="dashed", lwd=2)#lower
 
+lines(pv_[[5]][[1]], pv_pred_intervals.origin[[5]][[3]], col="orangered", lty="dashed", lwd=2)#upper
+lines(pv_[[5]][[1]], pv_pred_intervals.origin[[5]][[2]], col="orangered", lty="dashed", lwd=2)#lower
+
 legend("bottomright", legend=c("1:1", "OLS", "Pred.Int"), lty=c(1,1,2), col=c("black", "#4f8359", "orangered"), lwd=2, bty="n")
 
 plot(com$modulus_est, com$modulus,
@@ -193,6 +219,9 @@ abline(pv_lms.v2[[7]], col="#4f8359", lwd=3)
 
 lines(pv_[[7]][[1]], pv_pred_intervals[[7]][[3]], col="orangered", lty="dashed", lwd=2)#upper
 lines(pv_[[7]][[1]], pv_pred_intervals[[7]][[2]], col="orangered", lty="dashed", lwd=2)#lower
+
+lines(pv_[[7]][[1]], pv_pred_intervals.origin[[7]][[3]], col="orangered", lty="dashed", lwd=2)#upper
+lines(pv_[[7]][[1]], pv_pred_intervals.origin[[7]][[2]], col="orangered", lty="dashed", lwd=2)#lower
 
 legend("bottomright", legend=c("1:1", "OLS", "Pred.Int"), lty=c(1,1,2), col=c("black", "#4f8359", "orangered"), lwd=2, bty="n")
 
@@ -207,6 +236,9 @@ abline(pv_lms.v2[[8]], col="#4f8359", lwd=3)
 lines(pv_[[8]][[1]], pv_pred_intervals[[8]][[3]], col="orangered", lty="dashed", lwd=2)#upper
 lines(pv_[[8]][[1]], pv_pred_intervals[[8]][[2]], col="orangered", lty="dashed", lwd=2)#lower
 
+lines(pv_[[8]][[1]], pv_pred_intervals.origin[[8]][[3]], col="orangered", lty="dashed", lwd=2)#upper
+lines(pv_[[8]][[1]], pv_pred_intervals.origin[[8]][[2]], col="orangered", lty="dashed", lwd=2)#lower
+
 legend("bottomright", legend=c("1:1", "OLS", "Pred.Int"), lty=c(1,1,2), col=c("black", "#4f8359", "orangered"), lwd=2, bty="n")
 
 plot(com$cap.ft.bulk, com$cap_ft,
@@ -220,6 +252,9 @@ abline(pv_lms.v2[[9]], col="#4f8359", lwd=3)
 lines(pv_[[9]][[1]], pv_pred_intervals[[9]][[3]], col="orangered", lty="dashed", lwd=2)#upper
 lines(pv_[[9]][[1]], pv_pred_intervals[[9]][[2]], col="orangered", lty="dashed", lwd=2)#lower
 
+lines(pv_[[9]][[1]], pv_pred_intervals.origin[[9]][[3]], col="orangered", lty="dashed", lwd=2)#upper
+lines(pv_[[9]][[1]], pv_pred_intervals.origin[[9]][[2]], col="orangered", lty="dashed", lwd=2)#lower
+
 legend("bottomright", legend=c("1:1", "OLS", "Pred.Int"), lty=c(1,1,2), col=c("black", "#4f8359", "orangered"), lwd=2, bty="n")
 
 plot(com$cap.tlp.bulk, com$cap_tlp,
@@ -232,6 +267,9 @@ abline(pv_lms.v2[[10]], col="#4f8359", lwd=3)
 
 lines(pv_[[10]][[1]], pv_pred_intervals[[10]][[3]], col="orangered", lty="dashed", lwd=2)#upper
 lines(pv_[[10]][[1]], pv_pred_intervals[[10]][[2]], col="orangered", lty="dashed", lwd=2)#lower
+
+lines(pv_[[10]][[1]], pv_pred_intervals.origin[[10]][[3]], col="orangered", lty="dashed", lwd=2)#upper
+lines(pv_[[10]][[1]], pv_pred_intervals.origin[[10]][[2]], col="orangered", lty="dashed", lwd=2)#lower
 
 legend("bottomright", legend=c("1:1", "OLS", "Pred.Int"), lty=c(1,1,2), col=c("black", "#4f8359", "orangered"), lwd=2, bty="n")
 
