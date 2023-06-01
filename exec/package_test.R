@@ -17,7 +17,7 @@ pv_dat<-read_excel(here("inst","extdata", "pvldcurvedata_10042022.xlsx"))%>%
 pvsps<-pv_dat%>%transmute(sp_indiv=paste0(toupper(species),leaf))
 
 #only the unique ids (SPECIES{1:X}) for the data 
-unique.ids<-pvsps%>%filter(pvsps$sp_indiv%in%itvpv$spcind)%>%pull(1)%>%unique()
+unique.ids<-pvsps%>%dplyr::filter(pvsps$sp_indiv%in%itvpv$spcind)%>%pull(1)%>%unique()
 
 ## paper data summarized
 itvpv <- readr::read_csv(here("inst/extdata/pvdat.csv"))
@@ -114,6 +114,34 @@ pv_pred_intervals.origin <- map2(pv_lms.origin,
                                  ~ predict(.x, newdata = .y, interval = "prediction") %>%
                                     as.data.frame)
 
+
+pv_pred_intervals.origin
+
+find_outlier<-function(x,y, index){
+  
+  temp<-merge(x,y)
+  
+  var<-names(temp)[index]
+  
+  temp_output<-temp%>%
+    filter({{index}}<=lwr|{{index}}>=upr)
+  
+  return(temp_output)
+  
+}
+
+x=pv_pred_intervals[[1]]; y=pv_[[1]]
+t<-find_outlier(x=pv_pred_intervals[[1]], y=pv_[[1]], 4)
+
+test<-merge(pv_pred_intervals[[1]], pv_[[1]])
+
+test.filt<-test%>% #these are the saturated water content values that are greater than or less than the pred.int
+  filter(saturated.water.content<=lwr|saturated.water.content>=upr)
+
+test<-cbind(pv_pred_intervals[[2]], pv_[[2]])
+
+test.filt<-test%>% #these are the saturated water content values that are greater than or less than the pred.int
+  filter(osm.pot.fullturgor<=lwr|osm.pot.fullturgor>=upr)
 # new_preds<-com%>%transmute(saturated.water.content=seq(0,max(com$saturated.water.content), length.out=nrow(com)))
 # 
 # newx <- seq(0,max(com$saturated.water.content), length.out=nrow(newdata))
