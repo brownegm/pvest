@@ -4,8 +4,6 @@
 
 library(tidyverse)
 library(here)
-library(readxl)
-library(readr)
 library(pvest)
 
 # load data ---------------------------------------------------------------
@@ -32,6 +30,8 @@ itvpv[itvpv$spcode=="CLLA","spcind"]<-paste0("CLLA", c(1:6))
 itvpv<-itvpv%>%
   mutate(unique_id=paste(tolower(spcode),individual,sep = "_"), .before=swc)
 
+itvpv_byspecies<-sumParams(itvpv, spcode)#summarize the manual estimates by species
+
 # compute parameter estimates ---------------------------------------------
 
 # filter the unique ids that aren't in the summarized df
@@ -55,16 +55,19 @@ pv_leaf_uniques<-pv_params_byleaf%>%
   filter(unique_id%in%uniques)
 
 #summarize by species
-param_sum<-sumParams(pv_params, species)%>%select(species, saturated.water.content:cap.tlp.sym)
-itvpv_sum<-sumParams(itvpv, spcode)
+pv_params_byspecies<-sumParams(pv_params, species)#%>%select(species, saturated.water.content:cap.tlp.sym)
+
 
 # combine measured and estimated ------------------------------------------
 com<-right_join(itvpv, pv_params_byleaf, by="unique_id", suffix = c("", "_est"))
 
+com_species<-right_join(itvpv_byspecies, pv_params_byspecies, by="unique_id", suffix = c("", "_est"))
+
 #figure this out!!!
 #com_sp<-left_join(itvpv_sum, param_sum, by=species==spcode, suffix = c("", "_est"))
 
-# Estimate prediction fits and intervals ----------------------------------
+# Estimate OLS fits and prediction intervals (BY LEAF) ----------------------------------
+
 f<-function(data, var){
   
   new_preds<-data%>%# create df with just the variable of interest 
