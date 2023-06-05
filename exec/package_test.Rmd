@@ -1,5 +1,5 @@
 ---
-title: "pvest package test"
+title: "Package Test"
 output: html_notebook
 ---
 
@@ -13,9 +13,60 @@ In this notebook, my aim is to validate the use of the functions within the [pve
 library(tidyverse)
 library(here)
 library(readxl)
-library(readr)
 library(pvest)
 
 ```
 
 ### Load data {#sec-data}
+
+First, I load the raw values of the leaf water potential and leaf water mass. I only work with non-duplicates first for simplicity. Then, I create another object which loads the manually estimated parameters.
+
+```{r load-data, echo=FALSE}
+# load data
+
+## individual mass and pv data
+pv_dat<-readxl::read_xlsx(here("inst","extdata", "pvldcurvedata_10042022.xlsx"))%>%
+  select(!c(fresh.weight.saturated, water.potential.bar, bag.weight,sp.leaf))%>%
+  as.data.frame()
+
+pvsps<-pv_dat%>%transmute(sp_indiv=paste0(toupper(species),leaf))# summarize and create list of species names 
+
+#only the unique ids for the data 
+unique.ids<-pvsps%>%
+  dplyr::filter(pvsps$sp_indiv%in%itvpv$spcind)%>%
+  pull(1)%>%
+  unique()
+
+## paper data summarized
+itvpv <- readr::read_csv(here("inst/extdata/pvdat.csv"))
+
+itvpv<-itvpv%>%
+  filter(!grepl(c("PLRA|ENFA|BAGA|QUAG|RAIN|CEBE"), spcode))#filter these out; for the moment they add complexity
+
+itvpv[itvpv$spcode=="CLLA","individual"]<-as.character(c(1:6))
+itvpv[itvpv$spcode=="CLLA","spcind"]<-paste0("CLLA", c(1:6))
+
+# match IDs of est output
+itvpv<-itvpv%>%
+  mutate(unique_id=paste(tolower(spcode),individual,sep = "_"), .before=swc)
+
+itvpv_byspecies<-sumParams(itvpv, spcode)#summarize the manual estimates by species
+
+head(pv_dat)
+head(itvpv)
+
+```
+
+### Compute parameter estimates
+
+Once the data is loaded estimate the parameters using the package function `estParams()` .
+
+```{r compute-parameter-estimates}
+# filter the unique ids that aren't in the summarized df
+pv_dat_fil<-pv_dat%>%
+  dplyr::filter(paste0(toupper(species),leaf) %in% unique.ids)
+
+# compute
+pv_params<-pvest::estParams(pv_dat_fil, fw.index = 5, wp.index = 4, dm.index = 3)
+
+```
