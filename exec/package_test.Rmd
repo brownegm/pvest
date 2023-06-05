@@ -1,0 +1,21 @@
+---
+title: "pvest package test"
+output: html_notebook
+---
+
+## Test the package functionality with data from ITV-PV
+
+In this notebook, my aim is to validate the use of the functions within the [pvest](github.com/brownegm/pvest) package which takes raw measurements of leaf water potential and water mass of plant organs and estimates pressure volume curve parameters.
+
+```{r load-packages, include=F}
+
+# Create space
+library(tidyverse)
+library(here)
+library(readxl)
+library(readr)
+library(pvest)
+
+```
+
+### Load data {#sec-data}
