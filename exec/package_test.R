@@ -6,16 +6,42 @@ library(tidyverse)
 library(here)
 library(pvest)
 
-# load data ---------------------------------------------------------------
+
+# Functions ---------------------------------------------------------------
+
+find_outlier<-function(x,y, index){
+  
+  temp<-merge(x,y)
+  
+  var<-names(temp)[index]
+  
+  temp_output<-temp%>%
+    filter({{index}}<=lwr|{{index}}>=upr)
+  
+  return(temp_output)
+  
+}
+
+#for simplicity in later prediction interval estimation this function creates a new df with just the variable 
+#to be worked on
+f<-function(data, var){
+  
+  new_preds<-data%>%# create df with just the variable of interest 
+    select(any_of(var))%>%
+    transmute(var=seq(min(data[,var], na.rm = T),max(data[,var], na.rm = T), length.out=nrow(data)))
+  
+  names(new_preds)[1]<-{{var}} # rename that column to match
+  
+  return(new_preds)
+}
+
+# Load data ---------------------------------------------------------------
 
 ## individual mass and pv data
-pv_dat<-read_excel(here("inst","extdata", "pvldcurvedata_10042022.xlsx"))%>%
+pv_dat<-readxl::read_xlsx(here("inst","extdata", "pvldcurvedata_10042022.xlsx"))%>%
   select(!c(fresh.weight.saturated, water.potential.bar, bag.weight,sp.leaf))%>%as.data.frame()
 
 pvsps<-pv_dat%>%transmute(sp_indiv=paste0(toupper(species),leaf))
-
-#only the unique ids (SPECIES{1:X}) for the data 
-unique.ids<-pvsps%>%dplyr::filter(pvsps$sp_indiv%in%itvpv$spcind)%>%pull(1)%>%unique()
 
 ## paper data summarized
 itvpv <- readr::read_csv(here("inst/extdata/pvdat.csv"))
@@ -30,9 +56,10 @@ itvpv[itvpv$spcode=="CLLA","spcind"]<-paste0("CLLA", c(1:6))
 itvpv<-itvpv%>%
   mutate(unique_id=paste(tolower(spcode),individual,sep = "_"), .before=swc)
 
-itvpv_byspecies<-sumParams(itvpv, spcode)#summarize the manual estimates by species
+#only the unique ids (SPECIES{1:X}) for the data 
+unique.ids<-pvsps%>%dplyr::filter(pvsps$sp_indiv%in%itvpv$spcind)%>%pull(1)%>%unique()
 
-# compute parameter estimates ---------------------------------------------
+# Compute parameter estimates ---------------------------------------------
 
 # filter the unique ids that aren't in the summarized df
 pv_dat_fil<-pv_dat%>%
@@ -41,7 +68,7 @@ pv_dat_fil<-pv_dat%>%
 # compute
 pv_params<-estParams(pv_dat_fil, fw.index = 5, wp.index = 4, dm.index = 3)
 
-# summarize output --------------------------------------------------------
+# Summarize output --------------------------------------------------------
 
 # summarize by leaf
 pv_params_byleaf<-pv_params%>%  
@@ -49,47 +76,47 @@ pv_params_byleaf<-pv_params%>%
                                        relative.water.deficit.attlp:cap.tlp.sym)%>%
   group_by(unique_id)%>%summarize_if(is.numeric, unique)
 
-uniques<-read_excel(here("inst","extdata","summary_main.xlsx"), sheet = "unique_ids")%>%pull(unique_id)
+uniques<-readxl::read_xlsx(here("inst","extdata","summary_main.xlsx"), sheet = "unique_ids")%>%pull(unique_id)
 
 pv_leaf_uniques<-pv_params_byleaf%>%
   filter(unique_id%in%uniques)
 
 #summarize by species
-pv_params_byspecies<-sumParams(pv_params, species)#%>%select(species, saturated.water.content:cap.tlp.sym)
 
+# pv_params_byspecies<-sumParams(pv_params, species, remove.cols = T, cols.to.remove="leaf")#%>%select(species, saturated.water.content:cap.tlp.sym)
+# 
+# itvpv_byspecies<-sumParams(itvpv, spcode)#summarize the manual estimates by species
 
+pv_params_byspecies<-pv_params%>%
+  select(!leaf:saturated.water.mass)%>%
+  group_by(species)%>%
+  summarize(across(where(is.numeric), ~mean(.,na.rm=T)))
+
+itvpv_byspecies<-itvpv%>%
+  mutate(spcode=tolower(spcode))%>%
+  filter(spcode %in% pv_params_byspecies$species)%>%
+  group_by(spcode)%>%
+  summarize(across(where(is.numeric), ~mean(.,na.rm=T)))%>%
+  rename(species=spcode)
+  
 # combine measured and estimated ------------------------------------------
 com<-right_join(itvpv, pv_params_byleaf, by="unique_id", suffix = c("", "_est"))
 
-com_species<-right_join(itvpv_byspecies, pv_params_byspecies, by="unique_id", suffix = c("", "_est"))
+com_species<-right_join(itvpv_byspecies, pv_params_byspecies, by="species", suffix = c("", "_est"))
 
-#figure this out!!!
-#com_sp<-left_join(itvpv_sum, param_sum, by=species==spcode, suffix = c("", "_est"))
-
-# Estimate OLS fits and prediction intervals (BY LEAF) ----------------------------------
-
-f<-function(data, var){
-  
-  new_preds<-data%>%# create df with just the variable of interest 
-    select(any_of(var))%>%
-    transmute(var=seq(min(data[,var], na.rm = T),max(data[,var], na.rm = T), length.out=nrow(data)))
-  
-  names(new_preds)[1]<-{{var}} # rename that column to match
-  
-  return(new_preds)
-}
+# Estimate OLS and pred intervals (BY LEAF) ----------------------------------
 
 # variables pred and manual
 og_vars<-names(com)[9:20]
 pred_vars<-names(com)[c(22:24, 26, 28:35)]
+
 #reorder pred_vars to match og_vars
 pred_vars<-pred_vars[c(1,2,6,3:5,7:8,9,11,10,12)]
 pred_vars_index<-which(names(com)%in%pred_vars)[c(1,2,6,3:5,7:8,9,11,10,12)] # as index numbers
 
 # estimate linear models and summaries
-pv_lms<-purrr::map2(og_vars, pred_vars,~lm(com[[.x]]~com[[.y]])) #compute linear models for each variable pair
 
-pv_lms.v2<-purrr::map2(c(9:20),pred_vars_index, 
+pv_lms<-purrr::map2(c(9:20),pred_vars_index, 
                        ~lm(as.formula(paste(names(com)[.x], "~", names(com)[.y])), data=com)) #compute linear models for each variable pair
 
 pv_lms_summary<-purrr::map(pv_lms,\(lm) summary(lm)) #save lm summaries 
@@ -107,7 +134,7 @@ pv_lms.origin<-purrr::map2(c(9:20),pred_vars_index,
 pv_<-map(pred_vars_index, \(coln) f(data=com, names(com)[coln]))# use function f to create "newdata" dataframes for each variable
 
 # estimate prediction intervals
-pv_pred_intervals <- map2(pv_lms.v2,
+pv_pred_intervals <- map2(pv_lms,
                           pv_,
                           ~ predict(.x, newdata = .y, interval = "prediction") %>%
                             as.data.frame)
@@ -120,18 +147,48 @@ pv_pred_intervals.origin <- map2(pv_lms.origin,
 
 pv_pred_intervals.origin
 
-find_outlier<-function(x,y, index){
-  
-  temp<-merge(x,y)
-  
-  var<-names(temp)[index]
-  
-  temp_output<-temp%>%
-    filter({{index}}<=lwr|{{index}}>=upr)
-  
-  return(temp_output)
-  
-}
+x=pv_pred_intervals[[1]]; y=pv_[[1]]
+t<-find_outlier(x=pv_pred_intervals[[1]], y=pv_[[1]], 4)
+
+test<-merge(pv_pred_intervals[[1]], pv_[[1]])
+
+test.filt<-test%>% #these are the saturated water content values that are greater than or less than the pred.int
+  filter(saturated.water.content<=lwr|saturated.water.content>=upr)
+
+test<-cbind(pv_pred_intervals[[2]], pv_[[2]])
+
+test.filt<-test%>% #these are the saturated water content values that are greater than or less than the pred.int
+  filter(osm.pot.fullturgor<=lwr|osm.pot.fullturgor>=upr)
+
+# Estimate OLS and pred intervals (BY SPECIES) ----------------------------------
+
+# estimate linear models and summaries
+pv_lm.sp<-purrr::map2(c(9:20),pred_vars_index, 
+                       ~lm(as.formula(paste(names(com_species)[.x], "~", names(com_species)[.y])), data=com_species)) #compute linear models for each variable pair
+
+pv_lms_summary.sp<-purrr::map(pv_lms.sp,\(lm) summary(lm)) #save lm summaries 
+
+
+pv_lms.origin.sp<-purrr::map2(c(9:20),pred_vars_index, 
+                           ~lm(as.formula(paste(names(com_species)[.x], "~", "0+", names(com_species)[.y])), data=com_species)) #compute linear models for each variable pair
+
+#prep for prediction intervals
+
+pv_sp<-map(pred_vars_index, \(coln) f(data=com_species, names(com_species)[coln]))# use function f to create "newdata" dataframes for each variable
+
+# estimate prediction intervals
+pv_pred_intervals.sp <- map2(pv_lms.sp,
+                          pv_sp,
+                          ~ predict(.x, newdata = .y, interval = "prediction") %>%
+                            as.data.frame)
+
+pv_pred_intervals.origin.sp <- map2(pv_lms.origin.sp,
+                                 pv_sp,
+                                 ~ predict(.x, newdata = .y, interval = "prediction") %>%
+                                   as.data.frame)
+
+
+pv_pred_intervals.origin.sp
 
 x=pv_pred_intervals[[1]]; y=pv_[[1]]
 t<-find_outlier(x=pv_pred_intervals[[1]], y=pv_[[1]], 4)
@@ -151,7 +208,7 @@ test.filt<-test%>% #these are the saturated water content values that are greate
 # 
 # newdata <- data.frame(newx)
 # 
-# pred_params <- predict(pv_lms.v2[[1]], newdata=new_preds, interval="prediction", level=0.95)%>%as.data.frame()
+# pred_params <- predict(pv_lms[[1]], newdata=new_preds, interval="prediction", level=0.95)%>%as.data.frame()
 # 
 # a<-predict(pv_lms[[1]], interval="prediction", level = 0.95)
 
@@ -164,7 +221,7 @@ plot(com$swc~com$saturated.water.content,
 
 abline(a=0, b=1, lwd=2)
 
-abline(pv_lms.v2[[1]], col="#4f8359", lwd=3)
+abline(pv_lms[[1]], col="#4f8359", lwd=3)
 
 lines(pv_[[1]][[1]], pv_pred_intervals[[1]][[3]], col="orangered", lty="dashed", lwd=2)#upper
 lines(pv_[[1]][[1]], pv_pred_intervals[[1]][[2]], col="orangered", lty="dashed", lwd=2)#lower
@@ -180,7 +237,7 @@ plot(com$osm.pot.fullturgor, com$pi_o,
 
 abline(a=0, b=1, lwd=2)
 
-abline(pv_lms.v2[[2]], col="#4f8359", lwd=3)
+abline(pv_lms[[2]], col="#4f8359", lwd=3)
 
 abline(pv_lms.origin[[2]], col="#4f8359", lwd=3)
 
@@ -198,7 +255,7 @@ plot(com$leaf.waterpotential.attlp, com$psi_tlp,
 
 abline(a=0, b=1, lwd=2)
 
-abline(pv_lms.v2[[3]], col="#4f8359", lwd=3)
+abline(pv_lms[[3]], col="#4f8359", lwd=3)
 
 lines(pv_[[3]][[1]], pv_pred_intervals[[3]][[3]], col="orangered", lty="dashed", lwd=2)#upper
 lines(pv_[[3]][[1]], pv_pred_intervals[[3]][[2]], col="orangered", lty="dashed", lwd=2)#lower
@@ -214,7 +271,7 @@ plot(com$apoplastic.fraction, com$af,
 
 abline(a=0, b=1, lwd=2)
 
-abline(pv_lms.v2[[4]], col="#4f8359", lwd=3)
+abline(pv_lms[[4]], col="#4f8359", lwd=3)
 
 lines(pv_[[4]][[1]], pv_pred_intervals[[4]][[3]], col="orangered", lty="dashed", lwd=2)#upper
 lines(pv_[[4]][[1]], pv_pred_intervals[[4]][[2]], col="orangered", lty="dashed", lwd=2)#lower
@@ -230,7 +287,7 @@ plot(com$relative.water.content.attlp, com$rwc_tlp,
 
 abline(a=0, b=1, lwd=2)
 
-abline(pv_lms.v2[[5]], col="#4f8359", lwd=3)
+abline(pv_lms[[5]], col="#4f8359", lwd=3)
 
 lines(pv_[[5]][[1]], pv_pred_intervals[[5]][[3]], col="orangered", lty="dashed", lwd=2)#upper
 lines(pv_[[5]][[1]], pv_pred_intervals[[5]][[2]], col="orangered", lty="dashed", lwd=2)#lower
@@ -246,7 +303,7 @@ plot(com$modulus_est, com$modulus,
 
 abline(a=0, b=1, lwd=2)
 
-abline(pv_lms.v2[[7]], col="#4f8359", lwd=3)
+abline(pv_lms[[7]], col="#4f8359", lwd=3)
 
 lines(pv_[[7]][[1]], pv_pred_intervals[[7]][[3]], col="orangered", lty="dashed", lwd=2)#upper
 lines(pv_[[7]][[1]], pv_pred_intervals[[7]][[2]], col="orangered", lty="dashed", lwd=2)#lower
@@ -262,7 +319,7 @@ plot(com$modulus_sym, com$mod_sym,
 
 abline(a=0, b=1, lwd=2)
 
-abline(pv_lms.v2[[8]], col="#4f8359", lwd=3)
+abline(pv_lms[[8]], col="#4f8359", lwd=3)
 
 lines(pv_[[8]][[1]], pv_pred_intervals[[8]][[3]], col="orangered", lty="dashed", lwd=2)#upper
 lines(pv_[[8]][[1]], pv_pred_intervals[[8]][[2]], col="orangered", lty="dashed", lwd=2)#lower
@@ -278,7 +335,7 @@ plot(com$cap.ft.bulk, com$cap_ft,
 
 abline(a=0, b=1, lwd=2)
 
-abline(pv_lms.v2[[9]], col="#4f8359", lwd=3)
+abline(pv_lms[[9]], col="#4f8359", lwd=3)
 
 lines(pv_[[9]][[1]], pv_pred_intervals[[9]][[3]], col="orangered", lty="dashed", lwd=2)#upper
 lines(pv_[[9]][[1]], pv_pred_intervals[[9]][[2]], col="orangered", lty="dashed", lwd=2)#lower
@@ -294,7 +351,7 @@ plot(com$cap.tlp.bulk, com$cap_tlp,
 
 abline(a=0, b=1, lwd=2)
 
-abline(pv_lms.v2[[10]], col="#4f8359", lwd=3)
+abline(pv_lms[[10]], col="#4f8359", lwd=3)
 
 lines(pv_[[10]][[1]], pv_pred_intervals[[10]][[3]], col="orangered", lty="dashed", lwd=2)#upper
 lines(pv_[[10]][[1]], pv_pred_intervals[[10]][[2]], col="orangered", lty="dashed", lwd=2)#lower

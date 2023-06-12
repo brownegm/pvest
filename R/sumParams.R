@@ -16,14 +16,14 @@ sumParams<-function(df,group_name, remove.cols=F, cols.to.remove=c("leaf", "uniq
   if(remove.cols==F){
     group_summary<-df%>% 
       dplyr::group_by({{group_name}})%>%
-      dplyr::summarize(across(tidyselect::vars_select_helpers$where(is.numeric), mean))
+      dplyr::summarize(across(tidyselect::vars_select_helpers$where(is.numeric), mean(.,na.rm = T)))
   
     }else{
     
   group_summary<-df%>% 
     dplyr::group_by({{group_name}})%>%
-    dplyr::select(!{{remove.cols}})%>%
-    dplyr::summarize(across(tidyselect::vars_select_helpers$where(is.numeric), mean))
+    dplyr::select(!{{cols.to.remove}})%>%
+    dplyr::summarize(across(tidyselect::vars_select_helpers$where(is.numeric), mean(.,na.rm = T)))
   
   }
   return(group_summary)
