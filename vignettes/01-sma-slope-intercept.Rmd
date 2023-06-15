@@ -42,17 +42,19 @@ This is always the first parameter of the linear relationship to be estimated be
 ### Example
 
 ```{r estimate-slope}
-set.seed(1)# set seed for reproducibility
+set.seed(1) # set seed for reproducibility
 
-#create x and y variable
-x<-rnorm(10)
-y<-rnorm(10)
+# create x and y variable
+x <- rnorm(10)
+y <- rnorm(10)
 
-#estimate SMA slope
-slope=pvest::sma_slope(x=x, 
-                 y=y)
+# estimate SMA slope
+slope <- pvest::sma_slope(
+  x = x,
+  y = y
+)
 
-#print slope
+# print slope
 slope
 ```
 
@@ -77,11 +79,13 @@ $$
 ### Example
 
 ```{r estimate-intercept}
-#estimate SMA intercept
-intercept<-pvest::sma_intercept(x=x, 
-                     y=y,
-                     slope=slope)
-#print intercept
+# estimate SMA intercept
+intercept <- pvest::sma_intercept(
+  x = x,
+  y = y,
+  slope = slope
+)
+# print intercept
 intercept
 ```
 

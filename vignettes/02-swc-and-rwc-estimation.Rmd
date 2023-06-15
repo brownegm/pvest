@@ -67,17 +67,19 @@ $$
 ### Example
 
 ```{r swc-estimation}
-#load data for Quercus agrifolia
-quag1<-pvest::data%>%
-  filter(leaf==1)
+# load data for Quercus agrifolia
+quag1 <- pvest::data %>%
+  filter(leaf == 1)
 
 head(quag1)
 
-swm_swc<- SaturatedWaterContent(data=quag1, 
-                                  fw.index = 5, 
-                                  wp.index = 4, 
-                                  dm.index = 3)
-swm_swc # output list of saturated water mass and content 
+swm_swc <- SaturatedWaterContent(
+  data = quag1,
+  fw.index = 5,
+  wp.index = 4,
+  dm.index = 3
+)
+swm_swc # output list of saturated water mass and content
 ```
 
 ## Relative Water Content/Deficit Estimation (`RelativeWaterCD()`)
@@ -107,19 +109,19 @@ Note that both RWC and RWD outputs from `RelativeWaterCD()` are expressed as per
 ### Example
 
 ```{r rwc-rwd-estimation}
+# create column that contains the saturated water content and mass
+quag1[, c("saturated.water.mass", "saturated.water.content")] <- swm_swc
 
-#create column that contains the saturated water content and mass
-quag1[,c("saturated.water.mass", "saturated.water.content")]<-swm_swc
-
-#view full data frame with the new column
+# view full data frame with the new column
 head(quag1)
 
-#estimate RWC and RWD and add to data frame
-quag1[,c("relative.water.content", "relative.water.deficit")]<-RelativeWaterCD(data=quag1,
-                           fw.index = 5)
+# estimate RWC and RWD and add to data frame
+quag1[, c("relative.water.content", "relative.water.deficit")] <- RelativeWaterCD(
+  data = quag1,
+  fw.index = 5
+)
 
-quag1[,c("relative.water.content", "relative.water.deficit")]
-
+quag1[, c("relative.water.content", "relative.water.deficit")]
 ```
 
 ## References

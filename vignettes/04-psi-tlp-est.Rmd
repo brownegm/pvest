@@ -66,31 +66,34 @@ $$
 ### Example
 
 ```{r tlp-estimation}
-#load data for Quercus agrifolia leaf 1 (QUAG 1) 
-quag1.df<-pvest::data%>%
-  filter(leaf==1)%>%
-  mutate(inv.water.potential=-1/water.potential)# calculate the inverse of water potential for RWC estimation
+# load data for Quercus agrifolia leaf 1 (QUAG 1)
+quag1.df <- pvest::data %>%
+  filter(leaf == 1) %>%
+  mutate(inv.water.potential = -1 / water.potential) # calculate the inverse of water potential for RWC estimation
 
-# estimate saturated water mass and saturated water content for QUAG 1 
-swc<- SaturatedWaterContent(data=quag1.df, 
-                                  fw.index = 5, 
-                                  wp.index = 4, 
-                                  dm.index = 3)
+# estimate saturated water mass and saturated water content for QUAG 1
+swc <- SaturatedWaterContent(
+  data = quag1.df,
+  fw.index = 5,
+  wp.index = 4,
+  dm.index = 3
+)
 
-#create columns that contain the saturated water mass and saturated water content
-quag1.df[,c("saturated.water.mass"," saturated.water.content")]<-swc
+# create columns that contain the saturated water mass and saturated water content
+quag1.df[, c("saturated.water.mass", " saturated.water.content")] <- swc
 
-#estimate RWC and RWD
-quag1.df[,c("relative.water.content", "relative.water.deficit")]<-RelativeWaterCD(data=quag1.df,
-                                                                                      fw.index = 5)
+# estimate RWC and RWD
+quag1.df[, c("relative.water.content", "relative.water.deficit")] <- RelativeWaterCD(
+  data = quag1.df,
+  fw.index = 5
+)
 
-q1_osm.est<-OsmoticEstimates(data=quag1.df, wc.index = "relative.water.deficit", wp.index = "inv.water.potential")
+q1_osm.est <- OsmoticEstimates(data = quag1.df, wc.index = "relative.water.deficit", wp.index = "inv.water.potential")
 
-q1_tlp.est<-EstimateTLP(q1_osm.est, wc.index = "relative.water.deficit",wp.index = "inv.water.potential")
+q1_tlp.est <- EstimateTLP(q1_osm.est, wc.index = "relative.water.deficit", wp.index = "inv.water.potential")
 
-#summarize leaf level values 
-(q1_tlp.sum<-q1_tlp.est%>%
-  select(1,2,10,11,14,17:23)%>%
+# summarize leaf level values
+(q1_tlp.sum <- q1_tlp.est %>%
+  select(1, 2, 10, 11, 14, 17:23) %>%
   unique())
-
 ```
