@@ -213,17 +213,20 @@ test.filt <- test %>% # these are the saturated water content values that are gr
   filter(osm.pot.fullturgor <= lwr | osm.pot.fullturgor >= upr)
 
 
-# another option is to use box plot stats 
+## another option is to use box plot stats 
 # see ?boxplot.stats for more info
 outs <- boxplot.stats(pv_lms[[2]])$out # "the values of any data points which lie beyong the extremes of the whiskers
 
-# another another option is cook's distance
+## another another option is cook's distance
+# https://r-statistics.co/Outlier-Treatment-With-R.html
 cooks.d<-cooks.distance(pv_lms[[2]])
 
 plot(cooksd, pch="*", cex=2, main="Influential Obs by Cooks distance")  # plot cook's distance
 abline(h = 4*mean(cooksd, na.rm=T), col="red")  # add cutoff line
 text(x=1:length(cooksd)+1, y=cooksd, labels=ifelse(cooksd>4*mean(cooksd, na.rm=T),names(cooksd),""), col="red")  # add labels
 
+## find the influential values 
+influential <- as.numeric(names(cooksd)[(cooksd > 4*mean(cooksd, na.rm=T))])  # influential row numbers
 # PLOT: Leaf-level predictions -------------------------------------------------------------
 pdf(file = here::here("inst/extdata", "pv_params_leaf.pdf"))
 
