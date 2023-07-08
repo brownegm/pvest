@@ -232,6 +232,8 @@ lines(pv_[[1]][[1]], pv_pred_intervals.origin[[1]][[2]], col = "orangered", lty 
 
 legend("bottomright", legend = c("1:1", "OLS", "Pred.Int"), lty = c(1, 1, 2), col = c("black", "#4f8359", "orangered"), lwd = 2, bty = "n")
 
+text(x=com$saturated.water.content, y=com$swc, labels=1:nrow(com)) #find weirdos
+
 plot(com$osm.pot.fullturgor, com$pi_o,
   pch = 21, cex = 2,
   col = "black", bg = "#4f8359"
@@ -248,6 +250,8 @@ abline(pv_lms.origin[[2]], col = "#4f8359", lwd = 3)
 
 lines(pv_[[2]][[1]], pv_pred_intervals.origin[[2]][[3]], col = "orangered", lty = "dashed", lwd = 2) # upper
 lines(pv_[[2]][[1]], pv_pred_intervals.origin[[2]][[2]], col = "orangered", lty = "dashed", lwd = 2) # lower
+
+text(x=com$saturated.water.content, y=com$swc, labels=1:nrow(com)) #find weirdos
 
 legend("bottomright", legend = c("1:1", "OLS", "Pred.Int"), lty = c(1, 1, 2), col = c("black", "#4f8359", "orangered"), lwd = 2, bty = "n")
 
