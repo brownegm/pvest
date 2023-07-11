@@ -212,21 +212,37 @@ test <- cbind(pv_pred_intervals[[2]], pv_[[2]])
 test.filt <- test %>% # these are the saturated water content values that are greater than or less than the pred.int
   filter(osm.pot.fullturgor <= lwr | osm.pot.fullturgor >= upr)
 
-
-## another option is to use box plot stats 
-# see ?boxplot.stats for more info
-outs <- boxplot.stats(pv_lms[[2]])$out # "the values of any data points which lie beyong the extremes of the whiskers
-
 ## another another option is cook's distance
 # https://r-statistics.co/Outlier-Treatment-With-R.html
 cooks.d<-cooks.distance(pv_lms[[2]])
 
-plot(cooksd, pch="*", cex=2, main="Influential Obs by Cooks distance")  # plot cook's distance
-abline(h = 4*mean(cooksd, na.rm=T), col="red")  # add cutoff line
-text(x=1:length(cooksd)+1, y=cooksd, labels=ifelse(cooksd>4*mean(cooksd, na.rm=T),names(cooksd),""), col="red")  # add labels
+plot(cooks.d, pch="*", cex=2, main="Influential Obs by Cooks distance")  # plot cook's distance
+abline(h = 4*mean(cooks.d, na.rm=T), col="red")  # add cutoff line
+text(x=1:length(cooks.d)+1, y=cooks.d, labels=ifelse(cooks.d>4*mean(cooks.d, na.rm=T),names(cooks.d),""), col="red")  # add labels
 
 ## find the influential values 
-influential <- as.numeric(names(cooksd)[(cooksd > 4*mean(cooksd, na.rm=T))])  # influential row numbers
+cooks.d_odd <- as.numeric(names(cooks.d)[(cooks.d > 4*mean(cooks.d, na.rm=T))])  # influential row numbers
+
+head(cooks.d_odd)
+
+## this seems to work well; now for all the variables 
+cooks.dist_predictions <- lapply(1:length(pv_lms), function(mod) {
+  cooks <- cooks.distance(pv_lms[[mod]])
+  cooks.odd <- as.numeric(names(cooks)[(cooks > 4*mean(cooks, na.rm=T))])
+  return(cooks.odd)
+  })
+
+cooks.dist_predictions
+
+# filter dfs by the weird rows
+coms_pio.odd <- com%>%
+  slice(cooks.dist_predictions[[2]])
+
+plot(coms_pio.odd$osm.pot.fullturgor, coms_pio.odd$pi_o,
+     pch = 21, cex = 2,
+     col = "black", bg = "#4f8359"
+)
+
 # PLOT: Leaf-level predictions -------------------------------------------------------------
 pdf(file = here::here("inst/extdata", "pv_params_leaf.pdf"))
 
