@@ -3,6 +3,8 @@
 #' @param data A data frame. Input data frame with the raw values
 #' @param fw.index A numeric. Data frame index for the water content information.
 #' @param wp.index A numeric. Indicates the index of the data frame including the water potential data
+#' @param dm.index Numeric index of dry mass data. 
+#' @param n_pts Logical. If `TRUE`, the number of rows to use for predicting pio is based on the lowest number of rows with a CV less than 10%. 
 #'
 #' @details
 #'     Data needs to have species or individual information as well as leaf identifiers.
@@ -19,7 +21,7 @@
 #' @import dplyr
 #' @export
 #'
-estParams <- function(data, fw.index, wp.index, dm.index) {
+estParams <- function(data, fw.index, wp.index, dm.index, n_pts=F) {
   # stopifnot()#add check if the data frame is a dataframe
   # create unique ID and add inverse psi
   data$unique_id <- paste(data$species, data$leaf, sep = "_")
@@ -41,9 +43,12 @@ estParams <- function(data, fw.index, wp.index, dm.index) {
 
     leaf_estimate[, c("relative.water.content", "relative.water.deficit")] <- RelativeWaterCD(leaf_estimate, fw.index = fw.index)
 
+    pts<-ifelse(n_pts==T,# how many points
+                min(check_n_pts(leaf_estimate, wp.index="inv.water.potential", wm.index="relative.water.deficit")$cv10), 4)
+    
     ## need to change the amount of points included for estimation after TLP is estimated.
-    tlp_est <- OsmoticEstimates(data = leaf_estimate, wc.index = "relative.water.deficit", wp.index = "inv.water.potential") %>%
-      EstimateTLP(., wc.index = "relative.water.deficit", wp.index = "inv.water.potential") %>%
+    tlp_est <- OsmoticEstimates(data = leaf_estimate, wc.index = "relative.water.deficit", wp.index = "inv.water.potential", n_row = pts)%>%
+      EstimateTLP(., wc.index = "relative.water.deficit", wp.index = "inv.water.potential",n_row_below=pts) %>%
       dplyr::pull(leaf.waterpotential.attlp) %>%
       unique()
     ## n rows above and below this tlp estimate
@@ -75,3 +80,4 @@ estParams <- function(data, fw.index, wp.index, dm.index) {
 
   return(output_df)
 }
+

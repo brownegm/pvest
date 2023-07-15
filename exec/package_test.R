@@ -67,7 +67,7 @@ pv_dat_fil <- pv_dat %>%
   filter(paste0(toupper(species), leaf) %in% unique.ids)
 
 # compute
-pv_params <- estParams(pv_dat_fil, fw.index = 5, wp.index = 4, dm.index = 3)
+pv_params <- estParams(pv_dat_fil, fw.index = 5, wp.index = 4, dm.index = 3, n_pts = T)
 
 # Summarize output --------------------------------------------------------
 

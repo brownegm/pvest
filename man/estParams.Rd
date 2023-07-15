@@ -4,7 +4,7 @@
 \alias{estParams}
 \title{Estimate all pressure volume curve parameters for all leaves}
 \usage{
-estParams(data, fw.index, wp.index, dm.index)
+estParams(data, fw.index, wp.index, dm.index, n_pts = F)
 }
 \arguments{
 \item{data}{A data frame. Input data frame with the raw values}
@@ -12,6 +12,10 @@ estParams(data, fw.index, wp.index, dm.index)
 \item{fw.index}{A numeric. Data frame index for the water content information.}
 
 \item{wp.index}{A numeric. Indicates the index of the data frame including the water potential data}
+
+\item{dm.index}{Numeric index of dry mass data.}
+
+\item{n_pts}{Logical. If \code{TRUE}, the number of rows to use for predicting pio is based on the lowest number of rows with a CV less than 10\%.}
 }
 \value{
 Returns a data frame with the estimated parameters
@@ -20,12 +24,12 @@ Returns a data frame with the estimated parameters
 Estimate all pressure volume curve parameters for all leaves
 }
 \details{
-\if{html}{\out{<div class="sourceCode">}}\preformatted{Data needs to have species or individual information as well as leaf identifiers. 
-The function takes your "water.potential" column(recommend naming it thus) and a "fresh water content"(again, ideally named fresh.water.content) for multiple 
-hydration states. For information on the production of leaf pressure volume curves see Sack 2011. 
+\if{html}{\out{<div class="sourceCode">}}\preformatted{Data needs to have species or individual information as well as leaf identifiers.
+The function takes your "water.potential" column(recommend naming it thus) and a "fresh water content"(again, ideally named fresh.water.content) for multiple
+hydration states. For information on the production of leaf pressure volume curves see Sack 2011.
 With the data for each leaf it takes the first for values and estimates a saturated water content, estimates
-relative water content and then with the relationship between relative water deficit and 1/psi, it estimates the 
+relative water content and then with the relationship between relative water deficit and 1/psi, it estimates the
 osmotic potential and pressure potential at full turgor(max.psip) from which the same parameters are estimated for each
-subsequent hydration state. 
+subsequent hydration state.
 }\if{html}{\out{</div>}}
 }

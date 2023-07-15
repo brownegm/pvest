@@ -1,13 +1,13 @@
 #' plotPV
 #'
-#' @param data
-#' @param x
-#' @param y
+#' @param data dataframe
+#' @param x x value
+#' @param y y value
 #' @param rows number of rows to select
-#' @param ...
+#' @param ... tbd extras 
 #'
 #' @return a plot
-#' @export
+#'
 #'
 #' @examples
 #' plotPV(data[1:4, "leaf" = 5], x = "fresh.weight", y = "water.potential")

@@ -7,15 +7,15 @@
 plotPV(data, x, y, rows = 4, ...)
 }
 \arguments{
-\item{data}{}
+\item{data}{dataframe}
 
-\item{x}{}
+\item{x}{x value}
 
-\item{y}{}
+\item{y}{y value}
 
 \item{rows}{number of rows to select}
 
-\item{...}{}
+\item{...}{tbd extras}
 }
 \value{
 a plot
@@ -24,8 +24,6 @@ a plot
 plotPV
 }
 \examples{
-plotPV(data[1:4,"leaf"=5], x='fresh.weight', y='water.potential')
-
-  
+plotPV(data[1:4, "leaf" = 5], x = "fresh.weight", y = "water.potential")
 
 }
