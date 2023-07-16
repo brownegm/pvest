@@ -43,14 +43,36 @@ estParams <- function(data, fw.index, wp.index, dm.index, n_pts=F) {
 
     leaf_estimate[, c("relative.water.content", "relative.water.deficit")] <- RelativeWaterCD(leaf_estimate, fw.index = fw.index)
 
-    pts<-ifelse(n_pts==T,# how many points
-                min(check_n_pts(leaf_estimate, wp.index="inv.water.potential", wm.index="relative.water.deficit")$cv10), 4)
+    if( n_pts==T){
+      
+      pts.vec = check_n_pts(leaf_estimate, wp.index="inv.water.potential", wm.index="relative.water.deficit")$cv10
+      
+      if(is.na(pts.vec[1])){ # sometimes it is the case that none of the estimated cv values are < 10%; if this is the case set as 4
+        
+        pts = 4
+  
+      }else{
+        
+      pts = pts.vec[1]
+      
+      }
+      
+    }else{
+      
+      pts = 4
+      
+    }
+    
+    # pts <- ifelse(n_pts==T,# how many points
+    #             min(check_n_pts(leaf_estimate, wp.index="inv.water.potential", wm.index="relative.water.deficit")$cv10), 4)
+    # 
     
     ## need to change the amount of points included for estimation after TLP is estimated.
     tlp_est <- OsmoticEstimates(data = leaf_estimate, wc.index = "relative.water.deficit", wp.index = "inv.water.potential", n_row = pts)%>%
-      EstimateTLP(., wc.index = "relative.water.deficit", wp.index = "inv.water.potential",n_row_below=pts) %>%
+      EstimateTLP(., wc.index = "relative.water.deficit", wp.index = "inv.water.potential", n_row_below=pts) %>%
       dplyr::pull(leaf.waterpotential.attlp) %>%
       unique()
+    
     ## n rows above and below this tlp estimate
     row_above_tlp <- leaf_estimate %>%
       dplyr::filter(.[, wp.index] > tlp_est) %>%
