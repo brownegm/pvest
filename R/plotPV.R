@@ -24,8 +24,8 @@ plotPV <- function(data, x, y, rows = 4, ...) {
   l.y <- int + (slope * l.x)
 
   plot(data[[y]] ~ data[[x]],
-    ylab = y,
-    xlab = x
+    ylab = expression(paste(1/Psi, " (MPa)")),
+    xlab= "Relative Water Deficit "
   )
 
   lines(x = l.x, y = l.y)
