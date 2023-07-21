@@ -13,10 +13,14 @@
 #' plotPV(data[1:4, "leaf" = 5], x = "fresh.weight", y = "water.potential")
 #'
 plotPV <- function(data, x, y, rows = 4, ...) {
-  slope <- pvest::sma_slope(data[[x]][1:rows], data[[y]][1:rows])
-  int <- pvest::sma_intercept(data[[x]][1:rows], data[[y]][1:rows], slope)
+  
+  plot.x<- tail(roco1[[x]], n=rows)
+  plot.y<-tail(roco1[[y]], n=rows)
+  
+  slope <- pvest::sma_slope(plot.x, plot.y)
+  int <- pvest::sma_intercept(plot.x, plot.y, slope)
 
-  l.x <- seq(0, max(data[[x]]), length.out = length(data[[x]]))
+  l.x <- seq(0, max(data[[x]]), length.out = rows)
   l.y <- int + (slope * l.x)
 
   plot(data[[y]] ~ data[[x]],
@@ -25,8 +29,17 @@ plotPV <- function(data, x, y, rows = 4, ...) {
   )
 
   lines(x = l.x, y = l.y)
+  
+  legend("topright", legend=bquote(pi[O] == .(format(1/int, digits = 2))))
+  
 }
+bquote(pi[O] == .(format(-1/int, digits = 3)))
 
+roco1<-pv_params%>%filter(species=="roco"& leaf == 2)
+
+plotPV(roco1, x="relative.water.deficit", y="inv.water.potential")
+
+smatr::sma(relative.water.deficit~inv.water.potential, data=roco1%>%slice_tail(n=9))
 # #other thoughts using ggplot
 # library(ggplot2)
 #
