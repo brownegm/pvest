@@ -4,8 +4,8 @@
 #' @param fw.index A numeric. Data frame index for the water content information.
 #' @param wp.index A numeric. Indicates the index of the data frame including the water potential data
 #' @param dm.index Numeric index of dry mass data. 
-#' @param n_pts Logical. If `TRUE`, the number of rows to use for predicting pio is based on the lowest number of rows with a CV less than 10%. 
-#'
+#' @param method Default "cv"; See details for more information. If method="cv", the number of rows to use for predicting pio is based on the lowest number of rows with a CV less than 10%. 
+#' @param max_row Defaults to length of the input data frame. Maximum number of rows to check with method. 
 #' @details
 #'     Data needs to have species or individual information as well as leaf identifiers.
 #'     The function takes your "water.potential" column(recommend naming it thus) and a "fresh water content"(again, ideally named fresh.water.content) for multiple
@@ -14,6 +14,13 @@
 #'     relative water content and then with the relationship between relative water deficit and 1/psi, it estimates the
 #'     osmotic potential and pressure potential at full turgor(max.psip) from which the same parameters are estimated for each
 #'     subsequent hydration state.
+#'     
+#'     Method options: 
+#'     * "cv" - number of rows chosen by lowest number of points where slope of inv_psi vs RWD is greater than 10%
+#'     * "r2" - number of rows chosen as the number of points where R^2 is greatest.
+#'     * "lowest" - number of rows chosen as number of points that estimates the lowest pio value between 4-max_rows rows. 
+#'     * "median" - number of rows chosen as number of points that estimates the median pio value between 4-max_rows rows. 
+#'     * if nothing specified - estimate pio with only 4 observations. 
 #'
 #' @return Returns a data frame with the estimated parameters
 #'
@@ -21,7 +28,7 @@
 #' @import dplyr
 #' @export
 #'
-estParams <- function(data, fw.index, wp.index, dm.index, n_pts=F) {
+estParams <- function(data, fw.index, wp.index, dm.index, method="cv", max_row=nrow(data)) {
   # stopifnot()#add check if the data frame is a dataframe
   # create unique ID and add inverse psi
   data$unique_id <- paste(data$species, data$leaf, sep = "_")
@@ -43,9 +50,11 @@ estParams <- function(data, fw.index, wp.index, dm.index, n_pts=F) {
 
     leaf_estimate[, c("relative.water.content", "relative.water.deficit")] <- RelativeWaterCD(leaf_estimate, fw.index = fw.index)
 
-    if( n_pts==T){
+    test.vec <- check_n_pts(leaf_estimate, wp.index="inv.water.potential", wm.index="relative.water.deficit", max_row = max_row)
+    
+    if(method=="cv"){
       
-      pts.vec = check_n_pts(leaf_estimate, wp.index="inv.water.potential", wm.index="relative.water.deficit")$cv10
+      cv.vec <- test.vec$cv10
       
       if(is.na(pts.vec[1])){ # sometimes it is the case that none of the estimated cv values are < 10%; if this is the case set as 4
         
@@ -57,17 +66,25 @@ estParams <- function(data, fw.index, wp.index, dm.index, n_pts=F) {
       
       }
       
+    }else if(method=="r2"){
+      
+      pts = test.vec$r2
+        
+    }else if(method=="lowest"){
+      
+      pts = test.vec$pi_o
+      
+    # }else if(method=="median"){
+    #   
+    #   pts = which(test.vec$all_pio==median(test.vec$all_pio, na.rm = T))
+    #   
     }else{
       
       pts = 4
       
     }
-    
-    # pts <- ifelse(n_pts==T,# how many points
-    #             min(check_n_pts(leaf_estimate, wp.index="inv.water.potential", wm.index="relative.water.deficit")$cv10), 4)
-    # 
-    
-    ## need to change the amount of points included for estimation after TLP is estimated.
+
+  ## need to change the amount of points included for estimation after TLP is estimated.
     tlp_est <- OsmoticEstimates(data = leaf_estimate, wc.index = "relative.water.deficit", wp.index = "inv.water.potential", n_row = pts)%>%
       EstimateTLP(., wc.index = "relative.water.deficit", wp.index = "inv.water.potential", n_row_below=pts) %>%
       dplyr::pull(leaf.waterpotential.attlp) %>%
