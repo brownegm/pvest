@@ -9,7 +9,7 @@
 #' 
 #' @family internal
 #'
-#'@export
+#' @export
 
 check_n_pts <- function(data, wp.index, wm.index, max_row = nrow(data)) {
     # create vectors to store the values

@@ -39,6 +39,7 @@ estParams <- function(data, fw.index, wp.index, dm.index, method="cv", max_row=n
   output_est <- list() # list of estimates for each unique id
 
   for (i in unique_ids) {
+    
     leaf_estimate <- data[data$unique_id == i, ]
 
     # fw.index=water mass, wp.index= water potential
@@ -74,10 +75,12 @@ estParams <- function(data, fw.index, wp.index, dm.index, method="cv", max_row=n
       
       pts = test.vec$pi_o
       
-    # }else if(method=="median"){
-    #   
-    #   pts = which(test.vec$all_pio==median(test.vec$all_pio, na.rm = T))
-    #   
+    }else if(method=="median"){
+
+      pts = which(test.vec$all_pio==median(test.vec$all_pio, na.rm = T))
+      
+      stopifnot(is.numeric(pts))
+
     }else{
       
       pts = 4
