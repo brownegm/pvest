@@ -19,9 +19,24 @@ check_n_pts <- function(data, wp.index, wm.index, max_row = nrow(data)) {
     slope.cv <- vector()
     
     # for each number of rows estimate model parameters, collect slope and r2, estimate pio and cv of slope.
+    mods<-lapply(4:max_row, function(rows) smatr::sma(formula = inv.water.potential ~ relative.water.deficit, 
+                                                   data = slice_tail(leaf_estimate, n = rows)))
+    
+    output<-lapply(mods,
+                   function(mod) {
+                     list(
+                     r2 = unlist(mod$r2),
+                     pio = -1 / mod$coef[[1]][1, 1],
+                     slope = mod$coef[[1]][2, 1] )
+                     #slope.cv <- sd(c(slope, slope[mod - 1]), na.rm = T) / mean(c(slope[mod], slope[mod - 1]))
+                   
+                    # list()
+                     }
+                     )
+    # 
     for (i in 4:max_row) {
       tmp <- data %>%
-        dplyr::arrange(desc(wp.index)) %>%
+        #dplyr::arrange(desc(wp.index)) %>%
         dplyr::slice_tail(n = i) %>%
         as.data.frame()
       
