@@ -26,18 +26,28 @@
 #'
 #' @importFrom purrr reduce
 #' @import dplyr
+#' @importFrom cli cli_progress_bar
+#' @importFrom cli cli_progress_update
 #' @export
 #'
 estParams <- function(data, fw.index, wp.index, dm.index, method="cv", max_row=nrow(data)) {
   # stopifnot()#add check if the data frame is a dataframe
   # create unique ID and add inverse psi
+  
   data$unique_id <- paste(data$species, data$leaf, sep = "_")
   data$inv.water.potential <- -(1 / (data[[wp.index]]))
 
   unique_ids <- unique(data$unique_id)
 
+  cli::cli_progress_bar(name="Estimating PV Paramaters", total=length(unique_ids))  
   output_est <- list() # list of estimates for each unique id
-
+ 
+   # method determination
+  cv<-method=="cv"
+  r2<-method=="r2"
+  lowest<-method=="lowest"
+  median<-method=="median"
+  
   for (i in unique_ids) {
     
     leaf_estimate <- data[data$unique_id == i, ]
@@ -51,32 +61,32 @@ estParams <- function(data, fw.index, wp.index, dm.index, method="cv", max_row=n
 
     leaf_estimate[, c("relative.water.content", "relative.water.deficit")] <- RelativeWaterCD(leaf_estimate, fw.index = fw.index)
 
-    test.vec <- check_n_pts(leaf_estimate, wp.index="inv.water.potential", wm.index="relative.water.deficit", max_row = max_row)
-    
-    if(method=="cv"){
+    if(cv){
+      
+      test.vec <- check_n_pts(leaf_estimate, wp.index="inv.water.potential", wm.index="relative.water.deficit", max_row = max_row)
       
       cv.vec <- test.vec$cv10
       
-      if(is.na(pts.vec[1])){ # sometimes it is the case that none of the estimated cv values are < 10%; if this is the case set as 4
+      if(is.na(cv.vec[1])){ # sometimes it is the case that none of the estimated cv values are < 10%; if this is the case set as 4
         
         pts = 4
   
       }else{
         
-      pts = pts.vec[1]
+      pts = cv.vec[1]
       
       }
       
-    }else if(method=="r2"){
-      
+    }else if(r2){
+      test.vec <- check_n_pts(leaf_estimate, wp.index="inv.water.potential", wm.index="relative.water.deficit", max_row = max_row)
       pts = test.vec$r2
         
-    }else if(method=="lowest"){
-      
+    }else if(lowest){
+      test.vec <- check_n_pts(leaf_estimate, wp.index="inv.water.potential", wm.index="relative.water.deficit", max_row = max_row)
       pts = test.vec$pi_o
       
-    }else if(method=="median"){
-
+    }else if(median){
+      test.vec <- check_n_pts(leaf_estimate, wp.index="inv.water.potential", wm.index="relative.water.deficit", max_row = max_row)
       pts = which(test.vec$all_pio==median(test.vec$all_pio, na.rm = T))
       
       stopifnot(is.numeric(pts))
@@ -116,6 +126,8 @@ estParams <- function(data, fw.index, wp.index, dm.index, method="cv", max_row=n
     leaf_estimate[, "cap.tlp.sym"] <- rep(leaf_estimate_cap[4], nrow(leaf_estimate))
 
     output_est[[i]] <- leaf_estimate
+    
+    cli::cli_progress_update()
   }
   # combine all leaf estimates into one data frame.
   output_df <- as.data.frame(purrr::reduce(output_est, rbind))
