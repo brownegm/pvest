@@ -25,7 +25,9 @@ OsmoticPotFullTurgor <- function(data, wc.index, wp.index) {
 
   pi.o <- -1 / intercept
 
-  output <- c(slope, intercept, pi.o)
+  output <- list("Slope"=slope,
+                 "Intercept"=intercept,
+                 "Pi_o"=pi.o)
 
   return(output)
 }

@@ -59,7 +59,8 @@ RelativeWaterCD <- function(data, fw.index) {
   relative.water.content <- (data[, fw.index] / data$saturated.water.mass) * 100
   relative.water.deficit <- 100 - (relative.water.content)
 
-  rwc.rwd <- c(relative.water.content, relative.water.deficit)
+  rwc.rwd <- list("Relative_Water_Content"=relative.water.content,
+                  "Relative_Water_Deficit"=relative.water.deficit)
 
   return(rwc.rwd)
 }

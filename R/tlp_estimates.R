@@ -16,7 +16,10 @@ PsiPRWD_slopeint <- function(data, psip.index, rwd.index, sym_rwd.index) {
   slope_sym <- -sma_slope(x = data[, psip.index], y = data[, sym_rwd.index])
   intercept_sym <- sma_intercept(x = data[, psip.index], y = data[, sym_rwd.index], slope = slope_sym)
 
-  out <- c(slope, intercept, slope_sym, intercept_sym)
+  out <- list("Bulk_slope" = slope,
+              "Bulk_int" = intercept,
+              "Sym_slope" = slope_sym,
+              "Sym_int" = intercept_sym)
 
   return(out)
 }
