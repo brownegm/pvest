@@ -14,8 +14,8 @@
 
 plotPV <- function(data, x, y, rows = 4, ...) {
   
-  plot.x<- tail(data[[x]], n=rows)
-  plot.y<-tail(data[[y]], n=rows)
+  plot.x<- utils::tail(data[[x]], n=rows)
+  plot.y<-utils::tail(data[[y]], n=rows)
   
   slope <- pvest::sma_slope(plot.y, plot.x)*-1
   int <- pvest::sma_intercept(plot.y, plot.x, slope)
@@ -29,9 +29,9 @@ plotPV <- function(data, x, y, rows = 4, ...) {
     ...
   )
 
-  lines(x = l.x, y = l.y)
+  graphics::lines(x = l.x, y = l.y)
   
-  legend("topright", legend=bquote(pi[o] == .(format(-1/int, digits = 3))), bty="n")
+  graphics::legend("topright", legend=bquote(pi[o] == .(format(-1/int, digits = 3))), bty="n")
   
 }
 

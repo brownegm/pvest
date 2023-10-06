@@ -15,12 +15,12 @@ sumParams <- function(df, group_name, remove.cols = F, cols.to.remove = c("leaf"
   if (remove.cols == F) {
     group_summary <- df %>%
       dplyr::group_by({{ group_name }}) %>%
-      dplyr::summarize(across(tidyselect::vars_select_helpers$where(is.numeric), mean(., na.rm = T)))
+      dplyr::summarize(across(tidyselect::vars_select_helpers$where(is.numeric), mean(.data, na.rm = T)))
   } else {
     group_summary <- df %>%
       dplyr::group_by({{ group_name }}) %>%
       dplyr::select(!{{ cols.to.remove }}) %>%
-      dplyr::summarize(across(tidyselect::vars_select_helpers$where(is.numeric), mean(., na.rm = T)))
+      dplyr::summarize(across(tidyselect::vars_select_helpers$where(is.numeric), mean(.data, na.rm = T)))
   }
   return(group_summary)
 }

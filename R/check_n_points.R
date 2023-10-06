@@ -8,6 +8,7 @@
 #' @return returns a list of two with the number of rows that produces the greatest r-squared (r2) or lowest pi_o value
 #' 
 #' @family internal
+#' @importFrom smatr sma
 #'
 #'@export
 
