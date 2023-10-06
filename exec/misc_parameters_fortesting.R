@@ -1,5 +1,5 @@
 
-
+  
 roco1<-pv_dat%>%filter(species=="roco" & leaf=="1")
 
 data<-pv_dat%>%filter(species=="roco"& leaf=="4")

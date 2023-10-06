@@ -15,15 +15,11 @@ plotPV(data, x, y, rows = 4, ...)
 
 \item{rows}{number of rows to select}
 
-\item{...}{tbd extras}
+\item{...}{parameters to pass through plot()}
 }
 \value{
 a plot
 }
 \description{
 plotPV
-}
-\examples{
-plotPV(data[1:4, "leaf" = 5], x = "fresh.weight", y = "water.potential")
-
 }
