@@ -7,6 +7,8 @@
 #' @param ... parameters to pass through plot() 
 #'
 #' @return a plot
+#' 
+#' @export
 #'
 #'
 
@@ -29,7 +31,7 @@ plotPV <- function(data, x, y, rows = 4, ...) {
 
   lines(x = l.x, y = l.y)
   
-  legend("topright", legend=bquote(pi[O] == .(format(-1/int, digits = 3))), bty="n")
+  legend("topright", legend=bquote(pi[o] == .(format(-1/int, digits = 3))), bty="n")
   
 }
 
