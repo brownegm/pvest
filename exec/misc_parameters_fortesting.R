@@ -9,6 +9,7 @@ data<-pv_dat%>%filter(species=="roco"& leaf=="4")
 fw.index = 5; wp.index = 4; dm.index = 3; n_pts = T
 
 # ROCO 1 & 4 , ALMA 2 problems as of 20230719
+wp.index="inv.water.potential"; wm.index="relative.water.deficit"
 
 i<-unique_ids[1]
 
