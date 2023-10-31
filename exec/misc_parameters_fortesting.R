@@ -1,10 +1,10 @@
 
   
-roco1<-pv_dat%>%filter(species=="roco" & leaf=="1")
+#roco1<-pv_dat%>%filter(species=="roco" & leaf=="1")
 
 data<-pv_dat%>%filter(species=="roco"& leaf=="4")
 
-data<-pv_dat%>%filter(species=="alma"& leaf=="2")
+#data<-pv_dat%>%filter(species=="alma"& leaf=="2")
 
 fw.index = 5; wp.index = 4; dm.index = 3; n_pts = T
 
