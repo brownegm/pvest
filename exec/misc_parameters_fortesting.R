@@ -16,7 +16,7 @@ i<-unique_ids[1]
 plot(leaf_estimate$relative.water.deficit, leaf_estimate$inv.water.potential)
 leaf_estimate
 
-t<-check_n_pts(leaf_estimate, wp.index="inv.water.potential", wm.index="relative.water.deficit")#$cv10
+t<-check_n_pts(pv_params_r2, wp.index="inv.water.potential", wm.index="relative.water.deficit", method = "all")#$cv10
 
 
 pv_params_fil<-pv_params%>%filter(is.na(modulus))

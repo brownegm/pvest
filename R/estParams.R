@@ -5,6 +5,7 @@
 #' @param wp.index A numeric. Indicates the index of the data frame including the water potential data
 #' @param dm.index Numeric index of dry mass data. 
 #' @param n_pts Logical. If `TRUE`, the number of rows to use for predicting pio is based on the lowest number of rows with a CV less than 10%. 
+#' @param method Optional character parameter for when n_pts=T. Determines which method to pick number of rows below TLP.O ptions include "r2","pio","cv". See `?check_n_points` for more information
 #'
 #' @details
 #'     Data needs to have species or individual information as well as leaf identifiers.
@@ -21,17 +22,24 @@
 #' @import dplyr
 #' @export
 #'
-estParams <- function(data, fw.index, wp.index, dm.index, n_pts=F) {
-  # stopifnot()#add check if the data frame is a dataframe
+estParams <- function(data, fw.index, wp.index, dm.index, n_pts=F, method) {
+  
+  # stopifnot("Method must be specified when n_pts=T" = {n_pts=T
+  #                   method=c("r2","pio","cv")}
+  #           )
+  
   # create unique ID and add inverse psi
   data$unique_id <- paste(data$species, data$leaf, sep = "_")
-  data$inv.water.potential <- -(1 / (data[[wp.index]]))
+  data$inv.water.potential <- -1 / (data[[wp.index]])
 
   unique_ids <- unique(data$unique_id)
 
   output_est <- list() # list of estimates for each unique id
 
+  d_names <- names(data)
+  
   for (i in unique_ids) {
+    
     leaf_estimate <- data[data$unique_id == i, ]
 
     # fw.index=water mass, wp.index= water potential
@@ -43,9 +51,9 @@ estParams <- function(data, fw.index, wp.index, dm.index, n_pts=F) {
 
     leaf_estimate[, c("relative.water.content", "relative.water.deficit")] <- RelativeWaterCD(leaf_estimate, fw.index = fw.index)
 
-    if( n_pts==T){
+    if(n_pts==T){
       
-      pts.vec = check_n_pts(leaf_estimate, wp.index="inv.water.potential", wm.index="relative.water.deficit")$cv10
+      pts.vec = check_n_pts(leaf_estimate, wp.index="inv.water.potential", wm.index="relative.water.deficit", method = method)
       
       if(is.na(pts.vec[1])){ # sometimes it is the case that none of the estimated cv values are < 10%; if this is the case set as 4
         
@@ -62,23 +70,19 @@ estParams <- function(data, fw.index, wp.index, dm.index, n_pts=F) {
       pts = 4
       
     }
-    
-    # pts <- ifelse(n_pts==T,# how many points
-    #             min(check_n_pts(leaf_estimate, wp.index="inv.water.potential", wm.index="relative.water.deficit")$cv10), 4)
-    # 
-    
+
     ## need to change the amount of points included for estimation after TLP is estimated.
     tlp_est <- OsmoticEstimates(data = leaf_estimate, wc.index = "relative.water.deficit", wp.index = "inv.water.potential", n_row = pts)%>%
-      EstimateTLP(.data, wc.index = "relative.water.deficit", wp.index = "inv.water.potential", n_row_below=pts) %>%
+      EstimateTLP(., wc.index = "relative.water.deficit", wp.index = "inv.water.potential", n_row_below=pts) %>%
       dplyr::pull(leaf.waterpotential.attlp) %>%
       unique()
     
     ## n rows above and below this tlp estimate
     row_above_tlp <- leaf_estimate %>%
-      dplyr::filter(.data[, wp.index] > tlp_est) %>%
+      dplyr::filter(.data[[d_names[wp.index]]]> tlp_est) %>%
       nrow()
     row_below_tlp <- leaf_estimate %>%
-      dplyr::filter(.data[, wp.index] < tlp_est) %>%
+      dplyr::filter(.data[[d_names[wp.index]]] < tlp_est) %>%
       nrow()
 
     leaf_estimate <- OsmoticEstimates(data = leaf_estimate, wc.index = "relative.water.deficit", wp.index = "inv.water.potential", n_row = row_below_tlp) # osmotic variables are estimated based on inv.psi vs RWD below TLP

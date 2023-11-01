@@ -66,9 +66,14 @@ unique.ids <- pvsps %>%
 pv_dat_fil <- pv_dat %>%
   filter(paste0(toupper(species), leaf) %in% unique.ids)
 
+test<-pv_dat_fil%>%filter(species=="heca")
 # compute
-pv_params <- estParams(pv_dat_fil, fw.index = 5, wp.index = 4, dm.index = 3, n_pts = F)
-pv_params_variablepts <- estParams(pv_dat_fil, fw.index = 5, wp.index = 4, dm.index = 3, n_pts = T)
+pv_params <- estParams(pv_dat_fil, fw.index = 5, wp.index = 4, dm.index = 3, n_pts = T)
+pv_params_r2 <- estParams(test, fw.index = 5, wp.index = 4, dm.index = 3, n_pts = T, method ="r2")
+pv_params_cv <- estParams(test, fw.index = 5, wp.index = 4, dm.index = 3, n_pts = T, method ="cv")
+pv_params_pio <- estParams(test, fw.index = 5, wp.index = 4, dm.index = 3, n_pts = T, method ="pio")
+
+
 # Summarize output --------------------------------------------------------
 
 # summarize by leaf

@@ -4,7 +4,7 @@
 \alias{estParams}
 \title{Estimate all pressure volume curve parameters for all leaves}
 \usage{
-estParams(data, fw.index, wp.index, dm.index, n_pts = F)
+estParams(data, fw.index, wp.index, dm.index, n_pts = F, method)
 }
 \arguments{
 \item{data}{A data frame. Input data frame with the raw values}
@@ -16,6 +16,8 @@ estParams(data, fw.index, wp.index, dm.index, n_pts = F)
 \item{dm.index}{Numeric index of dry mass data.}
 
 \item{n_pts}{Logical. If \code{TRUE}, the number of rows to use for predicting pio is based on the lowest number of rows with a CV less than 10\%.}
+
+\item{method}{Optional character parameter for when n_pts=T. Determines which method to pick number of rows below TLP.O ptions include "r2","pio","cv". See \code{?check_n_points} for more information}
 }
 \value{
 Returns a data frame with the estimated parameters
