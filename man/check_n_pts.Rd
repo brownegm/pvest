@@ -4,7 +4,13 @@
 \alias{check_n_pts}
 \title{Determine best number of points below turgor loss}
 \usage{
-check_n_pts(data, wp.index, wm.index, max_row = 10)
+check_n_pts(
+  data,
+  wp.index,
+  wm.index,
+  max_row = 10,
+  method = c("r2", "pio", "cv10", "all")
+)
 }
 \arguments{
 \item{data}{a data frame}
