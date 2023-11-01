@@ -6,7 +6,8 @@
 #' @param wp.index index number or string containing the column name of the water potential data
 #' @param wm.index index number or string containing the column name of the water mass data (i.e., water mass or relative water content)
 #' @param max_row set cap on the number of rows to test for best r-squared value. Default to 10 rows of data.
-#'
+#' @param method set method for choosing number of rows. See return for returned values. Recommend using "all" outside of other functions. "All" returns a named list as below. 
+
 #' @details An alternative to the default number of rows would be to set `max_rows` to number of rows in the `data`. Note that more rows require greater computational time especially if computing parameters across many species. Suggest running the function with the default then, if a greater number of rows need to be tested, rerun the function for a subset of species. 
 #' 
 #' @return returns a list of 6 containing r2 values, osmotic potentials and coefficients of variation. See below for further information.
@@ -39,7 +40,7 @@ check_n_pts <- function(data, wp.index, wm.index, max_row = 10, method = c("r2",
     
     #for (i in 4:max_row)
     mods <- lapply(4:max_row, function(ntail) {
-      tmp <- leaf_estimate %>%
+      tmp <- data %>%
         dplyr::arrange(desc(wp.index)) %>%
         dplyr::slice_tail(n = ntail) %>%
         as.data.frame()
@@ -50,15 +51,20 @@ check_n_pts <- function(data, wp.index, wm.index, max_row = 10, method = c("r2",
     
     if (method == "all") {
       
-      r2_vals <- unlist(mods[[mod]]$r2)
-      pio[i] <- -1 / mod$coef[[1]][1, 1]
-      slope[i] <- mod$coef[[1]][2, 1]
-      slope.cv[i] <- sd(c(slope[i], slope[i - 1]), na.rm = T) / mean(c(slope[i], slope[i - 1]))
-      
-      greatest_r2<-which.max(r2)
-      lowest_pio <- which.min(pio)
-      cv.10 <- which(abs(slope.cv) < 0.10)
-      
+      for (i in 1:length(mods)){
+        
+        mod<-mods[[i]]
+        
+        r2[i]<-mod$r2%>%unlist
+        pio[i]<- -1/mod$coef[[1]][1,1]
+        slope[i]<-mod$coef[[1]][2,1]
+        slope.cv[i]<-sd(c(slope[i], slope[i-1]), na.rm = T)/mean(c(slope[i], slope[i-1]))
+        
+        greatest_r2<-which.max(r2)
+        lowest_pio<-which.min(pio)
+        cv.10<-which(abs(slope.cv)<0.10)
+        
+      }
       # return a named list of values.
       return(
         list(
@@ -90,24 +96,19 @@ check_n_pts <- function(data, wp.index, wm.index, max_row = 10, method = c("r2",
       return(which.min(pio))
       
     } else if (method == "cv") {
-      #
-      # slopes<-lapply(1:length(mods), function(mod) {
-      #
-      #   slope<-mods[[mod]]$coef[[1]][2,1]%>%unlist
-      #
-      # })%>%
-      #   dplyrsummarize()
-      # # make it summarize the slopes list getting the cv between the first and next object
-      #
-      # slopes<-unlist(slopes)
-      #
-      #
-      #
-      # cv<-sd(c(slope[i], slope[i-1]), na.rm = T)/mean(c(slope[i], slope[i-1]))
-      #
-      #
-      #
-      # cv.10<-which(abs(slope.cv)<0.10)
+      
+      for (i in 1:length(mods)){
+
+        mod<-mods[[i]]
+
+        slope[i]<-mod$coef[[1]][2,1]
+        slope.cv[i]<-sd(c(slope[i], slope[i-1]), na.rm = T)/mean(c(slope[i], slope[i-1]))
+        
+        cv.10<-which(abs(slope.cv)<0.10)
+        
+      }
+      
+      return(cv.10)
       
     }
     
