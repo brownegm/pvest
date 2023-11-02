@@ -35,7 +35,7 @@ check_n_pts <- function(data, wp.index, wm.index, max_row = 10, method = c("r2",
     pio <- vector()
     slope <- vector()
     slope.cv <- vector()
-    
+    rows <- c(4:max_row)
   # for each number of rows estimate model parameters, collect slope and r2, estimate pio and cv of slope.
     
     #for (i in 4:max_row)
@@ -84,7 +84,7 @@ check_n_pts <- function(data, wp.index, wm.index, max_row = 10, method = c("r2",
         
       })
       
-      return(which.max(r2))
+      return(rows[which.max(r2)])
       
     } else if (method == "pio") {
       
@@ -92,8 +92,8 @@ check_n_pts <- function(data, wp.index, wm.index, max_row = 10, method = c("r2",
         pio_vals <- -1 / (mods[[mod]]$coef[[1]][1, 1])
         
       })
-      
-      return(which.min(pio))
+     
+      return(rows[which.min(pio)])
       
     } else if (method == "cv") {
       
@@ -108,7 +108,7 @@ check_n_pts <- function(data, wp.index, wm.index, max_row = 10, method = c("r2",
         
       }
       
-      return(cv.10)
+      return(rows[max(cv.10)])
       
     }
     
