@@ -55,8 +55,8 @@ estParams <- function(data, fw.index, wp.index, dm.index, n_pts=F, method) {
       
       pts.vec = check_n_pts(leaf_estimate, wp.index="inv.water.potential", wm.index="relative.water.deficit", method = method)
       
-      if(is.na(pts.vec[1])){ # sometimes it is the case that none of the estimated cv values are < 10%; if this is the case set as 4
-        
+      if(is.character(pts.vec)){ # sometimes it is the case that none of the estimated cv values are < 10%; if this is the case set as 4
+      
         pts = 4
   
       }else{

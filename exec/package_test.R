@@ -67,13 +67,30 @@ pv_dat_fil <- pv_dat %>%
   filter(paste0(toupper(species), leaf) %in% unique.ids)
 
 test<-pv_dat_fil%>%filter(species=="heca")
-# computepv_dat_fil
-pv_params <- estParams(pv_dat_fil, fw.index = 5, wp.index = 4, dm.index = 3, n_pts = F)
-pv_params_r2 <- estParams(pv_dat_fil, fw.index = 5, wp.index = 4, dm.index = 3, n_pts = T, method ="r2")
-pv_params_cv <- estParams(pv_dat_fil, fw.index = 5, wp.index = 4, dm.index = 3, n_pts = T, method = "cv")
-pv_params_pio <- estParams(pv_dat_fil, fw.index = 5, wp.index = 4, dm.index = 3, n_pts = T, method ="pio")
+
+# compute pv parameters
+pv_params <- estParams(pv_dat_fil,
+                       fw.index = 5, wp.index = 4, dm.index = 3, 
+                       n_pts = F)
+
+pv_params_r2 <- estParams(pv_dat_fil, 
+                          fw.index = 5, wp.index = 4, dm.index = 3,
+                          n_pts = T, method ="r2")
+
+pv_params_cv <- estParams(pv_dat_fil, 
+                          fw.index = 5, wp.index = 4, dm.index = 3, 
+                          n_pts = T, method = "cv")
+
+pv_params_pio <- estParams(pv_dat_fil,
+                           fw.index = 5, wp.index = 4, dm.index = 3, 
+                           n_pts = T, method ="pio")
 
 
+# find the leaves that have NAs by psi_tlp
+og_nas <- pv_params%>%filter(is.na(leaf.waterpotential.attlp))
+r2_nas <- pv_params_r2%>%filter(is.na(leaf.waterpotential.attlp))
+cv_nas <- pv_params_cv%>%filter(is.na(leaf.waterpotential.attlp))
+pio_nas <- pv_params_pio%>%filter(is.na(leaf.waterpotential.attlp))
 # Summarize output --------------------------------------------------------
 
 # summarize by leaf
