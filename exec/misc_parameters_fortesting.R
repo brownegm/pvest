@@ -2,7 +2,7 @@
   
 #roco1<-pv_dat%>%filter(species=="roco" & leaf=="1")
 
-data<-pv_dat%>%filter(species=="roco"& leaf=="4")
+data<-pv_dat%>%filter(species=="alma"& leaf=="2")
 
 #data<-pv_dat%>%filter(species=="alma"& leaf=="2")
 
@@ -75,7 +75,46 @@ swc_swm_est <- SaturatedWaterContent(leaf_estimate, fw.index = fw.index, wp.inde
   plot(leaf_estimate$relative.water.deficit, leaf_estimate$inv.water.potential, main = "LOESS Fit", xlab = "X", ylab = "Y", col = "blue")
   lines(leaf_estimate$relative.water.deficit, y_pred, col = "red", lwd = 2)
   
+ 
   
+  
+  best_fit <- NULL
+  best_metric <- 0
+  
+  for (i in 2:(nrow(leaf_estimate) - 1)) {
+    
+    model1 <- fit_linear_model(leaf_estimate, 1, i)
+    model2 <- fit_linear_model(leaf_estimate, i + 1, nrow(leaf_estimate))
+    
+    metric1 <- assess_fit(model1)
+    metric2 <- assess_fit(model2)
+    
+    # Use a metric to compare the fits (e.g., sum of R-squared values)
+    total_metric <- metric1 + metric2
+    
+    if (total_metric > best_metric) {
+      best_metric <- total_metric
+      best_fit <- list(above = model1, below = model2)
+    }
+  }
+  
+
+# test piecewise regression -----------------------------------------------
+#source(here("R", "piecewise_regression.R"))
+
+  mod_bestfit <- piecewise_reg(leaf_estimate)
+
+  ?piecewise_reg
+  
+  
+  
+d# Visualize the best fit
+  plot(leaf_estimate$relative.water.deficit, leaf_estimate$inv.water.potential, main = "Piecewise Linear Regression", xlab = "X", ylab = "Y", col = "blue")
+  abline(mod_bestfit$above, col = "red", lwd = 2)
+  abline(mod_bestfit$below, col = "green", lwd = 2) 
+  
+  abline(best_fit$above, col = "red", lwd = 2)
+  abline(best_fit$below, col = "green", lwd = 2)
 # other -------------------------------------------------------------------
 
 
