@@ -85,12 +85,17 @@ pv_params_pio <- estParams(pv_dat_fil,
                            fw.index = 5, wp.index = 4, dm.index = 3, 
                            n_pts = T, method ="pio")
 
+pv_params_piecewise <- estParams(pv_dat_fil,
+                           fw.index = 5, wp.index = 4, dm.index = 3, 
+                           n_pts = T, method ="piecewise")
 
 # find the leaves that have NAs by psi_tlp
 og_nas <- pv_params%>%filter(is.na(leaf.waterpotential.attlp))
 r2_nas <- pv_params_r2%>%filter(is.na(leaf.waterpotential.attlp))
 cv_nas <- pv_params_cv%>%filter(is.na(leaf.waterpotential.attlp))
 pio_nas <- pv_params_pio%>%filter(is.na(leaf.waterpotential.attlp))
+piece_nas <- pv_params_piecewise%>%filter(is.na(leaf.waterpotential.attlp))
+
 # Summarize output --------------------------------------------------------
 
 # summarize by leaf

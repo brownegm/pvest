@@ -9,7 +9,7 @@ check_n_pts(
   wp.index,
   wm.index,
   max_row = 10,
-  method = c("r2", "pio", "cv10", "all")
+  method = c("r2", "pio", "cv10", "piecewise", "all")
 )
 }
 \arguments{

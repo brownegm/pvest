@@ -5,7 +5,7 @@
 #' @return Stops evaluation of function
 #'
 #' @importFrom tibble is_tibble
-#'
+#' @noRd
 
 InputCheck <- function(data) {
   # check that data is a data.frame "Check that data is not a tibble."

@@ -28,7 +28,7 @@
 #'
 #'@export
 
-check_n_pts <- function(data, wp.index, wm.index, max_row = 10, method = c("r2", "pio", "cv10", "all")) {
+check_n_pts <- function(data, wp.index, wm.index, max_row = 10, method = c("r2", "pio", "cv10","piecewise", "all")) {
     
   # create vectors to store the values
     r2 <- vector()
@@ -111,6 +111,14 @@ check_n_pts <- function(data, wp.index, wm.index, max_row = 10, method = c("r2",
       row_max_cv <- rows[max(cv.10)]
       
       output<-ifelse(row_max_cv==-Inf, "No rows with CV< 10%", row_max_cv)
+      return(output)
+      
+    } else if (method == "piecewise") {
+      
+      piecewise <- pvest::piecewise_reg(df=data)
+      
+      output<-nrow(piecewise$below$model)
+      
       return(output)
       
     }
