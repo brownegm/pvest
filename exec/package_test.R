@@ -96,6 +96,8 @@ cv_nas <- pv_params_cv%>%filter(is.na(leaf.waterpotential.attlp))
 pio_nas <- pv_params_pio%>%filter(is.na(leaf.waterpotential.attlp))
 piece_nas <- pv_params_piecewise%>%filter(is.na(leaf.waterpotential.attlp))
 
+lapply(list(og_nas,r2_nas, pio_nas, piece_nas), function(x) nrow(x))
+
 # Summarize output --------------------------------------------------------
 
 # summarize by leaf
