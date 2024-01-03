@@ -81,10 +81,19 @@ estParams <- function(data, fw.index, wp.index, dm.index, n_pts=F, method) {
     row_above_tlp <- leaf_estimate %>%
       dplyr::filter(.data[[d_names[wp.index]]]> tlp_est) %>%
       nrow()
+    
     row_below_tlp <- leaf_estimate %>%
       dplyr::filter(.data[[d_names[wp.index]]] < tlp_est) %>%
       nrow()
-
+    
+  if(row_above_tlp|row_below_tlp>nrow(data)-4){
+    row_below_tlp = 4
+    
+    row_above_tlp = nrow(data)-row_below_tlp
+    
+  }else{
+    
+  }
     leaf_estimate <- OsmoticEstimates(data = leaf_estimate, wc.index = "relative.water.deficit", wp.index = "inv.water.potential", n_row = row_below_tlp) # osmotic variables are estimated based on inv.psi vs RWD below TLP
 
     leaf_estimate <- EstimateTLP(df = leaf_estimate, wc.index = "relative.water.deficit", wp.index = "inv.water.potential", n_row_above = row_above_tlp, n_row_below = row_below_tlp)

@@ -7,6 +7,7 @@ data<-pv_dat%>%filter(species=="alma"& leaf=="2")
 #data<-pv_dat%>%filter(species=="alma"& leaf=="2")
 
 fw.index = 5; wp.index = 4; dm.index = 3; n_pts = F
+
 fw.index="fresh.weight"; wp.index= "water.potential"; 
 #wp.index="inv.water.potential"; wm.index="relative.water.deficit"; 
 
@@ -35,7 +36,38 @@ swc_swm_est <- SaturatedWaterContent(leaf_estimate, fw.index = fw.index, wp.inde
   
   leaf_estimate[, c("relative.water.content", "relative.water.deficit")] <- RelativeWaterCD(leaf_estimate, fw.index = fw.index)
   
+  
+  
+  # pts.vec = check_n_pts(leaf_estimate, wp.index="inv.water.potential", wm.index="relative.water.deficit", method = metho)  
 
+  pts.vec = 4
+  pts =4 
+  
+  tlp_est <- OsmoticEstimates(data = leaf_estimate, wc.index = "relative.water.deficit", wp.index = "inv.water.potential", n_row = pts)%>%
+    EstimateTLP(., wc.index = "relative.water.deficit", wp.index = "inv.water.potential", n_row_below=pts) %>%
+    dplyr::pull(leaf.waterpotential.attlp) %>%
+    unique()
+  
+  
+  ## n rows above and below this tlp estimate
+  row_above_tlp <- leaf_estimate %>%
+    dplyr::filter(water.potential> tlp_est) %>%
+    nrow()
+  row_below_tlp <- leaf_estimate %>%
+    dplyr::filter(water.potential< tlp_est) %>%
+    nrow()
+ 
+   if(row_above_tlp|row_below_tlp>nrow(data)-4){
+    row_below_tlp = 4
+    row_above_tlp = nrow(data)-row_below_tlp
+  }else{
+    
+  }
+  
+  leaf_estimate <- OsmoticEstimates(data = leaf_estimate, wc.index = "relative.water.deficit", wp.index = "inv.water.potential", n_row = row_below_tlp) # osmotic variables are estimated based on inv.psi vs RWD below TLP
+  
+  leaf_estimate <- EstimateTLP(df = leaf_estimate, wc.index = "relative.water.deficit", wp.index = "inv.water.potential", n_row_above = row_above_tlp, n_row_below = row_below_tlp)
+  
 ## 
   df<-leaf_estimate
   # define function that returns the SSE
@@ -108,7 +140,7 @@ swc_swm_est <- SaturatedWaterContent(leaf_estimate, fw.index = fw.index, wp.inde
   
   
   
-d# Visualize the best fit
+# Visualize the best fit
   plot(leaf_estimate$relative.water.deficit, leaf_estimate$inv.water.potential, main = "Piecewise Linear Regression", xlab = "X", ylab = "Y", col = "blue")
   abline(mod_bestfit$above, col = "red", lwd = 2)
   abline(mod_bestfit$below, col = "green", lwd = 2) 
