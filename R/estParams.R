@@ -87,6 +87,7 @@ estParams <- function(data, fw.index, wp.index, dm.index, n_pts=F, method) {
       nrow()
     
   if(row_above_tlp|row_below_tlp>nrow(data)-4){
+    
     row_below_tlp = 4
     
     row_above_tlp = nrow(data)-row_below_tlp
