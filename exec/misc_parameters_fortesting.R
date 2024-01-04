@@ -2,7 +2,7 @@
   
 #roco1<-pv_dat%>%filter(species=="roco" & leaf=="1")
 
-data<-pv_dat%>%filter(species=="alma"& leaf=="2")
+data<-pv_dat%>%filter(species=="roco"& leaf=="4")
 
 #data<-pv_dat%>%filter(species=="alma"& leaf=="2")
 
@@ -67,6 +67,7 @@ swc_swm_est <- SaturatedWaterContent(leaf_estimate, fw.index = fw.index, wp.inde
   leaf_estimate <- OsmoticEstimates(data = leaf_estimate, wc.index = "relative.water.deficit", wp.index = "inv.water.potential", n_row = row_below_tlp) # osmotic variables are estimated based on inv.psi vs RWD below TLP
   
   leaf_estimate <- EstimateTLP(df = leaf_estimate, wc.index = "relative.water.deficit", wp.index = "inv.water.potential", n_row_above = row_above_tlp, n_row_below = row_below_tlp)
+  
   
 ## 
   df<-leaf_estimate

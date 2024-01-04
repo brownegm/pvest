@@ -19,7 +19,7 @@ capacitance_fttlp <- function(df, wp.index = "water.potential", wc.index = "rela
   psi.tlp <- unique(df$leaf.waterpotential.attlp) # unique value of psi tlp for leaf
   stopifnot("Psi_tlp must be numeric" = is.numeric(psi.tlp)) # make sure tlp is numeric
   
-  if()
+
   # extract values above and below turgor loss point
   data_abovetlp <- df %>%
     dplyr::arrange(desc({{ wp.sym }})) %>%
