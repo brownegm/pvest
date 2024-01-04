@@ -4,7 +4,8 @@
 #' @param wp.index A string. Indicates water potential vectror in df. Default is "water.potential".
 #' @param wc.index Water content index. Here the expected value is total relative water content. Default is "relative.water.content".
 #' @param s_wc.index Symplastic water content index. Here symplastic relative water content is expected. Default is "sym.rwc".
-#'
+#' @param n_row Number of rows below TLP to operate on
+#' 
 #' @return Returns vectors of estimated capacitance above and below turgor loss point
 #'     and for bulk tissue values and symplastic quantities.
 #'
@@ -12,12 +13,13 @@
 #' @importFrom rlang sym
 #' @export
 
-capacitance_fttlp <- function(df, wp.index = "water.potential", wc.index = "relative.water.content", s_wc.index = "sym.rwc") {
+capacitance_fttlp <- function(df, wp.index = "water.potential", wc.index = "relative.water.content", s_wc.index = "sym.rwc", n_row) {
   wp.sym <- rlang::sym(wp.index) # create symbol from string input for later tidy eval
 
   psi.tlp <- unique(df$leaf.waterpotential.attlp) # unique value of psi tlp for leaf
   stopifnot("Psi_tlp must be numeric" = is.numeric(psi.tlp)) # make sure tlp is numeric
-
+  
+  if()
   # extract values above and below turgor loss point
   data_abovetlp <- df %>%
     dplyr::arrange(desc({{ wp.sym }})) %>%

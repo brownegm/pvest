@@ -8,29 +8,35 @@ library(pvest)
 
 # Functions ---------------------------------------------------------------
 # 
-# find_outlier <- function(x, y, index) {
-#   temp <- merge(x, y)
-# 
-#   var <- names(temp)[index]
-# 
-#   temp_output <- temp %>%
-#     filter({{ index }} <= lwr | {{ index }} >= upr)
-# 
-#   return(temp_output)
-# }
+find_outlier <- function(x, y, index) {
+  temp <- merge(x, y)
+
+  var <- names(temp)[index]
+
+  temp_output <- temp %>%
+    filter({{ index }} <= lwr | {{ index }} >= upr)
+
+  return(temp_output)
+}
 # 
 # # for simplicity in later prediction interval estimation this function creates a new df with just the variable
 # # to be worked on
-# f <- function(data, var) {
-#   new_preds <- data %>% # create df with just the variable of interest
-#     select(any_of(var)) %>%
-#     transmute(var = seq(min(data[, var], na.rm = T), max(data[, var], na.rm = T), length.out = nrow(data)))
-# 
-#   names(new_preds)[1] <- {{ var }
-#   } # rename that column to match
-# 
-#   return(new_preds)
-# }
+f <- function(data, var) {
+  new_preds <- data %>% # create df with just the variable of interest
+    select(any_of(var)) %>%
+    transmute(var = seq(min(data[, var], na.rm = T), max(data[, var], na.rm = T), length.out = nrow(data)))
+
+  names(new_preds)[1] <- {{ var }
+  } # rename that column to match
+
+  return(new_preds)
+}
+
+rmse <- function(actual, predicted){
+  
+  return(sqrt(mean(se(actual,predicted))))
+  
+}
 
 # Load data ---------------------------------------------------------------
 
@@ -101,7 +107,7 @@ lapply(list(four_points=og_nas,greatestr2=r2_nas, lowestpio=pio_nas,piecewise_re
 # Summarize output --------------------------------------------------------
 
 # summarize by leaf
-pv_params_byleaf <- pv_params %>%
+pv_params_byleaf <- pv_params_piecewise %>%
   select(
     species, leaf, unique_id, saturated.water.content, osm.pot.fullturgor, apoplastic.fraction,
     relative.water.deficit.attlp:cap.tlp.sym
@@ -125,6 +131,21 @@ pv_params_byspecies <- pv_params %>%
   group_by(species) %>%
   summarize(across(where(is.numeric), ~ mean(., na.rm = T)))
 
+pv_params_byspecies_pio <- pv_params_pio %>%
+  select(!leaf:saturated.water.mass) %>%
+  group_by(species) %>%
+  summarize(across(where(is.numeric), ~ mean(., na.rm = T)))
+
+pv_params_byspecies_r2 <- pv_params_r2 %>%
+  select(!leaf:saturated.water.mass) %>%
+  group_by(species) %>%
+  summarize(across(where(is.numeric), ~ mean(., na.rm = T)))
+
+pv_params_byspecies_piecewise <- pv_params_piecewise %>%
+  select(!leaf:saturated.water.mass) %>%
+  group_by(species) %>%
+  summarize(across(where(is.numeric), ~ mean(., na.rm = T)))
+
 itvpv_byspecies <- itvpv %>%
   mutate(spcode = tolower(spcode)) %>%
   filter(spcode %in% pv_params_byspecies$species) %>%
@@ -137,6 +158,8 @@ com <- right_join(itvpv, pv_params_byleaf, by = "unique_id", suffix = c("", "_es
 
 com_species <- right_join(itvpv_byspecies, pv_params_byspecies, by = "species", suffix = c("", "_est"))
 
+com_all_method <-  right_join(itvpv, pv_params_byleaf, by = "unique_id", suffix = c("", "_fourpts"))%>%
+  right_join(., pv_params_byleaf_)
 # Estimate OLS and pred intervals (BY LEAF) ----------------------------------
 
 # variables pred and manual
