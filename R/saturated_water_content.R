@@ -18,7 +18,7 @@
 #' @family abovetlp
 #'
 #' @return Returns the saturated water content from the relationship between water mass and water potential
-#' @usage SaturatedWaterContent(data, fw.index, wp.index, n_row)
+#' @usage SaturatedWaterContent(data, fw.index, wp.index, dm.index, n_row = 4)
 #'
 #' @export
 

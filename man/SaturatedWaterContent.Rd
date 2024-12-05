@@ -4,7 +4,7 @@
 \alias{SaturatedWaterContent}
 \title{Saturated water content(SWC) estimation}
 \usage{
-SaturatedWaterContent(data, fw.index, wp.index, n_row)
+SaturatedWaterContent(data, fw.index, wp.index, dm.index, n_row = 4)
 }
 \arguments{
 \item{data}{Data frame containing leaf fresh water mass and leaf water potentials}

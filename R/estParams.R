@@ -99,16 +99,16 @@ estParams <- function(data, fw.index, wp.index, dm.index, method="cv", max_row=n
 
   ## need to change the amount of points included for estimation after TLP is estimated.
     tlp_est <- OsmoticEstimates(data = leaf_estimate, wc.index = "relative.water.deficit", wp.index = "inv.water.potential", n_row = pts)%>%
-      EstimateTLP(., wc.index = "relative.water.deficit", wp.index = "inv.water.potential", n_row_below=pts) %>%
+      EstimateTLP(.data, wc.index = "relative.water.deficit", wp.index = "inv.water.potential", n_row_below=pts) %>%
       dplyr::pull(leaf.waterpotential.attlp) %>%
       unique()
     
     ## n rows above and below this tlp estimate
     row_above_tlp <- leaf_estimate %>%
-      dplyr::filter(.[, wp.index] > tlp_est) %>%
+      dplyr::filter(.data[, wp.index] > tlp_est) %>%
       nrow()
     row_below_tlp <- leaf_estimate %>%
-      dplyr::filter(.[, wp.index] < tlp_est) %>%
+      dplyr::filter(.data[, wp.index] < tlp_est) %>%
       nrow()
 
     leaf_estimate <- OsmoticEstimates(data = leaf_estimate, wc.index = "relative.water.deficit", wp.index = "inv.water.potential", n_row = row_below_tlp) # osmotic variables are estimated based on inv.psi vs RWD below TLP
