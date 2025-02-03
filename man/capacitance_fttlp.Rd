@@ -8,7 +8,8 @@ capacitance_fttlp(
   df,
   wp.index = "water.potential",
   wc.index = "relative.water.content",
-  s_wc.index = "sym.rwc"
+  s_wc.index = "sym.rwc",
+  n_row
 )
 }
 \arguments{
@@ -19,6 +20,8 @@ capacitance_fttlp(
 \item{wc.index}{Water content index. Here the expected value is total relative water content. Default is "relative.water.content".}
 
 \item{s_wc.index}{Symplastic water content index. Here symplastic relative water content is expected. Default is "sym.rwc".}
+
+\item{n_row}{Number of rows below TLP to operate on}
 }
 \value{
 Returns vectors of estimated capacitance above and below turgor loss point

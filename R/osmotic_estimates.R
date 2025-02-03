@@ -17,7 +17,6 @@
 #'
 
 OsmoticPotFullTurgor <- function(data, wc.index, wp.index) {
-  output <- list()
 
   slope <- -sma_slope(x = data[, wp.index], y = data[, wc.index])
 
@@ -25,9 +24,9 @@ OsmoticPotFullTurgor <- function(data, wc.index, wp.index) {
 
   pi.o <- -1 / intercept
 
-  output <- list("Slope"=slope,
-                 "Intercept"=intercept,
-                 "Pi_o"=pi.o)
+  output <- list("slope"=slope, 
+                  "intercept"=intercept,
+                  "pi.o"=pi.o)
 
   return(output)
 }

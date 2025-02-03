@@ -4,7 +4,13 @@
 \alias{check_n_pts}
 \title{Determine best number of points below turgor loss}
 \usage{
-check_n_pts(data, wp.index, wm.index, max_row = 10)
+check_n_pts(
+  data,
+  wp.index,
+  wm.index,
+  max_row = 10,
+  method = c("r2", "pio", "cv10", "piecewise", "all")
+)
 }
 \arguments{
 \item{data}{a data frame}
@@ -14,6 +20,8 @@ check_n_pts(data, wp.index, wm.index, max_row = 10)
 \item{wm.index}{index number or string containing the column name of the water mass data (i.e., water mass or relative water content)}
 
 \item{max_row}{set cap on the number of rows to test for best r-squared value. Default to 10 rows of data.}
+
+\item{method}{set method for choosing number of rows. See return for returned values. Recommend using "all" outside of other functions. "All" returns a named list as below.}
 }
 \value{
 returns a list of 6 containing r2 values, osmotic potentials and coefficients of variation. See below for further information.

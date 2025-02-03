@@ -4,14 +4,7 @@
 \alias{estParams}
 \title{Estimate all pressure volume curve parameters for all leaves}
 \usage{
-estParams(
-  data,
-  fw.index,
-  wp.index,
-  dm.index,
-  method = "cv",
-  max_row = nrow(data)
-)
+estParams(data, fw.index, wp.index, dm.index, n_pts = F, method)
 }
 \arguments{
 \item{data}{A data frame. Input data frame with the raw values}
@@ -22,9 +15,9 @@ estParams(
 
 \item{dm.index}{Numeric index of dry mass data.}
 
-\item{method}{Default "cv"; See details for more information. If method="cv", the number of rows to use for predicting pio is based on the lowest number of rows with a CV less than 10\%.}
+\item{n_pts}{Logical. If \code{TRUE}, the number of rows to use for predicting pio is based on the lowest number of rows with a CV less than 10\%.}
 
-\item{max_row}{Defaults to length of the input data frame. Maximum number of rows to check with method.}
+\item{method}{Optional character parameter for when n_pts=T. Determines which method to pick number of rows below TLP.O ptions include "r2","pio","cv". See \code{?check_n_points} for more information}
 }
 \value{
 Returns a data frame with the estimated parameters
@@ -40,12 +33,5 @@ With the data for each leaf it takes the first for values and estimates a satura
 relative water content and then with the relationship between relative water deficit and 1/psi, it estimates the
 osmotic potential and pressure potential at full turgor(max.psip) from which the same parameters are estimated for each
 subsequent hydration state.
-
-Method options: 
-* "cv" - number of rows chosen by lowest number of points where slope of inv_psi vs RWD is greater than 10\%
-* "r2" - number of rows chosen as the number of points where R^2 is greatest.
-* "lowest" - number of rows chosen as number of points that estimates the lowest pio value between 4-max_rows rows. 
-* "median" - number of rows chosen as number of points that estimates the median pio value between 4-max_rows rows. 
-* if nothing specified - estimate pio with only 4 observations. 
 }\if{html}{\out{</div>}}
 }
