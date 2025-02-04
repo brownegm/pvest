@@ -20,8 +20,8 @@
 #' @importFrom stats sd
 
 
-
 sma_slope <- function(x, y) {
+
   return(sd(x) / sd(y))
 }
 
@@ -39,11 +39,32 @@ NULL
 #'     variable(e.g., water content or leaf relative water content). Likewise, the y variable is often associated
 #'     with pressure(e.g., leaf water potential, and inverse of leaf water potential). For a
 #'     detailed explanation of the function see \code{vignette('sma-slope-intercept')}
-#'
 #' @export
 #'
 
-
 sma_intercept <- function(x, y, slope) {
+
   return(mean(x) - (slope * mean(y)))
+}
+
+
+#' SMA model formulation
+#'
+#' @param x independent variable
+#' @param y dependent variable
+#'
+#' @returns Returns a model function slope and intercept values for the standard major axis regression
+#' @export
+#'
+
+sma_model <- function(x,y){
+  
+  if(any(is.na(x))|any(is.na(y))){
+    stop("sma_model:Missing values found in input data. Ensure that there are no missing values.")
+  }
+  
+  slope <- sma_slope(x,y)
+  intercept <- sma_intercept(x,y,slope)
+  
+  return(structure(list(slope, intercept), .Names = c("slope", "intercept"), class = "sma_model"))
 }
