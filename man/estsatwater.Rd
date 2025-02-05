@@ -4,16 +4,16 @@
 \alias{estsatwater}
 \title{Saturated water content(SWC) estimation}
 \usage{
-SaturatedWaterContent(data, fw.index, wp.index, dm.index, n_row = 4)
+estsatwater(fresh_mass, psi, dry_mass)
 }
 \arguments{
+\item{fresh_mass}{Numeric vector of fresh water mass}
+
+\item{psi}{Numeric vector of water potential}
+
+\item{dry_mass}{Leaf dry mass}
+
 \item{data}{Data frame containing leaf fresh water mass and leaf water potentials}
-
-\item{fw.index}{Numeric value indicating the column number where the leaf water mass data is within data frame}
-
-\item{wp.index}{Numeric value indicating the column number where the leaf water potential data is within the data frame}
-
-\item{dm}{Leaf dry mass}
 
 \item{n_row}{A number. Indicates number of rows to estimate parameters from within data}
 }

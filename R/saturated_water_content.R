@@ -4,9 +4,9 @@
 #'     detailed explanation of the function see \code{vignette('swc-and-rwc-estimation')}
 #'
 #' @param data Data frame containing leaf fresh water mass and leaf water potentials
-#' @param fw.index Numeric value indicating the column number where the leaf water mass data is within data frame
-#' @param wp.index Numeric value indicating the column number where the leaf water potential data is within the data frame
-#' @param dm Leaf dry mass
+#' @param fresh_mass Numeric vector of fresh water mass
+#' @param psi Numeric vector of water potential
+#' @param dry_mass Leaf dry mass
 #' @param n_row A number. Indicates number of rows to estimate parameters from within data
 #' @details This function calculates the saturated water content as the standard major axis intercept.
 #'
@@ -18,31 +18,39 @@
 #' @family abovetlp
 #'
 #' @return Returns the saturated water content from the relationship between water mass and water potential
-#' @usage SaturatedWaterContent(data, fw.index, wp.index, dm.index, n_row = 4)
+#' @usage estsatwater(fresh_mass, psi, dry_mass)
 #'
 #' @export
 #' 
 #' @importFrom dplyr arrange slice_head
 
-estsatwater <- function(data, fw.index, wp.index, dm, n_row = 4) {
-  # first select the first for values and estimate SWC and RWC values
-  data_abovetlp <- data %>%
-    dplyr::arrange(desc({{ wp.index }})) %>%
-    dplyr::slice_head(n = n_row) %>%
-    as.data.frame()
-  
-  # dry mass 
-  dry_mass <- dm
+estsatwater <- function(fresh_mass, psi, dry_mass) {
+  # check dry mass 
+  if(length(dry_mass) > 1){
+    unique_dry_mass <- unique(dry_mass)
+   if(!length(unique_dry_mass) == 1){
+     cat("{Unique dry mass values are}:", unique_dry_mass)
+     stop("Dry mass should be a single value for a given individual.")
+   }else{
+     dry_mass <- unique(dry_mass)[1]
+   }
+  }
+
+  fw <- fresh_mass
+  wp <- psi
   
   # estimate the SMA model
-  sma_abovetlp <- sma_model(data_abovetlp[, fw.index], data_abovetlp[, wp.index])
+  sma_abovetlp <- sma_model(fw, wp)
 
   #estimate the saturated water content
   sat_water_mass <- sma_abovetlp$intercept
 
   sat_water_content <- sat_water_mass / dry_mass
 
-  return(list("swm" = sat_water_mass, "swc" = sat_water_content))
+  return(structure(
+    list("swm" = sat_water_mass, "swc" = sat_water_content),
+    units = list("swm"="g", "swc"="g/g")
+  ))
 }
 
 NULL
@@ -65,38 +73,55 @@ NULL
 
 estRWC <- function(data, fw.index, wp.index, dm.index, n_row = 4, silent) {
   
-  varnames <- list("fw" = names(data)[fw.index], "wp" = names(data)[wp.index])
-  check_var <- all(varnames %in% names(data))
-
-  if (nrow(data) < n_row){
-    stop("The number of rows to estimate parameters from is greater than the number of rows in the data.")
-  }
-  
-  if (check_var == FALSE){
-    stop("The column names provided do not exist in the data frame.")
-  }
- 
-  if(silent == FALSE){
-    
-    cat(
-      varnames$fw,
-      varnames$wp,
-      labels = paste("{Fresh mass, water potential column names}: \n"),
-      fill = TRUE
+  if (nrow(data) < n_row) {
+    stop(
+      "The number of rows to estimate parameters from is greater than the number of rows in the data."
     )
   }
   
+  varnames <- list("fw" = names(data)[fw.index],
+                   "wp" = names(data)[wp.index], 
+                   "dm" = ifelse(dm.index%%1==0,
+                                 names(data)[dm.index],NA))
+  
+  check_var <- all(varnames[c("fw", "wp")] %in% names(data))
+  
+  if (check_var == FALSE) {
+    stop("estRWC: The column names (for fresh mass or water potential) provided do not exist in the data frame.")
+  }
+  
+  if (silent == FALSE) {
+    cat("\nEstimating RWC and RWD...\n\n")
+    
+    print(head(data))
+
+    cat("Using the following columns for the estimation:\n",
+      "{Fresh mass}: ", varnames$fw, "\n",
+      "{Water potential}: ", varnames$wp, "\n\n",
+      sep = ""
+    )
+    
+  }
+  
+  # Select values above initial turgor loss guess
+  data_abovetlp <- data %>%
+    dplyr::arrange(desc({{ wp.index }})) %>%
+    dplyr::slice_head(n = n_row) %>%
+    as.data.frame()
+  
   # inputs
-  fresh_mass <- data[, varnames$fw]
-  dry_mass <- data[, varnames$wp]
+  fresh_mass <- data[[varnames$fw]]
+  fresh_mass_thres <- data_abovetlp[[varnames$fw]]
+  water_potential_thres <- data_abovetlp[[varnames$wp]]
+  dry_mass <- ifelse(dm.index%%1==0, #if dm.index is an integer send vector of values to estsatwater.
+                     data_abovetlp[[varnames$dm]],
+                     dm.index)#
   
   #calculate SWC and relative water content
   swc <- estsatwater(
-    data,
-    fw.index = varnames$fw,
-    wp.index = varnames$wp,
-    dm = dry_mass,
-    n_row = n_row
+    fresh_mass = fresh_mass_thres,
+    psi = water_potential_thres,
+    dry_mass = dry_mass
   )$swc
   
   relative.water.content <- (fresh_mass/ swc) * 100
@@ -107,7 +132,8 @@ estRWC <- function(data, fw.index, wp.index, dm.index, n_row = 4, silent) {
   rwc.rwd <- structure(
     list(swc, relative.water.content, relative.water.deficit),
     .Names = c("swc", "rwc", "rwd"),
-    .flag = paste("There are", plateau, "potential plateau points.")
+     units = c("g/g", "%", "%"),
+     flag = paste("There are", plateau, "potential plateau points.")
   )
 
   return(rwc.rwd)
