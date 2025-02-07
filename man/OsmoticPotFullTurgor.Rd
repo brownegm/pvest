@@ -4,7 +4,7 @@
 \alias{OsmoticPotFullTurgor}
 \title{Osmotic potential at full turgor estimate}
 \usage{
-OsmoticPotFullTurgor(data, wc.index, wp.index)
+OsmoticPotFullTurgor(data, rwc, psi)
 }
 \arguments{
 \item{data}{A data frame. A data frame containing the data set of the last 4 hydration states for a given leaf}

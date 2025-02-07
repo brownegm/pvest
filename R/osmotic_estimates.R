@@ -16,17 +16,20 @@
 #' @seealso \code{\link{sma_slope}}, \code{\link{sma_intercept}}
 #'
 
-OsmoticPotFullTurgor <- function(data, wc.index, wp.index) {
+OsmoticPotFullTurgor <- function(data, rwc, psi) {
 
-  slope <- -sma_slope(x = data[, wp.index], y = data[, wc.index])
+  
+  
+  osm_mod <- sma_model(x = psi, 
+                       y = rwc)
+  #slope is negative here
+  osm_mod$slope <- osm_mod$slope*-1
 
-  intercept <- sma_intercept(x = data[, wp.index], y = data[, wc.index], slope = slope)
+  pi.o <- -1 / osm_mod$intercept
 
-  pi.o <- -1 / intercept
-
-  output <- list("slope"=slope, 
-                  "intercept"=intercept,
-                  "pi.o"=pi.o)
+  output <- list("slope" = osm_mod$slope, 
+                  "intercept" = osm_mod$intercept,
+                  "pi.o" = pi.o)
 
   return(output)
 }

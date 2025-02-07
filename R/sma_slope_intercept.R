@@ -65,6 +65,7 @@ sma_model <- function(x,y){
   
   slope <- sma_slope(x,y)
   intercept <- sma_intercept(x,y,slope)
+  model <- as.formula(paste("y ~", slope, "* x +", intercept))
   
-  return(structure(list(slope, intercept), .Names = c("slope", "intercept"), class = "sma_model"))
+  return(structure(model, .Names = "model", slope= slope, intercept = intercept, class = "sma_model"))
 }
