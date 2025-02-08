@@ -18,8 +18,6 @@
 
 OsmoticPotFullTurgor <- function(data, rwc, psi) {
 
-  
-  
   osm_mod <- sma_model(x = psi, 
                        y = rwc)
   #slope is negative here
