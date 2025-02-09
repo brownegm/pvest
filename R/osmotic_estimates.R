@@ -18,7 +18,7 @@
 #' @seealso \code{\link{sma_slope}}, \code{\link{sma_intercept}}
 #'
 
-estPio <- function(rwc, psi) {
+estpio <- function(rwc, psi) {
 
   stopifnot(length(rwc)==length(psi))
   
@@ -107,7 +107,7 @@ estOsmotic <- function(data, wc.index = "relative.water.deficit", wp.index = "in
   
   minus_inv_psi <- -1/psi
 
-  pio <- estPio (rwc, minus_inv_psi)
+  pio <- estpio (rwc, minus_inv_psi)
   
   #calculate osmotic and pressure potential at full turgor
   osm.pot.fullturgor <- pio$pi.o
