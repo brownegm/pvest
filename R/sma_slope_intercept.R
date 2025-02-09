@@ -48,7 +48,7 @@ sma_intercept <- function(x, y, slope) {
 }
 
 
-#' SMA model formulation
+#' SMA model generic
 #'
 #' @param x independent variable
 #' @param y dependent variable
@@ -57,15 +57,71 @@ sma_intercept <- function(x, y, slope) {
 #' @export
 #'
 
-sma_model <- function(x,y){
+sma_model <- function(x, y, ...){
+  UseMethod("sma_model")
+}
+
+
+#' Default SMA model formulation
+#'
+#' @param x independent variable
+#' @param y dependent variable
+#'
+#' @returns Returns a model function slope and intercept values for the standard major axis regression
+#' @export
+#
+sma_model.default <- function(x, y, ...){
   
   if(any(is.na(x))|any(is.na(y))){
     stop("sma_model:Missing values found in input data. Ensure that there are no missing values.")
   }
   
-  slope <- sma_slope(x,y)
-  intercept <- sma_intercept(x,y,slope)
-  model <- as.formula(paste("y ~", slope, "* x +", intercept))
+  slope <- pvest::sma_slope(x, y)
+  intercept <- pvest::sma_intercept(x, y, slope)
   
-  return(structure(model, .Names = "model", slope= slope, intercept = intercept, class = "sma_model"))
+  model <- structure(.Data = list(slope, intercept),
+                     .Names = c("slope", "intercept"),
+                     class = "sma_model")
+  
+  invisible(model)
+
 }
+
+
+#' Method for calculate SMA model parameters for determining osmotic parameters
+#'
+#' @param x independent variable
+#' @param y dependent variable
+#'
+#' @returns Returns a model function slope and intercept values for the standard major axis regression
+#' @export
+#' 
+sma_model.osm_input <- function(x,y){
+  if(any(is.na(x))|any(is.na(y))){
+    stop("sma_model:Missing values found in input data. Ensure that there are no missing values.")
+  }
+  
+  slope <- pvest::sma_slope(x, y) * -1
+  intercept <- pvest::sma_intercept(x, y, slope)
+  
+  model <- structure(.Data = list(slope, intercept),
+                     .Names = c("slope", "intercept"),
+                     class = "sma_model")
+  
+  invisible(model)
+}
+#' Print method for the SMA model output
+#'
+#' @param x An object of the class "sma_model"
+#' @param ... Other parameters passed to cat
+#'
+#' @returns Printed SMA model output
+#' @export print.sma_model
+
+print.sma_model <- function(x, ...){
+  cat("SMA model\n")
+  cat("Slope:", x$slope, "\n")
+  cat("Intercept:", x$intercept, "\n")
+}
+
+

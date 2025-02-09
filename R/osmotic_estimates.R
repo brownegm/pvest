@@ -1,39 +1,60 @@
 # Contains functions for estimating the leaf osmotic parameters from the dataset with saturated and relative water content
 # already determined.
+
+
 #' Osmotic potential at full turgor estimate
 #'
 #' @description Estimates the osmotic potential at full turgor from the linear relationship
 #'     between relative water deficit and inverse leaf water potential.
 #'
 #' @param data A data frame. A data frame containing the data set of the last 4 hydration states for a given leaf
-#' @param wc.index A double. Data frame index which contains the relative water content/deficit
-#' @param wp.index A double. Data frame index which contains the leaf water potential data
+#' @param rwc A vector of relative water content or deficit data
+#' @param psi A vector of water potential data
 #'
-#' @return Numeric list containing the slope, intercept and osmotic potential at full turgor, in that order.
+#' @return Numeric list containing the slope, intercept and osmotic potential at full turgor, in that order. Class "osmEst"
 #'
 #' @export
 #'
 #' @seealso \code{\link{sma_slope}}, \code{\link{sma_intercept}}
 #'
 
-OsmoticPotFullTurgor <- function(data, rwc, psi) {
+estPio <- function(rwc, psi) {
 
+  stopifnot(length(rwc)==length(psi))
   
+  class(rwc) <- "osm_input"
+  class(psi) <- "osm_input"
   
+  #slope is negative here
   osm_mod <- sma_model(x = psi, 
                        y = rwc)
-  #slope is negative here
-  osm_mod$slope <- osm_mod$slope*-1
-
+  
   pi.o <- -1 / osm_mod$intercept
 
-  output <- list("slope" = osm_mod$slope, 
-                  "intercept" = osm_mod$intercept,
-                  "pi.o" = pi.o)
+  output <- structure(list(
+    # "slope" = osm_mod$slope,
+    # "intercept" = osm_mod$intercept,
+    "sma_mod" = osm_mod,
+    "pi.o" = pi.o
+  ),
+  class = "pioEst")
 
   return(output)
 }
 
+#' Print method for the Osmotic estimates output
+#'
+#' @param x An object of the class "pioEst"
+#' @param ... Other parameters passed to cat
+#'
+#' @returns Printed SMA model output
+#' @export print.pioEst
+
+print.pioEst <- function(x, ...){
+  cat("Pi estimates: \n")|>eval()
+  cat("Osmotic potential at full turgor:", x$pi.o, "\n")
+  return(x$sma_mod)
+}
 NULL
 
 #' Osmotic and pressure parameter estimation
@@ -69,24 +90,43 @@ NULL
 #'     }
 #'
 #' @import dplyr
-#' @export OsmoticEstimates
+#' @export estOsmotic
 #' @seealso [RelativeWaterCD()], [sma_intercept()]
 
-OsmoticEstimates <- function(data, wc.index = "relative.water.deficit", wp.index = "inv.water.potential", n_row = 4) {
+estOsmotic <- function(data, wc.index = "relative.water.deficit", wp.index = "inv.water.potential", n_row = 4) {
+  
   data_belowtlp <- data %>%
     dplyr::arrange(desc(wp.index)) %>%
     dplyr::slice_tail(n = n_row) %>%
     as.data.frame()
+  
+  # create vectors
+  rwc <- data_belowtlp[["wc.index"]]
+  rwd <- 100 - rwc
+  psi <- data_belowtlp[["wp.index"]]
+  
+  minus_inv_psi <- -1/psi
 
-  pi.o_list <- OsmoticPotFullTurgor(data_belowtlp, wc.index, wp.index)
+  pio <- estPio (rwc, minus_inv_psi)
+  
+  #calculate osmotic and pressure potential at full turgor
+  osm.pot.fullturgor <- pio$pi.o
+  max.psip <- osm.pot.fullturgor * -1
 
-  data$osm.pot.fullturgor <- pi.o_list[3]
-  data$max.psip <- data$osm.pot.fullturgor * -1
-  data$osmotic.potential <- -1 / (pi.o_list[2] + (pi.o_list[1] * data$relative.water.deficit))
-  data$pressure.potential <- data$water.potential - data$osmotic.potential
-  data$apoplastic.fraction <- 100 + (pi.o_list[2] / pi.o_list[1])
-  data$sym.rwc <- ((data$relative.water.content - (data$apoplastic.fraction)) / (100 - (data$apoplastic.fraction))) * 100
-  data$sym.rwd <- 100 - data$sym.rwc
+  osmotic_potential <- -1 / (pio$model$intercept + (pio$model$intercept * rwd))
+  pressure_potential <- psi - osmotic_potential
+  apoplastic_fraction <- 100 + (pio$model$intercept / pio$model$slope)
+  sym_rwc <- ((rwc - (apoplastic_fraction)) / (100 - (apoplastic_fraction))) * 100
+  sym_rwd <- 100 - sym_rwc
 
-  return(data)
+  structure(list("psi" = psi, 
+                 "pio" = osm.pot.fullturgor,
+                 "psip_o"= max.psip,
+                 "osmpot" = osmotic.potential,
+                 "prespot" = pressure_potential, 
+                 "af" = apoplastic_fraction, 
+                 "symrwc" = sym_rwc, 
+                 "symrwd" = sym_rwd), 
+                 class="osmEst")
 }
+
