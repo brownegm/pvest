@@ -120,6 +120,7 @@ estOsmotic <- function(data, wc.index = "relative.water.deficit", wp.index = "in
   sym_rwd <- 100 - sym_rwc
 
   structure(list("psi" = psi, 
+                 "invpsi" = minus_inv_psi,
                  "pio" = osm.pot.fullturgor,
                  "psip_o"= max.psip,
                  "osmpot" = osmotic.potential,
