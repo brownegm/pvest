@@ -11,7 +11,8 @@ To download the package use `install_github()` from devtools:
 
 ```{r}
 # download package
-devtools::install_github("brownegm/pvest", build_vignettes=TRUE) #Feel free not to build vignettes but they may be helpful for usage of functions. 
+library(pak)
+pak("brownegm/pvest")  
 
 ```
 
