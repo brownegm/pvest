@@ -1,8 +1,14 @@
+# Testing the functionality of the RWC and saturated water content estimation
+
+# simple fake dataset 
+data <- data.frame(
+  fw = seq(0.450, 0.2, length.out = 10),
+  wp = seq(-0.5, -2.5, length.out = 10),
+  dm = 0.5
+)
+
 test_that("Check that the output makes sense", {
-  data <- data.frame(fw = seq(0.450,0.2, length.out = 10),
-                     wp = seq(-0.5,-2.5, length.out = 10),
-                     dm = 0.5)
-  
+
   rwc_estimate <- estRWC(
     data = data,
     fw.index = 1,
@@ -19,5 +25,20 @@ test_that("Check that the output makes sense", {
   rwcdiff <- all(diff(rwc_estimate$rwc) < 0)
   
   expect_true(rwcdiff)
+})
+
+test_that("Check that the errors work", {
+
+#rename the columns 
+  names(data)[1]<- "fake_col_name"
+
+  expect_error(estRWC(
+    data = data,
+    fw.index = 1,
+    wp.index = 2,
+    dm.index = 3,
+    silent = F
+  ))
+
 })
 

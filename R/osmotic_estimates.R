@@ -65,13 +65,13 @@ NULL
 #' @param wc.index A double. A data frame index which contains the water content data passed through OsmoticPotFullTurgor function
 #' @param wp.index A double. A data frame index which contains the leaf water potential data
 #' @param n_row A double. Value which indicates the number of rows for estimating parameters. Default to 4 rows.
-#'
+#' @param silent Logical. Silences messages if TRUE
 #' @details
 #' This function estimates osmotic variables from the values \strong{below} turgor loss point. Here we assume that the data points at
 #' last 4 hydration states all represent points below turgor loss point.
 #'
 #' It is implemented \strong{after} estimation of leaf saturated water content, relative water content and relative
-#' water deficit.See `RelativeWaterCD` for information on the estimation of those parameters.
+#' water deficit.See `estRWC` for information on the estimation of those parameters.
 #'
 #' Here, we estimate the osmotic potential at full turgor as the x-intercept of the relationship between
 #' inverse leaf water potential and relative water deficit below turgor loss point. The slope needs to be negative
@@ -91,15 +91,38 @@ NULL
 #'
 #' @import dplyr
 #' @export estOsmotic
-#' @seealso [RelativeWaterCD()], [sma_intercept()]
+#' @seealso [estRWC()], [sma_intercept()]
 
-estOsmotic <- function(data, wc.index = "relative.water.deficit", wp.index = "inv.water.potential", n_row = 4) {
+estOsmotic <- function(data, wc.index = "relative.water.deficit", wp.index = "inv.water.potential", n_row = 4, silent) {
   
   data_belowtlp <- data %>%
     dplyr::arrange(desc(wp.index)) %>%
     dplyr::slice_tail(n = n_row) %>%
     as.data.frame()
   
+  varnames <- list(
+    "wc" = names(data)[wc.index],
+    "wp" = names(data)[wp.index]
+  )
+
+  check_var <- all(varnames[c("wc", "wp")] %in% names(data))
+
+  if (check_var == FALSE) {
+    stop("estOsmotic: The column names (for fresh mass or water potential) provided do not exist in the data frame.")
+  }
+
+  if (silent == FALSE) {
+    cat("\nEstimating osmotic variables...\n\n")
+    
+    print(head(data))
+
+    cat("Using the following columns for the estimation:\n",
+      "{RWC/RWD}: ", varnames$wc, "\n",
+      "{Water potential}: ", varnames$wp, "\n\n",
+      sep = ""
+    )
+    
+  }
   # create vectors
   rwc <- data_belowtlp[["wc.index"]]
   rwd <- 100 - rwc
@@ -131,3 +154,8 @@ estOsmotic <- function(data, wc.index = "relative.water.deficit", wp.index = "in
                  class="osmEst")
 }
 
+
+print.osmEst <- function (x, ...){
+
+  cat("Osmotic estimates:")
+}
