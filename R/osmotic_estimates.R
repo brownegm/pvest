@@ -21,13 +21,12 @@
 estpio <- function(rwc, psi) {
 
   stopifnot(length(rwc)==length(psi))
-  
-  class(rwc) <- "osm_input"
-  class(psi) <- "osm_input"
+
+  inputs<- structure(list(rwc, psi),.Names =  c("rwc", "psi"), class="osm_input")
   
   #slope is negative here
-  osm_mod <- sma_model(x = psi, 
-                       y = rwc)
+  osm_mod <- sma_model(x = inputs$psi, 
+                       y = inputs$rwc)
   
   pi.o <- -1 / osm_mod$intercept
 
@@ -130,7 +129,7 @@ estOsmotic <- function(data, wc.index = "relative.water.deficit", wp.index = "in
   
   minus_inv_psi <- -1/psi
 
-  pio <- estpio (rwc, minus_inv_psi)
+  pio <- estpio(rwc, minus_inv_psi)
   
   #calculate osmotic and pressure potential at full turgor
   osm.pot.fullturgor <- pio$pi.o
@@ -150,7 +149,9 @@ estOsmotic <- function(data, wc.index = "relative.water.deficit", wp.index = "in
                  "prespot" = pressure_potential, 
                  "af" = apoplastic_fraction, 
                  "symrwc" = sym_rwc, 
-                 "symrwd" = sym_rwd), 
+                 "symrwd" = sym_rwd,
+                 "data" = data, # bring the data and model estimates along
+                 "model" = pio$sma_mod), 
                  class="osmEst")
 }
 
@@ -158,4 +159,5 @@ estOsmotic <- function(data, wc.index = "relative.water.deficit", wp.index = "in
 print.osmEst <- function (x, ...){
 
   cat("Osmotic estimates:")
+
 }

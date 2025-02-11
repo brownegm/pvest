@@ -9,25 +9,36 @@
 #' @return Bulk and symplastic slopes and intercepts.
 #' @export
 #'
-PsiPRWD_slopeint <- function(data, psip.index, rwd.index, sym_rwd.index) {
-  slope <- -sma_slope(x = data[, psip.index], y = data[, rwd.index])
-  intercept <- sma_intercept(x = data[, psip.index], y = data[, rwd.index], slope = slope)
+psip_rwd_slopeint <- function(psip, rwd, sym_rwd) {
 
-  slope_sym <- -sma_slope(x = data[, psip.index], y = data[, sym_rwd.index])
-  intercept_sym <- sma_intercept(x = data[, psip.index], y = data[, sym_rwd.index], slope = slope_sym)
+  #set input class for correct input type 
+  inputs <- structure(list(psip, rwd, sym_rwd),.Names =  c( "psip", "rwd", "sym_rwd"), class="osm_input")
 
-  out <- list("Bulk_slope" = slope,
-              "Bulk_int" = intercept,
-              "Sym_slope" = slope_sym,
-              "Sym_int" = intercept_sym)
+  bulk <- sma_model(psip,rwd)
+  symplastic <- sma_model(psip,sym_rwd)
 
-  return(out)
+  # slope <- -sma_slope(x = psip, y = data[, rwd.index])
+  # intercept <- sma_intercept(x = psip, y = data[, rwd.index], slope = slope)
+
+  # slope_sym <- -sma_slope(x = psip, y = data[, sym_rwd.index])
+  # intercept_sym <- sma_intercept(x = psip, y = data[, sym_rwd.index], slope = slope_sym)
+
+  out <- list("bulk_slope" = bulk$slope,
+              "bulk_int" = bulk$intercept,
+              "sym_slope" = symplastic$slope,
+              "sym_int" = symplastic$intercept)
+  
+  # out <- list("bulk_slope" = slope,
+  #             "bulk_int" = intercept,
+  #             "sym_slope" = slope_sym,
+  #             "sym_int" = intercept_sym)
+  invisible(out)
 }
 #' Estimate parameters at turgor loss
 #' @description Estimate leaf water potential, relative water content at turgor loss point and modulus of elasticity
 #'    both bulk parameters and their symplastic counterparts
 #'
-#' @param df A data frame
+#' @param data A data frame
 #' @param wc.index An unquoted string indicating vector with water associated variable
 #' @param wp.index An unquoted string indicating vector with pressure associated variable
 #' @param n_row_above Double; Default to 4 rows.Value which indicates the number of rows above TLP for estimating SMA line parameters.
@@ -38,7 +49,14 @@ PsiPRWD_slopeint <- function(data, psip.index, rwd.index, sym_rwd.index) {
 #' @import dplyr
 #' @export
 
-EstimateTLP <- function(df, wc.index, wp.index, n_row_above = 4, n_row_below = 4) {
+estTLP <- function(x,...){
+  UseMethod("estTLP")
+}
+
+
+#' @export
+estTLP.default <- function(data, wc.index, wp.index, n_row_above = 4, n_row_below = 4) {
+  
   data_belowtlp <- df %>%
     dplyr::arrange(desc({{ wp.index }})) %>%
     dplyr::slice_tail(n = n_row_below) %>%
@@ -49,22 +67,58 @@ EstimateTLP <- function(df, wc.index, wp.index, n_row_above = 4, n_row_below = 4
     dplyr::slice_head(n = n_row_above) %>%
     as.data.frame()
 
-  psip.rwd_list <- PsiPRWD_slopeint(
+  psip_rwd_list <- psip_rwd_slopeint(
     data = data_abovetlp,
     psip.index = "pressure.potential",
     rwd.index = "relative.water.deficit",
     sym_rwd.index = "sym.rwd"
   ) # output is a list in order: slope, intercept, sym slope, sym intercept
 
-  pi.o_list <- OsmoticPotFullTurgor(data = data_belowtlp, wc.index, wp.index)[1:2]
+  pi.o_list <- estOsmotic(data = data_belowtlp, wc.index, wp.index)
 
-  df$relative.water.deficit.attlp <- -((psip.rwd_list[2]) / (psip.rwd_list[1]))
-  df$relative.water.content.attlp <- 100 - df$relative.water.deficit.attlp
-  df$sym.rwd.attlp <- -((psip.rwd_list[4]) / (psip.rwd_list[3]))
-  df$sym.rwc.attlp <- 100 - df$sym.rwd.attlp
-  df$leaf.waterpotential.attlp <- -1 / (pi.o_list[1] * df$relative.water.deficit.attlp + pi.o_list[2])
-  df$modulus <- df$max.psip / ((100 - df$relative.water.content.attlp) / 100)
-  df$modulus_sym <- df$max.psip / ((100 - df$sym.rwc.attlp) / 100)
+  outtlp <- structure(list(
+  "rwd_tlp" <- -((psip.rwd_list[2]) / (psip.rwd_list[1])),
+  "rwc_tlp"<- 100 - relative.water.deficit.attlp,
+  "sym_rwd_tlp" <- -((psip.rwd_list[4]) / (psip.rwd_list[3])),
+  "sym_rwc_tlp" <- 100 - sym.rwd.attlp,
+  "pi_tlp"<- -1 / (pi.o_list[1] * relative.water.deficit.attlp + pi.o_list[2]),
+  "modulus" <- max.psip / ((100 - relative.water.content.attlp) / 100),
+  "modulus_sym" <- max.psip / ((100 - sym.rwc.attlp) / 100)
+  ), 
+  class= "tlp")
+  return(outtlp)
+}
 
-  return(df)
+#' @description A method of estTLP for use with objects that are of class "osmEst"(i.e., returned from pvest::estOsm())
+#' @export
+estTLP.osmEst <- function(osm_object, wc.index, wp.index, n_row_above = 4, n_row_below = 4) {
+  
+  # for an object of class osmEst
+  data_abovetlp <- osm_object$data %>%
+    dplyr::arrange(desc({{ wp.index }})) %>%
+    dplyr::slice_head(n = n_row_above) %>%
+    as.data.frame()
+
+  psip.rwd_list <- psip_rwd_slopeint(
+    data = data_abovetlp,
+    psip.index = "pressure.potential",
+    rwd.index = "relative.water.deficit",
+    sym_rwd.index = "sym.rwd"
+  ) # output is a list in order: slope, intercept, sym slope, sym intercept
+
+  osm_slope <- osm_object$model$slope
+  osm_intercept <- osm_object$model$intercept
+
+  outtlp <- structure(list(
+    "rwd_tlp" <- -((psip.rwd_list[2]) / (psip.rwd_list[1])),
+    "rwc_tlp"<- 100 - relative.water.deficit.attlp,
+    "sym_rwd_tlp" <- -((psip.rwd_list[4]) / (psip.rwd_list[3])),
+    "sym_rwc_tlp" <- 100 - sym.rwd.attlp,
+    "pi_tlp"<- -1 / (osm_slope * relative.water.deficit.attlp + osm_intercept),
+    "modulus" <- max.psip / ((100 - relative.water.content.attlp) / 100),
+    "modulus_sym" <- max.psip / ((100 - sym.rwc.attlp) / 100)
+    ), 
+    class= "tlp")
+  
+  return(outtlp)
 }

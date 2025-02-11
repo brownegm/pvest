@@ -50,14 +50,11 @@ sma_intercept <- function(x, y, slope) {
 
 #' SMA model generic
 #'
-#' @param x independent variable
-#' @param y dependent variable
-#'
 #' @returns Returns a model function slope and intercept values for the standard major axis regression
 #' @export
 #'
 
-sma_model <- function(x, y, ...){
+sma_model <- function(x, ...){
   UseMethod("sma_model")
 }
 
