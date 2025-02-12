@@ -94,6 +94,7 @@ sma_model.default <- function(x, y, ...){
 #' @export
 #' 
 sma_model.osm_input <- function(x,y){
+  
   if(any(is.na(x))|any(is.na(y))){
     stop("sma_model:Missing values found in input data. Ensure that there are no missing values.")
   }

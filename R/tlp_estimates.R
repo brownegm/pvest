@@ -54,6 +54,7 @@ estTLP <- function(x,...){
 }
 
 
+#' Default method for estTLP
 #' @export
 estTLP.default <- function(data, wc.index, wp.index, n_row_above = 4, n_row_below = 4) {
   
@@ -89,6 +90,9 @@ estTLP.default <- function(data, wc.index, wp.index, n_row_above = 4, n_row_belo
   return(outtlp)
 }
 
+NULL
+
+#' estTLP method 
 #' @description A method of estTLP for use with objects that are of class "osmEst"(i.e., returned from pvest::estOsm())
 #' @export
 estTLP.osmEst <- function(osm_object, wc.index, wp.index, n_row_above = 4, n_row_below = 4) {

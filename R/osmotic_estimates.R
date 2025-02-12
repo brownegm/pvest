@@ -24,9 +24,10 @@ estpio <- function(rwc, psi) {
 
   inputs<- structure(list(rwc, psi),.Names =  c("rwc", "psi"), class="osm_input")
   
+  stopifnot(class(inputs)=="osm_input")
   #slope is negative here
-  osm_mod <- sma_model(x = inputs$psi, 
-                       y = inputs$rwc)
+  osm_mod <- sma_model(x = inputs$rwc, 
+                       y = inputs$psi)
   
   pi.o <- -1 / osm_mod$intercept
 
@@ -92,24 +93,43 @@ NULL
 #' @export estOsmotic
 #' @seealso [estRWC()], [sma_intercept()]
 
-estOsmotic <- function(data, wc.index = "relative.water.deficit", wp.index = "inv.water.potential", n_row = 4, silent) {
+estOsmotic <- function(x,...){
+  UseMethod("estOsmotic")
+}
+
+#'@export
+estOsmotic.default <- function(data, wc.index, wp.index, n_row = 4, silent) {
   
   data_belowtlp <- data %>%
     dplyr::arrange(desc(wp.index)) %>%
     dplyr::slice_tail(n = n_row) %>%
     as.data.frame()
   
-  varnames <- list(
-    "wc" = names(data)[wc.index],
-    "wp" = names(data)[wp.index]
-  )
-
+  is_char <- all(is.character(c(wc.index,wp.index)))
+  is_num <- all(is.numeric(c(wc.index,wp.index)))
+  
+  if (!(is_char|is_num)) {
+    stop("estOsmotic: Column indices must both be either character strings or numeric integers referencing the preferred column.")
+  }
+  
   check_var <- all(varnames[c("wc", "wp")] %in% names(data))
 
   if (check_var == FALSE) {
     stop("estOsmotic: The column names (for fresh mass or water potential) provided do not exist in the data frame.")
   }
-
+  
+  if(is_char){
+    varnames <- list(
+      "wc" = wc.index,
+      "wp" = wp.index
+    )
+  }else if(is_num){
+    varnames <- list(
+      "wc" = names(data)[wc.index],
+      "wp" = names(data)[wp.index]
+    )
+  }
+  
   if (silent == FALSE) {
     cat("\nEstimating osmotic variables...\n\n")
     
@@ -156,6 +176,8 @@ estOsmotic <- function(data, wc.index = "relative.water.deficit", wp.index = "in
 }
 
 
+# Print method of osmEst class objects
+#'@export
 print.osmEst <- function (x, ...){
 
   cat("Osmotic estimates:")
