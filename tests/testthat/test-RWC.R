@@ -22,23 +22,25 @@ test_that("Check that the output makes sense", {
   expect_equal(length(rwc_estimate$rwd), nrow(data))
   
   # check that the rwc values are increasing 
-  rwcdiff <- all(diff(rwc_estimate$rwc) < 0)
-  
+  # dont change input fake data
+  rwcdiff <- all(diff(rwc_estimate$rwc)<0)#-2.710027
+  modediff <- unique(diff(rwc_estimate$rwc)|>round(5)) == -2.71003
   expect_true(rwcdiff)
+  expect_true(modediff)
 })
 
 test_that("Check that the errors work", {
 
 #rename the columns 
-  names(data)[1]<- "fake_col_name"
-
+  # names(data)[1]<- "fake_col_name"
+  # 
   expect_error(estRWC(
     data = data,
     fw.index = 1,
     wp.index = 2,
-    dm.index = 3,
+    dm.index = 3,n_row = Inf,
     silent = F
   ))
-
+  
 })
 

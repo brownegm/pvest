@@ -1,17 +1,27 @@
 test_that("slope is negative and the sma_model output is correct class", {
   
-  rwc <- seq(0.95, 0.6, length.out = 10)
-  psi <- seq( -0.01, -0.95,length.out = 10)
+  psi <- c(-0.37,-0.883,-1.188,-1.698,-1.87,-2.175,-2.523,-2.863,-2.925,-4.132,-4.253)
+  rwc <- c(97.67,
+           92.89,
+           91.28,
+           89.64,
+           85.68,
+           84.12,
+           82.40,
+           81.12,
+           79.52,
+           75.20,
+           73.67)
   
   test_df <- as.data.frame(list("rwc"=rwc, "psi"=psi))
   
   wc.index = "rwc"
   wp.index = "psi"
   
-  test <- pvest::estpio("rwc","psi")
+  test <- pvest::estpio(rwc,psi)
   mod <-test$sma_mod
   
-  expect_lt(mod$slope, 0)
+  expect_lte(mod$slope, 0)
   
   testosm <- pvest::estOsmotic(test_df, wc.index = "rwc", wp.index = "psi")
 

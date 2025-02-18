@@ -76,6 +76,8 @@ sma_model.default <- function(x, y, ...){
   slope <- pvest::sma_slope(x, y)
   intercept <- pvest::sma_intercept(x, y, slope)
   
+  #terms.formula(y~slope * x + intercept)
+  
   model <- structure(.Data = list(slope, intercept),
                      .Names = c("slope", "intercept"),
                      class = "sma_model")

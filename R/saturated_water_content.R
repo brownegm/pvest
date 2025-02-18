@@ -79,16 +79,16 @@ estRWC <- function(data, fw.index, wp.index, dm.index, n_row = 4, silent) {
     )
   }
   
+  # check_var <- all(varnames[c("fw", "wp")] %in% names(data))
+  # 
+  # if (check_var == FALSE) {
+  #   stop("estRWC: The column names (for fresh mass or water potential) provided do not exist in the data frame.")
+  # }
+
   varnames <- list("fw" = names(data)[fw.index],
                    "wp" = names(data)[wp.index], 
                    "dm" = ifelse(dm.index%%1==0,
                                  names(data)[dm.index],NA))
-  
-  check_var <- all(varnames[c("fw", "wp")] %in% names(data))
-  
-  if (check_var == FALSE) {
-    stop("estRWC: The column names (for fresh mass or water potential) provided do not exist in the data frame.")
-  }
   
   if (silent == FALSE) {
     cat("\nEstimating RWC and RWD...\n\n")

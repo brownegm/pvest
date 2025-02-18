@@ -22,18 +22,14 @@ estpio <- function(rwc, psi) {
 
   stopifnot(length(rwc)==length(psi))
 
-  inputs<- structure(list(rwc, psi),.Names =  c("rwc", "psi"), class="osm_input")
+  osm_mod <- sma_model(x = rwc,#input_vals$rwc, 
+                       y = psi)#input_vals$psi)
   
-  stopifnot(class(inputs)=="osm_input")
-  #slope is negative here
-  osm_mod <- sma_model(x = inputs$rwc, 
-                       y = inputs$psi)
+  osm_mod$slope <- osm_mod$slope*-1#slope is negative here
   
   pi.o <- -1 / osm_mod$intercept
 
   output <- structure(list(
-    # "slope" = osm_mod$slope,
-    # "intercept" = osm_mod$intercept,
     "sma_mod" = osm_mod,
     "pi.o" = pi.o
   ),
@@ -41,6 +37,21 @@ estpio <- function(rwc, psi) {
 
   return(output)
 }
+
+
+#' Constructor for osmotic inputs
+#'
+#' @param rwc Values of relative water content and deficit
+#' @param psi Values of water potential 
+#' 
+# osminput <- function(rwc, psi) {
+#   
+#   inputs <- structure(list(rwc, psi),
+#                       .Names =  c("rwc", "psi"),
+#                       class = "osm_input")
+#   
+#   return(inputs)
+# }
 
 #' Print method for the Osmotic estimates output
 #'
@@ -98,7 +109,7 @@ estOsmotic <- function(x,...){
 }
 
 #'@export
-estOsmotic.default <- function(data, wc.index, wp.index, n_row = 4, silent) {
+estOsmotic.default <- function(data, wc.index, wp.index, n_row = 4, silent=T) {
   
   data_belowtlp <- data %>%
     dplyr::arrange(desc(wp.index)) %>%
@@ -112,12 +123,6 @@ estOsmotic.default <- function(data, wc.index, wp.index, n_row = 4, silent) {
     stop("estOsmotic: Column indices must both be either character strings or numeric integers referencing the preferred column.")
   }
   
-  check_var <- all(varnames[c("wc", "wp")] %in% names(data))
-
-  if (check_var == FALSE) {
-    stop("estOsmotic: The column names (for fresh mass or water potential) provided do not exist in the data frame.")
-  }
-  
   if(is_char){
     varnames <- list(
       "wc" = wc.index,
@@ -128,6 +133,12 @@ estOsmotic.default <- function(data, wc.index, wp.index, n_row = 4, silent) {
       "wc" = names(data)[wc.index],
       "wp" = names(data)[wp.index]
     )
+  }
+  
+  check_var <- all(varnames[c("wc", "wp")] %in% names(data))
+  
+  if (check_var == FALSE) {
+    stop("estOsmotic: The column names provided do not exist in the input data.")
   }
   
   if (silent == FALSE) {
@@ -143,35 +154,36 @@ estOsmotic.default <- function(data, wc.index, wp.index, n_row = 4, silent) {
     
   }
   # create vectors
-  rwc <- data_belowtlp[["wc.index"]]
+  rwc <- data_belowtlp[[wc.index]]
   rwd <- 100 - rwc
-  psi <- data_belowtlp[["wp.index"]]
+  psi <- data_belowtlp[[wp.index]]
   
   minus_inv_psi <- -1/psi
 
   pio <- estpio(rwc, minus_inv_psi)
-  
+  print(pio)
   #calculate osmotic and pressure potential at full turgor
-  osm.pot.fullturgor <- pio$pi.o
-  max.psip <- osm.pot.fullturgor * -1
+  osm_pot_fullturgor <- pio$pi.o
+  max_psip <- osm_pot_fullturgor * -1
 
-  osmotic_potential <- -1 / (pio$model$intercept + (pio$model$intercept * rwd))
+  osmotic_potential <- -1 / (pio$sma_mod$intercept + (pio$sma_mod$slope * rwd))
   pressure_potential <- psi - osmotic_potential
-  apoplastic_fraction <- 100 + (pio$model$intercept / pio$model$slope)
-  sym_rwc <- ((rwc - (apoplastic_fraction)) / (100 - (apoplastic_fraction))) * 100
+  apoplastic_fraction <- 100 + (pio$sma_mod$intercept / pio$sma_mod$slope)
+  sym_rwc <- (rwc - apoplastic_fraction)/(100 - apoplastic_fraction)
   sym_rwd <- 100 - sym_rwc
 
   structure(list("psi" = psi, 
                  "invpsi" = minus_inv_psi,
-                 "pio" = osm.pot.fullturgor,
-                 "psip_o"= max.psip,
-                 "osmpot" = osmotic.potential,
+                 "pio" = osm_pot_fullturgor,
+                 "psip_o"= max_psip,
+                 "osmpot" = osmotic_potential,
                  "prespot" = pressure_potential, 
                  "af" = apoplastic_fraction, 
                  "symrwc" = sym_rwc, 
                  "symrwd" = sym_rwd,
                  "data" = data, # bring the data and model estimates along
                  "model" = pio$sma_mod), 
+                 units = c("MPa","-MPa^-1", "MPa", "MPa","MPa", "MPa" ,"%", "%", "%"),
                  class="osmEst")
 }
 
@@ -180,6 +192,8 @@ estOsmotic.default <- function(data, wc.index, wp.index, n_row = 4, silent) {
 #'@export
 print.osmEst <- function (x, ...){
 
-  cat("Osmotic estimates:")
-
+  cat("Osmotic potential at full turgor:", x$pio, "\n")
+  cat("Pressure potential at full turgor:", x$psip_o, "\n")
+  cat("Apoplastic fraction:", x$af, "\n")
+  
 }

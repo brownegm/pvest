@@ -2,7 +2,7 @@
 % Please edit documentation in R/osmotic_estimates.R
 \name{print.pioEst}
 \alias{print.pioEst}
-\title{Print method for the Osmotic estimates output}
+\title{Constructor for osmotic inputs}
 \usage{
 \method{print}{pioEst}(x, ...)
 }
@@ -10,10 +10,16 @@
 \item{x}{An object of the class "pioEst"}
 
 \item{...}{Other parameters passed to cat}
+
+\item{rwc}{Values of relative water content and deficit}
+
+\item{psi}{Values of water potential
+
+Print method for the Osmotic estimates output}
 }
 \value{
 Printed SMA model output
 }
 \description{
-Print method for the Osmotic estimates output
+Constructor for osmotic inputs
 }
