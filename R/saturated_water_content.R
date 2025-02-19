@@ -73,7 +73,8 @@ NULL
 
 estRWC <- function(data, fw.index, wp.index, dm.index, n_row = 4, silent) {
   
-  if (nrow(data) < n_row) {
+  nvals <- nrow(data)
+  if (nvals < n_row) {
     stop(
       "The number of rows to estimate parameters from is greater than the number of rows in the data."
     )
@@ -106,7 +107,7 @@ estRWC <- function(data, fw.index, wp.index, dm.index, n_row = 4, silent) {
   # Select values above initial turgor loss guess
   data_abovetlp <- data %>%
     dplyr::arrange(desc({{ wp.index }})) %>%
-    dplyr::slice_head(n = n_row) %>%
+    dplyr::slice_head(n = nvals-n_row) %>%
     as.data.frame()
   
   # inputs
@@ -118,21 +119,21 @@ estRWC <- function(data, fw.index, wp.index, dm.index, n_row = 4, silent) {
                      dm.index)#
   
   #calculate SWC and relative water content
-  swc <- estsatwater(
+  satwater <- estsatwater(
     fresh_mass = fresh_mass_thres,
     psi = water_potential_thres,
     dry_mass = dry_mass
-  )$swc
+  )
   
-  relative.water.content <- (fresh_mass/ swc) * 100
+  relative.water.content <- (fresh_mass/ satwater$swm) * 100
   relative.water.deficit <- 100 - (relative.water.content)
 
   plateau <- sum(relative.water.content>100)
   
   rwc.rwd <- structure(
-    list(swc, relative.water.content, relative.water.deficit),
-    .Names = c("swc", "rwc", "rwd"),
-     units = c("g/g", "%", "%"),
+    list(satwater$swm,satwater$swc,relative.water.content, relative.water.deficit),
+    .Names = c("swm", "swc", "rwc", "rwd"),
+     units = c("g","g/g", "%", "%"),
      flag = paste("There are", plateau, "potential plateau points.")
   )
 
