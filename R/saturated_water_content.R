@@ -71,7 +71,7 @@ NULL
 #' @export estRWC
 #' @family abovetlp
 
-estRWC <- function(data, fw.index, wp.index, dm.index, n_row = 4, silent) {
+estRWC <- function(data, fw.index, wp.index, dm.index, n_row = 4, silent=T) {
   
   nvals <- nrow(data)
   if (nvals < n_row) {

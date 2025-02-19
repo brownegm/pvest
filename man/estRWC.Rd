@@ -4,7 +4,7 @@
 \alias{estRWC}
 \title{RWC and RWD estimation}
 \usage{
-estRWC(data, fw.index, wp.index, dm.index, n_row = 4, silent)
+estRWC(data, fw.index, wp.index, dm.index, n_row = 4, silent = T)
 }
 \arguments{
 \item{data}{Data frame containing leaf fresh water mass and leaf water potentials}
