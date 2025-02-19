@@ -4,7 +4,7 @@
 \alias{estOsmotic}
 \title{Osmotic and pressure parameter estimation}
 \usage{
-estOsmotic(x, ...)
+estOsmotic(data, wc.index, wp.index, n_row = 4, silent = T, ...)
 }
 \arguments{
 \item{data}{A data frame. A data frame containing the data set of the last 4 hydration states for a given leaf}

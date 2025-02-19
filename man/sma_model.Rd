@@ -4,7 +4,7 @@
 \alias{sma_model}
 \title{SMA model generic}
 \usage{
-sma_model(x, ...)
+sma_model(x, y, ...)
 }
 \value{
 Returns a model function slope and intercept values for the standard major axis regression

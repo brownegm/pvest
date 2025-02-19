@@ -8,8 +8,8 @@
 #'     between relative water deficit and inverse leaf water potential.
 #'
 #' @param data A data frame. A data frame containing the data set of the last 4 hydration states for a given leaf
-#' @param rwc A vector of relative water content or deficit data
-#' @param psi A vector of water potential data
+#' @param rwd A vector of relative water deficit values
+#' @param psi A vector of water potential values
 #'
 #' @return Numeric list containing the slope, intercept and osmotic potential at full turgor, in that order. Class "osmEst"
 #'
@@ -18,20 +18,19 @@
 #' @seealso \code{\link{sma_slope}}, \code{\link{sma_intercept}}
 #'
 
-estpio <- function(rwc, psi) {
+estpio <- function(rwd, psi) {
 
-  stopifnot(length(rwc)==length(psi))
-
-  osm_mod <- sma_model(x = rwc,#input_vals$rwc, 
-                       y = psi)#input_vals$psi)
+  stopifnot(length(rwd)==length(psi))
   
-  osm_mod$slope <- osm_mod$slope*-1#slope is negative here
+  input_vals <- osminput(rwd, psi)
   
-  pi.o <- -1 / osm_mod$intercept
+  osm_mod <- sma_model(x=input_vals)
+  
+  pio <- -1 / osm_mod$intercept
 
   output <- structure(list(
     "sma_mod" = osm_mod,
-    "pi.o" = pi.o
+    "pio" = pio
   ),
   class = "pioEst")
 
@@ -44,14 +43,14 @@ estpio <- function(rwc, psi) {
 #' @param rwc Values of relative water content and deficit
 #' @param psi Values of water potential 
 #' 
-# osminput <- function(rwc, psi) {
-#   
-#   inputs <- structure(list(rwc, psi),
-#                       .Names =  c("rwc", "psi"),
-#                       class = "osm_input")
-#   
-#   return(inputs)
-# }
+osminput <- function(rwd, psi) {
+
+  inputs <- structure(list(rwd, psi),
+                      .Names =  c("rwd", "neg_inv_psi"),
+                      class = "osm_input")
+
+  return(inputs)
+}
 
 #' Print method for the Osmotic estimates output
 #'
@@ -104,7 +103,7 @@ NULL
 #' @export estOsmotic
 #' @seealso [estRWC()], [sma_intercept()]
 
-estOsmotic <- function(x,...){
+estOsmotic <- function(data, wc.index, wp.index, n_row = 4, silent=T,...){
   UseMethod("estOsmotic")
 }
 
@@ -157,13 +156,12 @@ estOsmotic.default <- function(data, wc.index, wp.index, n_row = 4, silent=T) {
   rwc <- data_belowtlp[[wc.index]]
   rwd <- 100 - rwc
   psi <- data_belowtlp[[wp.index]]
-  
   minus_inv_psi <- -1/psi
 
-  pio <- estpio(rwc, minus_inv_psi)
-  print(pio)
+  pio <- estpio(rwd, minus_inv_psi)
+  
   #calculate osmotic and pressure potential at full turgor
-  osm_pot_fullturgor <- pio$pi.o
+  osm_pot_fullturgor <- pio$pio
   max_psip <- osm_pot_fullturgor * -1
 
   osmotic_potential <- -1 / (pio$sma_mod$intercept + (pio$sma_mod$slope * rwd))

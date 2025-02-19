@@ -4,12 +4,12 @@
 \alias{estpio}
 \title{Osmotic potential at full turgor estimate}
 \usage{
-estpio(rwc, psi)
+estpio(rwd, psi)
 }
 \arguments{
-\item{rwc}{A vector of relative water content or deficit data}
+\item{rwd}{A vector of relative water deficit values}
 
-\item{psi}{A vector of water potential data}
+\item{psi}{A vector of water potential values}
 
 \item{data}{A data frame. A data frame containing the data set of the last 4 hydration states for a given leaf}
 }

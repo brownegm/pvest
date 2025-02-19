@@ -4,7 +4,7 @@
 \alias{sma_model.osm_input}
 \title{Method for calculate SMA model parameters for determining osmotic parameters}
 \usage{
-\method{sma_model}{osm_input}(x, y)
+\method{sma_model}{osm_input}(x, y = NULL, ...)
 }
 \arguments{
 \item{x}{independent variable}

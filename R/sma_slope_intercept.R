@@ -54,7 +54,7 @@ sma_intercept <- function(x, y, slope) {
 #' @export
 #'
 
-sma_model <- function(x, ...){
+sma_model <- function(x, y,...){
   UseMethod("sma_model")
 }
 
@@ -95,14 +95,14 @@ sma_model.default <- function(x, y, ...){
 #' @returns Returns a model function slope and intercept values for the standard major axis regression
 #' @export
 #' 
-sma_model.osm_input <- function(x,y){
-  
-  if(any(is.na(x))|any(is.na(y))){
+sma_model.osm_input <- function(x,y= NULL, ...){
+   
+  if(any(is.na(x[[1]]))|any(is.na(x[[2]]))){
     stop("sma_model:Missing values found in input data. Ensure that there are no missing values.")
   }
-  
-  slope <- pvest::sma_slope(x, y) * -1
-  intercept <- pvest::sma_intercept(x, y, slope)
+
+  slope <- pvest::sma_slope(x$neg_inv_psi, x$rwd) * - 1
+  intercept <- pvest::sma_intercept(x$neg_inv_psi, x$rwd, slope)
   
   model <- structure(.Data = list(slope, intercept),
                      .Names = c("slope", "intercept"),
