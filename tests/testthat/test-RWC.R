@@ -14,7 +14,7 @@ test_that("Check that the output makes sense", {
     fw.index = 1,
     wp.index = 2,
     dm.index = 3,
-    silent = F
+    silent = T
   )
   
   expect_equal(length(rwc_estimate$swc), 1)
@@ -31,16 +31,22 @@ test_that("Check that the output makes sense", {
 
 test_that("Check that the errors work", {
 
-#rename the columns 
-  # names(data)[1]<- "fake_col_name"
-  # 
   expect_error(estRWC(
     data = data,
     fw.index = 1,
     wp.index = 2,
-    dm.index = 3,n_row = Inf,
+    dm.index = 3,
+    n_row = Inf,
     silent = F
   ))
+
+  # expect_error(estRWC(
+  #   data = data,
+  #   fw.index = 1,
+  #   wp.index = 9,
+  #   dm.index = 3,n_row = 4,
+  #   silent = F
+  # ))
   
 })
 

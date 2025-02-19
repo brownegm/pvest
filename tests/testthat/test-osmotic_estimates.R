@@ -24,7 +24,8 @@ test_that("slope is negative and the sma_model output is correct class", {
     dplyr::arrange(desc(wp.index)) %>%
     dplyr::slice_tail(n = 5)
   
-  test <- pvest::estpio(test_df_below$rwd, test_df_below$neg_inv_psi)
+  test <- pvest::estpio(test_df_below$rwd,
+                        test_df_below$neg_inv_psi)
   
   mod <-test$sma_mod
   
