@@ -191,9 +191,9 @@ estOsmotic.default <- function(data, wc.index, wp.index, n_row = 4, silent=T) {
 print.osmEst <- function (x, ...){
   
   cat("---Osmotic and pressure potential estimates:--- \n")
-  cat("Osmotic potential at full turgor:", x$pio, "\n")
-  cat("Pressure potential at full turgor:", x$psip_o, "\n")
-  cat("Apoplastic fraction:", x$af, "\n")
+  cat("Osmotic potential at full turgor:", round(x$pio,2), "MPa", "\n")
+  cat("Pressure potential at full turgor:", round(x$psip_o,2),"MPa", "\n")
+  cat("Apoplastic fraction:", round(x$af,2),"%", "\n")
   cat("Number of hydration states:", nrow(x$data), "\n")
   
 }
