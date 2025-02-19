@@ -189,9 +189,11 @@ estOsmotic.default <- function(data, wc.index, wp.index, n_row = 4, silent=T) {
 # Print method of osmEst class objects
 #'@export
 print.osmEst <- function (x, ...){
-
+  
+  cat("---Osmotic and pressure potential estimates:--- \n")
   cat("Osmotic potential at full turgor:", x$pio, "\n")
   cat("Pressure potential at full turgor:", x$psip_o, "\n")
   cat("Apoplastic fraction:", x$af, "\n")
+  cat("Number of hydration states:", nrow(x$data), "\n")
   
 }
