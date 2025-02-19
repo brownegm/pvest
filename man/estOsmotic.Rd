@@ -2,9 +2,12 @@
 % Please edit documentation in R/osmotic_estimates.R
 \name{estOsmotic}
 \alias{estOsmotic}
+\alias{estOsmotic.default}
 \title{Osmotic and pressure parameter estimation}
 \usage{
 estOsmotic(data, wc.index, wp.index, n_row = 4, silent = T, ...)
+
+\method{estOsmotic}{default}(data, wc.index, wp.index, n_row = 4, silent = T)
 }
 \arguments{
 \item{data}{A data frame. A data frame containing the data set of the last 4 hydration states for a given leaf}

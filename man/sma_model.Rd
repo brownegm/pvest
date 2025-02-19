@@ -2,13 +2,24 @@
 % Please edit documentation in R/sma_slope_intercept.R
 \name{sma_model}
 \alias{sma_model}
-\title{SMA model generic}
+\alias{sma_model.default}
+\alias{sma_model.osm_input}
+\title{Standard major axis model estimation.}
 \usage{
 sma_model(x, y, ...)
+
+\method{sma_model}{default}(x, y, ...)
+
+\method{sma_model}{osm_input}(x, y = NULL, ...)
+}
+\arguments{
+\item{x}{independent variable}
+
+\item{y}{dependent variable}
 }
 \value{
 Returns a model function slope and intercept values for the standard major axis regression
 }
 \description{
-SMA model generic
+Standard major axis(SMA) parameter estimation. The function here will estimate the slope and intercept of the SMA line for a given dependent and independent variable. There is a generic function that will dispatch the appropriate function based on the input data type. There is also an alternative method for objects of class \strong{osm_input} which is a list of vectors containing the negative inverse of the leaf water potential and the relative water deficit.
 }

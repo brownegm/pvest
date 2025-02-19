@@ -102,11 +102,13 @@ NULL
 #' @import dplyr
 #' @export estOsmotic
 #' @seealso [estRWC()], [sma_intercept()]
+#' @rdname estOsmotic
 
 estOsmotic <- function(data, wc.index, wp.index, n_row = 4, silent=T,...){
   UseMethod("estOsmotic")
 }
 
+#'@rdname estOsmotic
 #'@export
 estOsmotic.default <- function(data, wc.index, wp.index, n_row = 4, silent=T) {
   

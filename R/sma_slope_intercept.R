@@ -14,9 +14,7 @@
 #'     with pressure(e.g., leaf water potential, and inverse of leaf water potential)
 #'
 #' @return Returns slope value for standard major axis regression
-#'
-#' @export
-#'
+#' 
 #' @importFrom stats sd
 
 
@@ -39,8 +37,7 @@ NULL
 #'     variable(e.g., water content or leaf relative water content). Likewise, the y variable is often associated
 #'     with pressure(e.g., leaf water potential, and inverse of leaf water potential). For a
 #'     detailed explanation of the function see \code{vignette('sma-slope-intercept')}
-#' @export
-#'
+
 
 sma_intercept <- function(x, y, slope) {
 
@@ -48,23 +45,23 @@ sma_intercept <- function(x, y, slope) {
 }
 
 
-#' SMA model generic
+#' Standard major axis model estimation. 
+#' @description Standard major axis(SMA) parameter estimation. The function here will estimate the slope and intercept of the SMA line for a given dependent and independent variable. There is a generic function that will dispatch the appropriate function based on the input data type. There is also an alternative method for objects of class "\strong{osm_input}" which is a list of vectors containing the negative inverse of the leaf water potential and the relative water deficit.
+#' 
+#' @param x independent variable
+#' @param y dependent variable
 #'
 #' @returns Returns a model function slope and intercept values for the standard major axis regression
+#' 
 #' @export
-#'
+#' @rdname sma_model
 
 sma_model <- function(x, y,...){
   UseMethod("sma_model")
 }
 
 
-#' Default SMA model formulation
-#'
-#' @param x independent variable
-#' @param y dependent variable
-#'
-#' @returns Returns a model function slope and intercept values for the standard major axis regression
+#' @rdname sma_model
 #' @export
 #
 sma_model.default <- function(x, y, ...){
@@ -87,12 +84,7 @@ sma_model.default <- function(x, y, ...){
 }
 
 
-#' Method for calculate SMA model parameters for determining osmotic parameters
-#'
-#' @param x independent variable
-#' @param y dependent variable
-#'
-#' @returns Returns a model function slope and intercept values for the standard major axis regression
+#' @rdname sma_model
 #' @export
 #' 
 sma_model.osm_input <- function(x,y= NULL, ...){
@@ -110,6 +102,7 @@ sma_model.osm_input <- function(x,y= NULL, ...){
   
   invisible(model)
 }
+
 #' Print method for the SMA model output
 #'
 #' @param x An object of the class "sma_model"
