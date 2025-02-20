@@ -48,5 +48,5 @@ within the sma_intercept function(\code{\link{sma_intercept}}) because of the ne
 Also, note that unlike in the saturated water content estimation the x values is inverse.
 }
 \seealso{
-\code{\link[=estRWC]{estRWC()}}, \code{\link[=sma_intercept]{sma_intercept()}}
+\code{\link[=estRWC]{estRWC()}}, \code{\link[=sma_model]{sma_model()}}
 }

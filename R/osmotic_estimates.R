@@ -11,7 +11,7 @@
 #' @param rwd A vector of relative water deficit values
 #' @param psi A vector of water potential values
 #'
-#' @return Numeric list containing the slope, intercept and osmotic potential at full turgor, in that order. Class "osmEst"
+#' @return Numeric list containing the slope, intercept and osmotic potential at full turgor, in that order.Output is an object of class "pioEst"
 #'
 #' @export
 #'
@@ -99,9 +99,9 @@ NULL
 #'     \item symplastic relative water content(sym.rwc; for each hydration state)
 #'     }
 #'
-#' @import dplyr
+#' @importFrom dplyr arrange slice_tail
 #' @export estOsmotic
-#' @seealso [estRWC()], [sma_intercept()]
+#' @seealso [estRWC()], [sma_model()]
 #' @rdname estOsmotic
 
 estOsmotic <- function(data, wc.index, wp.index, n_row = 4, silent=T,...){

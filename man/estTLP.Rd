@@ -2,9 +2,15 @@
 % Please edit documentation in R/tlp_estimates.R
 \name{estTLP}
 \alias{estTLP}
+\alias{estTLP.default}
+\alias{estTLP.osmEst}
 \title{Estimate parameters at turgor loss}
 \usage{
 estTLP(x, ...)
+
+\method{estTLP}{default}(data, wc.index, wp.index, n_row_above = 4, n_row_below = 4)
+
+\method{estTLP}{osmEst}(osm_object, wc.index, wp.index, n_row_above = 4, n_row_below = 4)
 }
 \arguments{
 \item{data}{A data frame}
@@ -21,6 +27,5 @@ estTLP(x, ...)
 Returns data with new columns for the estimated parameters.
 }
 \description{
-Estimate leaf water potential, relative water content at turgor loss point and modulus of elasticity
-both bulk parameters and their symplastic counterparts
+Estimate leaf water potential, relative water content at turgor loss point and modulus of elasticity both bulk parameters and their symplastic counterparts
 }

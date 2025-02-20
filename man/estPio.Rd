@@ -14,7 +14,7 @@ estpio(rwd, psi)
 \item{data}{A data frame. A data frame containing the data set of the last 4 hydration states for a given leaf}
 }
 \value{
-Numeric list containing the slope, intercept and osmotic potential at full turgor, in that order. Class "osmEst"
+Numeric list containing the slope, intercept and osmotic potential at full turgor, in that order.Output is an object of class "pioEst"
 }
 \description{
 Estimates the osmotic potential at full turgor from the linear relationship

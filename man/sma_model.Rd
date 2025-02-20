@@ -4,6 +4,7 @@
 \alias{sma_model}
 \alias{sma_model.default}
 \alias{sma_model.osm_input}
+\alias{sma_model.tlp_input}
 \title{Standard major axis model estimation.}
 \usage{
 sma_model(x, y, ...)
@@ -11,6 +12,8 @@ sma_model(x, y, ...)
 \method{sma_model}{default}(x, y, ...)
 
 \method{sma_model}{osm_input}(x, y = NULL, ...)
+
+\method{sma_model}{tlp_input}(x, y = NULL, ...)
 }
 \arguments{
 \item{x}{independent variable}

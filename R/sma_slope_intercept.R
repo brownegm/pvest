@@ -83,11 +83,10 @@ sma_model.default <- function(x, y, ...){
 
 }
 
-
 #' @rdname sma_model
 #' @export
 #' 
-sma_model.osm_input <- function(x,y= NULL, ...){
+sma_model.osm_input <- function(x,y = NULL, ...){
    
   if(any(is.na(x[[1]]))|any(is.na(x[[2]]))){
     stop("sma_model:Missing values found in input data. Ensure that there are no missing values.")
@@ -98,6 +97,28 @@ sma_model.osm_input <- function(x,y= NULL, ...){
   
   model <- structure(.Data = list(slope, intercept),
                      .Names = c("slope", "intercept"),
+                     class = "sma_model")
+  
+  invisible(model)
+}
+
+
+#' @rdname sma_model
+#' @export
+sma_model.tlp_input <- function(x, y=NULL, ...){
+  
+  if(any(is.na(x[[1]]))|any(is.na(x[[2]]))){
+    stop("sma_model:Missing values found in input data. Ensure that there are no missing values.")
+  }
+
+  slope <- pvest::sma_slope(x$psip, x$rwd) * - 1
+  intercept <- pvest::sma_intercept(x$psip, x$rwd, slope)
+  
+  slope_sym <- pvest::sma_slope(x$psip, x$sym_rwd) * - 1
+  intercept_sym <- pvest::sma_intercept(x$psip, x$sym_rwd, slope_sym)
+  
+  model <- structure(.Data = list(slope, intercept, slope_sym, intercept_sym),
+                     .Names = c("slope", "intercept", "slope_sym", "intercept_sym"),
                      class = "sma_model")
   
   invisible(model)

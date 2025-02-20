@@ -1,42 +1,31 @@
-#' Estimate the RWC and RWD at turgor loss point for using the relationship between leaf pressure potential and
-#'     bulk and symplastic relative water deficit
+#' Estimate the RWC and RWD at turgor loss point for using the relationship between leaf pressure potential and bulk and symplastic relative water deficit
 #'
-#' @param data A data frame. Must contain pressure potential and relative water deficit values.
-#' @param psip.index A string or number.An indexing value for the vector in data for pressure potential.
-#' @param rwd.index A string or number.An indexing value for the vector in data for relative water deficit.
-#' @param sym_rwd.index A string or number.An indexing value for the vector in data for symplastic relative water deficit.
+#' @param psip A vector of pressure potential values
+#' @param rwd A vector of relative water deficit values
+#' @param sym_rwd A vector of symplastic relative water deficit values
 #'
 #' @return Bulk and symplastic slopes and intercepts.
-#' @export
-#'
-psip_rwd_slopeint <- function(psip, rwd, sym_rwd) {
 
-  #set input class for correct input type 
-  inputs <- structure(list(psip, rwd, sym_rwd),.Names =  c( "psip", "rwd", "sym_rwd"), class="osm_input")
+psip_rwd_params <- function(psip, rwd, sym_rwd) {
+  # create an input class for the data
+  tlp_input <- tlp_input(psip, rwd, sym_rwd)
+  # construct bulk and symplastic models
+  tlp_model <- sma_model(tlp_input)
 
-  bulk <- sma_model(psip,rwd)
-  symplastic <- sma_model(psip,sym_rwd)
-
-  # slope <- -sma_slope(x = psip, y = data[, rwd.index])
-  # intercept <- sma_intercept(x = psip, y = data[, rwd.index], slope = slope)
-
-  # slope_sym <- -sma_slope(x = psip, y = data[, sym_rwd.index])
-  # intercept_sym <- sma_intercept(x = psip, y = data[, sym_rwd.index], slope = slope_sym)
-
-  out <- list("bulk_slope" = bulk$slope,
-              "bulk_int" = bulk$intercept,
-              "sym_slope" = symplastic$slope,
-              "sym_int" = symplastic$intercept)
-  
-  # out <- list("bulk_slope" = slope,
-  #             "bulk_int" = intercept,
-  #             "sym_slope" = slope_sym,
-  #             "sym_int" = intercept_sym)
-  invisible(out)
+  invisible(tlp_model)
 }
+
+#' Constructor for the tlp_input class
+tlp_input <- function(psip, rwd, sym_rwd) {
+  input <- structure(list(psip, rwd, sym_rwd),
+                     .Names=c("psip", "rwc", "sym_rwc"),
+            class = "tlp_input")
+  return(input)
+}
+
+
 #' Estimate parameters at turgor loss
-#' @description Estimate leaf water potential, relative water content at turgor loss point and modulus of elasticity
-#'    both bulk parameters and their symplastic counterparts
+#' @description Estimate leaf water potential, relative water content at turgor loss point and modulus of elasticity both bulk parameters and their symplastic counterparts
 #'
 #' @param data A data frame
 #' @param wc.index An unquoted string indicating vector with water associated variable
@@ -46,16 +35,16 @@ psip_rwd_slopeint <- function(psip, rwd, sym_rwd) {
 #'
 #' @return Returns data with new columns for the estimated parameters.
 #'
-#' @import dplyr
+#' @importFrom dplyr arrange slice_tail slice_head
 #' @export
+#' @rdname estTLP
 
 estTLP <- function(x,...){
   UseMethod("estTLP")
 }
 
-
-#' Default method for estTLP
 #' @export
+#' @rdname estTLP
 estTLP.default <- function(data, wc.index, wp.index, n_row_above = 4, n_row_below = 4) {
   
   data_belowtlp <- df %>%
@@ -86,15 +75,15 @@ estTLP.default <- function(data, wc.index, wp.index, n_row_above = 4, n_row_belo
   "modulus" <- max.psip / ((100 - relative.water.content.attlp) / 100),
   "modulus_sym" <- max.psip / ((100 - sym.rwc.attlp) / 100)
   ), 
-  class= "tlp")
+  class= "tlpEst")
   return(outtlp)
 }
 
 NULL
 
-#' estTLP method 
-#' @description A method of estTLP for use with objects that are of class "osmEst"(i.e., returned from pvest::estOsm())
+
 #' @export
+#' @rdname estTLP
 estTLP.osmEst <- function(osm_object, wc.index, wp.index, n_row_above = 4, n_row_below = 4) {
   
   # for an object of class osmEst
