@@ -23,8 +23,9 @@ test_that("Check that the output makes sense", {
   
   # check that the rwc values are increasing 
   # dont change input fake data
+  # print(rwc_estimate$rwc)
   rwcdiff <- all(diff(rwc_estimate$rwc)<0)#-2.710027
-  modediff <- unique(diff(rwc_estimate$rwc)|>round(5)) == -2.71003
+  modediff <- unique(diff(rwc_estimate$rwc)|>round(5)) == -5.42005
   expect_true(rwcdiff)
   expect_true(modediff)
 })

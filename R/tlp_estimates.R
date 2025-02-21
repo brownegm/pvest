@@ -57,7 +57,7 @@ estTLP.default <- function(data, wc.index, wp.index, n_row_above = 4, n_row_belo
     dplyr::slice_head(n = n_row_above) %>%
     as.data.frame()
 
-  psip_rwd_list <- psip_rwd_slopeint(
+  psip_rwd_list <- psip_rwd_params(
     data = data_abovetlp,
     psip.index = "pressure.potential",
     rwd.index = "relative.water.deficit",
@@ -84,34 +84,30 @@ NULL
 
 #' @export
 #' @rdname estTLP
-estTLP.osmEst <- function(osm_object, wc.index, wp.index, n_row_above = 4, n_row_below = 4) {
+estTLP.osmEst <- function(osm_obj, n_row_above = 4) {
   
-  # for an object of class osmEst
-  data_abovetlp <- osm_object$data %>%
-    dplyr::arrange(desc({{ wp.index }})) %>%
-    dplyr::slice_head(n = n_row_above) %>%
-    as.data.frame()
-
-  psip.rwd_list <- psip_rwd_slopeint(
-    data = data_abovetlp,
-    psip.index = "pressure.potential",
-    rwd.index = "relative.water.deficit",
-    sym_rwd.index = "sym.rwd"
-  ) # output is a list in order: slope, intercept, sym slope, sym intercept
-
+  above_idx <- c(1:n_row_above)
+  
+  param_list <- psip_rwd_slopeint(
+    psip = osm_obj$prespot[above_idx],
+    rwd = osm_obj$rwd[above_idx], 
+    sym_rwd = osm_obj$sym_rwd[above_idx]
+  ) 
+  
+  #collect model parameters for below from osm object
   osm_slope <- osm_object$model$slope
   osm_intercept <- osm_object$model$intercept
 
   outtlp <- structure(list(
-    "rwd_tlp" <- -((psip.rwd_list[2]) / (psip.rwd_list[1])),
-    "rwc_tlp"<- 100 - relative.water.deficit.attlp,
-    "sym_rwd_tlp" <- -((psip.rwd_list[4]) / (psip.rwd_list[3])),
-    "sym_rwc_tlp" <- 100 - sym.rwd.attlp,
-    "pi_tlp"<- -1 / (osm_slope * relative.water.deficit.attlp + osm_intercept),
-    "modulus" <- max.psip / ((100 - relative.water.content.attlp) / 100),
-    "modulus_sym" <- max.psip / ((100 - sym.rwc.attlp) / 100)
+    "rwd_tlp" = -((param_list$intercept) / (param_list$slope)),
+    "rwc_tlp"= 100 - relative.water.deficit.attlp,
+    "sym_rwd_tlp" = -((param_list$intercept_sym) / (param_list$slope_sym)),
+    "sym_rwc_tlp" = 100 - sym.rwd.attlp,
+    "pi_tlp" = -1 / (osm_slope * relative.water.deficit.attlp + osm_intercept),
+    "modulus" = max.psip / ((100 - relative.water.content.attlp) / 100),
+    "modulus_sym" = max.psip / ((100 - sym.rwc.attlp) / 100)
     ), 
-    class= "tlp")
+    class= "tlpEst")
   
   return(outtlp)
 }

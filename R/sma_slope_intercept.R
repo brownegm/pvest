@@ -16,6 +16,7 @@
 #' @return Returns slope value for standard major axis regression
 #' 
 #' @importFrom stats sd
+#' @export
 
 
 sma_slope <- function(x, y) {
@@ -31,13 +32,14 @@ NULL
 #' @param y y variable
 #' @param slope slope parameter estimated by the sma_slope function
 #'
+#'
 #' @return Returns slope and intercept values for standard major axis regression
 #' @details  Estimation of the intercept \strong{requires} the estimation of the SMA slope. The intercept is estimated as the mean of the x variable
 #'     minus the SMA slope times the mean value of the y variable. Often in pressure volume curves, the x variable is the water-associated
 #'     variable(e.g., water content or leaf relative water content). Likewise, the y variable is often associated
 #'     with pressure(e.g., leaf water potential, and inverse of leaf water potential). For a
 #'     detailed explanation of the function see \code{vignette('sma-slope-intercept')}
-
+#' @export
 
 sma_intercept <- function(x, y, slope) {
 

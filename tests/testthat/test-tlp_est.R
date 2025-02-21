@@ -1,3 +1,6 @@
-test_that("multiplication works", {
-
+test_that("test tlp values same across versions", {
+  
+  #default
+  #osm_est
+  
 })
