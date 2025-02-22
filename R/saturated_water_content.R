@@ -107,7 +107,7 @@ estRWC <- function(data, fw.index, wp.index, dm.index, n_row = 4, silent=T) {
   # Select values above initial turgor loss guess
   data_abovetlp <- data %>%
     dplyr::arrange(desc({{ wp.index }})) %>%
-    dplyr::slice_head(n = nvals-n_row) %>%
+    dplyr::slice_head(n = nvals-n_row+1) %>% #rwc is estimated from the values above and including the tlp psi guess
     as.data.frame()
   
   # inputs
@@ -130,12 +130,13 @@ estRWC <- function(data, fw.index, wp.index, dm.index, n_row = 4, silent=T) {
 
   plateau <- sum(relative.water.content>100)
   
-  rwc.rwd <- structure(
-    list(satwater$swm,satwater$swc,relative.water.content, relative.water.deficit),
+  out_rwcrwd <- structure(
+    list(satwater$swm,satwater$swc, relative.water.content, relative.water.deficit),
     .Names = c("swm", "swc", "rwc", "rwd"),
      units = c("g","g/g", "%", "%"),
-     flag = paste("There are", plateau, "potential plateau points.")
+     flag = paste("There are", plateau, "potential plateau points."), 
+     class = "rwcEst"
   )
 
-  return(rwc.rwd)
+  return(out_rwcrwd)
 }

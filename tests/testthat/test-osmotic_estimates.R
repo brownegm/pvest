@@ -1,22 +1,16 @@
 test_that("slope is negative and the sma_model output is correct class", {
   
-  psi <- c(-0.37,-0.883,-1.188,
-           -1.698,-1.87,-2.175,
-           -2.523,-2.863,-2.925,
-           -4.132,-4.253)
-  rwc <- c(97.67,92.89,91.28,89.64,
-           85.68,84.12,82.40,81.12,
-           79.52,75.20,73.67)
-  
-  rwd <- 100-rwc
-  
-  neg_inv_psi <- -1/psi
-  
-  # test dataframe
-  test_df <- as.data.frame(list("rwc"=rwc,
-                                "psi"=psi,
-                                "rwd"=rwd,
-                                "neg_inv_psi"=neg_inv_psi))
+  # example from CODI1 
+  test_df <- data.frame(psi = c(-0.37,-0.883,-1.188,
+                             -1.698,-1.87,-2.175,
+                             -2.523,-2.863,-2.925,
+                             -4.132,-4.253),
+                     rwc = c(97.67,92.89,91.28,
+                             89.64,85.68,84.12,
+                             82.40,81.12,79.52,
+                             75.20,73.67), 
+                     rwd = 100-rwc, 
+                     neg_inv_psi = -1/psi)
 
   wp.index = "psi"
   
@@ -40,9 +34,11 @@ test_that("slope is negative and the sma_model output is correct class", {
                                wc.index = wc.index, wp.index = wp.index, 
                                n_row=5)
 
+  # check that symplastic rwc is correct.... should be less that bulk rwc
+  expect_true(all(testosm$sym_rwc < testosm$rwc))
   # check that the wrapper gets the same result
   expect_equal(testosm$pio, test$pio)
-  
+  expect_equal(length(testosm$osmpot), nrow(test_df)) #check that the length is the same as input
   #check class attributes
   expect_s3_class(test, "pioEst")
   expect_s3_class(mod, "sma_model")

@@ -12,7 +12,7 @@ estOsmotic(data, wc.index, wp.index, n_row = 4, silent = T, ...)
 \arguments{
 \item{data}{A data frame. A data frame containing the data set of the last 4 hydration states for a given leaf}
 
-\item{wc.index}{A double. A data frame index which contains the water content data passed through OsmoticPotFullTurgor function}
+\item{wc.index}{A double. A data frame index which contains the water content (RWD) data passed to estpio()}
 
 \item{wp.index}{A double. A data frame index which contains the leaf water potential data}
 

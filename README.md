@@ -27,3 +27,8 @@ library(pvest) # load package
 estParams()# this function estimates all pressure volume curve parameters for you in one step. 
 
 ```
+
+## TBD 
+- Check coverage
+- Export statistics along with sma_model
+- The inputs to the functions tlp, osm , rwc need standardization.

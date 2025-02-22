@@ -4,28 +4,49 @@
 \alias{estTLP}
 \alias{estTLP.default}
 \alias{estTLP.osmEst}
-\title{Estimate parameters at turgor loss}
+\title{Estimate pressure volume curve parameters at turgor loss}
 \usage{
-estTLP(x, ...)
+estTLP(data, wc.index, wp.index, n_row_above, n_row_below, ...)
 
-\method{estTLP}{default}(data, wc.index, wp.index, n_row_above = 4, n_row_below = 4)
+\method{estTLP}{default}(data, wc.index, wp.index, n_row_above, n_row_below)
 
-\method{estTLP}{osmEst}(osm_object, wc.index, wp.index, n_row_above = 4, n_row_below = 4)
+\method{estTLP}{osmEst}(osm_obj, n_row_below = NULL, n_row_above = 4)
 }
 \arguments{
 \item{data}{A data frame}
 
-\item{wc.index}{An unquoted string indicating vector with water associated variable}
+\item{wc.index}{Index of relative water content values}
 
-\item{wp.index}{An unquoted string indicating vector with pressure associated variable}
+\item{wp.index}{Index of water potential values.}
 
-\item{n_row_above}{Double; Default to 4 rows.Value which indicates the number of rows above TLP for estimating SMA line parameters.}
+\item{n_row_above}{Number of rows above turgor loss point guess for estimating SMA line parameters.}
 
-\item{n_row_below}{Double; Default to 4 rows.Value which indicates the number of rows below TLP for estimating SMA line parameters.}
+\item{n_row_below}{Number of rows below turgor loss point guess for estimating SMA line parameters.}
 }
 \value{
-Returns data with new columns for the estimated parameters.
+Returns an object of class \emph{tlpEst} with the following components:
+\item{pi_tlp}{Osmotic potential at turgor loss point}
+\item{rwc_tlp}{Bulk relative water content at turgor loss point}
+\item{rwd_tlp}{Bulk relative water deficit at turgor loss point}
+\item{sym_rwc_tlp}{Symplastic relative water content at turgor loss point}
+\item{sym_rwd_tlp}{Symplastic relative water deficit at turgor loss point}
+\item{modulus}{Bulk modulus of elasticity at turgor loss point}
+\item{sym_modulus}{Symplastic modulus of elasticity at turgor loss point}
 }
 \description{
-Estimate leaf water potential, relative water content at turgor loss point and modulus of elasticity both bulk parameters and their symplastic counterparts
+Estimate leaf water potential, relative water content at turgor loss point and modulus of elasticity both bulk parameters and their symplastic counterparts.
+
+Two methods are provided for this function: \code{estTLP.default} and \code{estTLP.osmEst}. The default method requires a data frame with columns for pressure potential and relative water content. The osmEst method requires an object of class \emph{osmEst} (i.e., produced by the estOsmotic function). The latter is recommended for simplicity and consistency with other functions in the package.
+}
+\details{
+The function estimates the standard major axis model parameters \strong{above} turgor loss between pressure potential and the bulk and symplastic relative water deficit to estimate the bulk and symplastic relative water content at turgor loss point as :
+\deqn{RWD_{TLP} = -\frac{SMA~Intercept}{SMA~Slope}}
+\deqn{RWC_{TLP} = 100 - RWD_{TLP}}
+\deqn{Symplastic~RWD_{TLP} = -\frac{SMA~Intercept_{sym}}{SMA~Slope_{sym}}}
+\deqn{Symplastic~RWC_{TLP} = 100 - Symplastic~RWD_{TLP}}
+Then, the water potential at turgor loss point is calculated using the SMA model parameters for hydration states \strong{below} turgor loss point as:
+\deqn{\pi_{TLP} = -\frac{1}{Slope_{osm} \times RWD_{TLP} + Intercept_{osm}}}
+Then, it calculates the bulk and symplastic modulus of elasticity as the ratio of the pressure potential at full turgor and the relative water content at turgor loss point:
+\deqn{\epsilon_{TLP} = \frac{P_{0}}{RWC_{TLP}}}
+\deqn{Symplastic~\epsilon_{TLP} = \frac{P_{0}}{Symplastic~RWC_{TLP}}}
 }

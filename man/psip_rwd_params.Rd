@@ -4,14 +4,14 @@
 \alias{psip_rwd_params}
 \title{Estimate the RWC and RWD at turgor loss point for using the relationship between leaf pressure potential and bulk and symplastic relative water deficit}
 \usage{
-psip_rwd_params(psip, rwd, sym_rwd)
+psip_rwd_params(psip, rwd, symrwd)
 }
 \arguments{
 \item{psip}{A vector of pressure potential values}
 
 \item{rwd}{A vector of relative water deficit values}
 
-\item{sym_rwd}{A vector of symplastic relative water deficit values}
+\item{symrwd}{A vector of symplastic relative water deficit values}
 }
 \value{
 Bulk and symplastic slopes and intercepts.
