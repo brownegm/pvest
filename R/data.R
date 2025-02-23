@@ -1,7 +1,6 @@
-#' Data
-#'
+#' quag
 #' Pressure volume curve data for Quercus agrifolia
-#'
+#' 
 #' @format Data frame with columns
 #' \describe{
 #' \item{species}{Species code: first two letters of Genus and Species}
@@ -10,6 +9,5 @@
 #' \item{water.potential}{:eaf water potential in MPa}
 #' \item{fresh.weight}{Leaf water weight in grams}
 #' }
-#' @examples
-#' head(data)
-"data"
+
+"quag"

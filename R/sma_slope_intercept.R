@@ -101,8 +101,14 @@ sma_model.osm_input <- function(x,y = NULL, ...){
   slope <- pvest::sma_slope(x$neg_inv_psi, x$rwd) * - 1
   intercept <- pvest::sma_intercept(x$neg_inv_psi, x$rwd, slope)
   
-  model <- structure(.Data = list(slope, intercept),
-                     .Names = c("slope", "intercept"),
+  #calculate the slopes for capacitance estimates
+  slope_cap_tlp <- pvest::sma_slope(x$psi, x$rwc)
+  slope_cap_sym_tlp <- pvest::sma_slope(x$psi, x$sym_rwc)
+  
+  model <- structure(.Data = list(slope, intercept,
+                                  slope_cap_tlp, slope_cap_sym_tlp),
+                     .Names = c("slope", "intercept",
+                                "slope_cap_tlp", "slope_cap_sym_tlp"),
                      class = "sma_model")
   
   invisible(model)
@@ -123,8 +129,14 @@ sma_model.tlp_input <- function(x, y=NULL, ...){
   slope_sym <- pvest::sma_slope(x$psip, x$sym_rwd) * - 1
   intercept_sym <- pvest::sma_intercept(x$psip, x$sym_rwd, slope_sym)
   
-  model <- structure(.Data = list(slope, intercept, slope_sym, intercept_sym),
-                     .Names = c("slope", "intercept", "slope_sym", "intercept_sym"),
+  #calculate the slopes for capacitance estimates
+  slope_cap_ft <- pvest::sma_slope(x$psi, x$rwc)
+  slope_cap_sym_ft <- pvest::sma_slope(x$psi, x$sym_rwc)
+  
+  model <- structure(.Data = list(slope, intercept,
+                                  slope_sym_ft, slope_cap_sym_ft),
+                     .Names = c("slope", "intercept", 
+                                "slope_sym_ft", "slope_cap_sym_ft"),
                      class = "sma_model")
   
   invisible(model)

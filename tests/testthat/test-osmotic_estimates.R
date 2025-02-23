@@ -46,6 +46,20 @@ test_that("slope is negative and the sma_model output is correct class", {
     wc.index = wc.index, wp.index = wp.index,
     n_row = 5
   )
+  
+  testosm_numinput <- pvest::estOsmotic(test_df,
+                               wc.index = 2, wp.index = 1,
+                               n_row = 5
+  )
+  
+  # check that the function throws an error if the input is not correct
+ expect_error(pvest::estOsmotic(test_df,
+                                        wc.index = "rwc", wp.index = 1,
+                                        n_row = 5
+  ))
+  
+  expect_identical(testosm, testosm_numinput)
+  
   expect_snapshot(print(testosm))
   # check that symplastic rwc is correct.... should be less that bulk rwc
   expect_true(all(testosm$sym_rwc < testosm$rwc))
@@ -71,13 +85,18 @@ test_that("Check that the errors work", {
   test_df <- as.data.frame(list("rwc" = rwc, "psi" = psi))
 
   # rename the columns
-  names(data)[1] <- "fake_col_name"
 
   expect_error(pvest::estOsmotic(
-    data = data,
-    fw.index = 1,
-    wp.index = 2,
-    dm.index = 3,
+    data = test_df,
+    wc.index = "rwc",
+    wp.index = "fake_col_name",
     silent = F
+  ))
+  
+  expect_snapshot(pvest::estOsmotic(
+    data = test_df,
+    wc.index = "rwc",
+    wp.index = "psi",
+    silent = T
   ))
 })

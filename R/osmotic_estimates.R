@@ -112,10 +112,10 @@ estOsmotic <- function(data, wc.index, wp.index, n_row = 4, silent=T,...){
 #'@export
 estOsmotic.default <- function(data, wc.index, wp.index, n_row = 4, silent=T) {
   
-  is_char <- all(is.character(c(wc.index,wp.index)))
-  is_num <- all(is.numeric(c(wc.index,wp.index)))
+  is_char <- all(c(is.character(wc.index), is.character(wp.index)))
+  is_num <- all(c(is.numeric(wc.index), is.numeric(wp.index)))
   
-  if (!(is_char|is_num)) {
+  if (!(is_char | is_num)) {
     stop("estOsmotic: Column indices must both be either character strings or numeric integers referencing the preferred column.")
   }
   

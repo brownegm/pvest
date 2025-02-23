@@ -2,9 +2,9 @@
 % Please edit documentation in R/tlp_estimates.R
 \name{psip_rwd_params}
 \alias{psip_rwd_params}
-\title{Estimate the RWC and RWD at turgor loss point for using the relationship between leaf pressure potential and bulk and symplastic relative water deficit}
+\title{Parameters to estimate values at turgor loss point from leaf pressure potential versus bulk and symplastic relative water deficit SMA parameters.}
 \usage{
-psip_rwd_params(psip, rwd, symrwd)
+psip_rwd_params(psi, psip, rwd, sym_rwd, rwc, sym_rwc)
 }
 \arguments{
 \item{psip}{A vector of pressure potential values}
@@ -17,5 +17,5 @@ psip_rwd_params(psip, rwd, symrwd)
 Bulk and symplastic slopes and intercepts.
 }
 \description{
-Estimate the RWC and RWD at turgor loss point for using the relationship between leaf pressure potential and bulk and symplastic relative water deficit
+Parameters to estimate values at turgor loss point from leaf pressure potential versus bulk and symplastic relative water deficit SMA parameters.
 }

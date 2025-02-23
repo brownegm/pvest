@@ -1,4 +1,4 @@
-#' Estimate the RWC and RWD at turgor loss point for using the relationship between leaf pressure potential and bulk and symplastic relative water deficit
+#' Parameters to estimate values at turgor loss point from leaf pressure potential versus bulk and symplastic relative water deficit SMA parameters.
 #'
 #' @param psip A vector of pressure potential values
 #' @param rwd A vector of relative water deficit values
@@ -6,7 +6,7 @@
 #'
 #' @return Bulk and symplastic slopes and intercepts.
 
-psip_rwd_params <- function(psip, rwd, symrwd) {
+psip_rwd_params <- function(psi, psip, rwd, sym_rwd, rwc, sym_rwc) {
   # create an input class for the data
   tlp_input <- tlpinput(psip, rwd, symrwd)
   # construct bulk and symplastic models
@@ -16,17 +16,29 @@ psip_rwd_params <- function(psip, rwd, symrwd) {
 }
 
 #' Constructor for the tlp_input class
-tlpinput <- function(psip, rwd, sym_rwd) {
-  input <- structure(list(psip, rwd, sym_rwd),
-                     .Names=c("psip", "rwd", "sym_rwd"),
+tlpinput <- function(psi, psip, rwd, sym_rwd, rwc, sym_rwc) {
+  input <- structure(list(psi, 
+                          psip, rwd, sym_rwd, # for modulus
+                          rwc, sym_rwc), # for capacitance
+                     .Names=c("psi",
+                              "psip", "rwd", "symrwd", 
+                              "rwc", "symrwc"),
             class = "tlp_input")
   return(input)
 }
 
+#' Parameters to estimate values at turgor loss point from leaf pressure potential versus bulk and symplastic relative water deficit SMA parameters.
+#'
+#' @param psip A vector of pressure potential values
+#' @param rwd A vector of relative water deficit values
+#' @param symrwd A vector of symplastic relative water deficit values
+#'
+#' @return Bulk and symplastic slopes and intercepts.
+
 
 #' Estimate pressure volume curve parameters at turgor loss
 #' 
-#' @description Estimate leaf water potential, relative water content at turgor loss point and modulus of elasticity both bulk parameters and their symplastic counterparts. 
+#' @description Estimate leaf water potential, relative water content at turgor loss point and modulus of elasticity both bulk parameters and their symplastic counterparts
 #'
 #' Two methods are provided for this function: \code{estTLP.default} and \code{estTLP.osmEst}. The default method requires a data frame with columns for pressure potential and relative water content. The osmEst method requires an object of class _osmEst_ (i.e., produced by the estOsmotic function). The latter is recommended for simplicity and consistency with other functions in the package. 
 #'
@@ -73,9 +85,12 @@ estTLP.default <- function(data, wc.index, wp.index, n_row_above, n_row_below) {
   above_idx <- c(1:n_row_above)
   
   param_list <- psip_rwd_params(
+    psi = osm_obj$data$psi[above_idx], 
+    sym_rwc = osm_obj$data$sym_rwc[above_idx],
+    rwc = osm_obj$data$rwc[above_idx], 
     psip = osm_obj$prespot[above_idx],
     rwd = osm_obj$data$rwd[above_idx], 
-    symrwd = osm_obj$symrwd[above_idx]
+    sym_rwd = osm_obj$sym_rwd[above_idx]
   ) 
   
   #collect model parameters for below from osm object
@@ -117,9 +132,12 @@ estTLP.osmEst <- function(osm_obj, n_row_below = NULL, n_row_above = 4) {
   above_idx <- c(1:n_row_above)
   
   param_list <- psip_rwd_params(
+    psi = osm_obj$data$psi[above_idx], 
+    sym_rwc = osm_obj$data$sym_rwc[above_idx],
+    rwc = osm_obj$data$rwc[above_idx], 
     psip = osm_obj$prespot[above_idx],
     rwd = osm_obj$data$rwd[above_idx], 
-    symrwd = osm_obj$symrwd[above_idx]
+    sym_rwd = osm_obj$sym_rwd[above_idx]
   ) 
 
   #collect model parameters for below from osm object
@@ -134,6 +152,12 @@ estTLP.osmEst <- function(osm_obj, n_row_below = NULL, n_row_above = 4) {
   pi_tlp <- -1 / (osm_slope * rwd_tlp + osm_intercept)
   modulus <- osm_obj$psip_o / (rwd_tlp / 100)
   sym_modulus<- osm_obj$psip_o  / (sym_rwd_tlp / 100)
+  # estimate capacitance
+
+  # cap.ft.bulk <- (sma_slope(x = data_abovetlp[, wc.index], y = data_abovetlp[, wp.index])) / 100
+  # cap.ft.sym <- (sma_slope(x = data_abovetlp[, s_wc.index], y = data_abovetlp[, wp.index])) / 100
+  # cap.tlp.bulk <- (sma_slope(x = data_belowtlp[, wc.index], y = data_belowtlp[, wp.index])) / 100
+  # cap.tlp.sym <- (sma_slope(x = data_belowtlp[, s_wc.index], y = data_belowtlp[, wp.index])) / 100
   
   outtlp <- structure(list(
     pi_tlp, rwc_tlp, rwd_tlp, 

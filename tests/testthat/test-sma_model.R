@@ -2,14 +2,19 @@ test_that("Check input values for NAs", {
   x <- c(1, 2, 3, 4, 5)
   y <- c(1, 2, 3, 4, NA)
   z <- c(1, 2, 3, 4, 5)
-  oinput <- pvest:::osminput( x, y)
-  tinput <- pvest:::tlpinput(x, y, z)
+  a <- c(1, 2, 3, 4, 5)
+  b <- c(1, 2, 3, 4, 5)
+  c <- c(1, 2, 3, 4, 5)
+  oinput <- pvest:::osminput(x, y)
+  tinput <- pvest:::tlpinput(x, y, z, a, b, c)
 
   expect_error(sma_model(x, y), "sma_model:Missing values found in input data. Ensure that there are no missing values.")
 
   expect_error(sma_model.osm_input(x = oinput), "sma_model:Missing values found in input data. Ensure that there are no missing values.")
 
   expect_error(sma_model.tlp_input(x = tinput), "sma_model:Missing values found in input data. Ensure that there are no missing values.")
+  
+  expect_snapshot(print(sma_model(x,z)))
 })
 
 test_that("Return expected model parameters", {

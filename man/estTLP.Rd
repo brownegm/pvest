@@ -4,7 +4,7 @@
 \alias{estTLP}
 \alias{estTLP.default}
 \alias{estTLP.osmEst}
-\title{Estimate pressure volume curve parameters at turgor loss}
+\title{Parameters to estimate values at turgor loss point from leaf pressure potential versus bulk and symplastic relative water deficit SMA parameters.}
 \usage{
 estTLP(data, wc.index, wp.index, n_row_above, n_row_below, ...)
 
@@ -22,8 +22,17 @@ estTLP(data, wc.index, wp.index, n_row_above, n_row_below, ...)
 \item{n_row_above}{Number of rows above turgor loss point guess for estimating SMA line parameters.}
 
 \item{n_row_below}{Number of rows below turgor loss point guess for estimating SMA line parameters.}
+
+\item{psip}{A vector of pressure potential values}
+
+\item{rwd}{A vector of relative water deficit values}
+
+\item{symrwd}{A vector of symplastic relative water deficit values}
 }
 \value{
+Bulk and symplastic slopes and intercepts.
+Estimate pressure volume curve parameters at turgor loss
+
 Returns an object of class \emph{tlpEst} with the following components:
 \item{pi_tlp}{Osmotic potential at turgor loss point}
 \item{rwc_tlp}{Bulk relative water content at turgor loss point}
@@ -34,7 +43,7 @@ Returns an object of class \emph{tlpEst} with the following components:
 \item{sym_modulus}{Symplastic modulus of elasticity at turgor loss point}
 }
 \description{
-Estimate leaf water potential, relative water content at turgor loss point and modulus of elasticity both bulk parameters and their symplastic counterparts.
+Estimate leaf water potential, relative water content at turgor loss point and modulus of elasticity both bulk parameters and their symplastic counterparts
 
 Two methods are provided for this function: \code{estTLP.default} and \code{estTLP.osmEst}. The default method requires a data frame with columns for pressure potential and relative water content. The osmEst method requires an object of class \emph{osmEst} (i.e., produced by the estOsmotic function). The latter is recommended for simplicity and consistency with other functions in the package.
 }
