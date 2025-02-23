@@ -8,7 +8,7 @@
 
 psip_rwd_params <- function(psip, rwd, symrwd) {
   # create an input class for the data
-  tlp_input <- tlp_input(psip, rwd, symrwd)
+  tlp_input <- tlpinput(psip, rwd, symrwd)
   # construct bulk and symplastic models
   tlp_model <- sma_model(tlp_input)
   # return the model parameters
@@ -16,7 +16,7 @@ psip_rwd_params <- function(psip, rwd, symrwd) {
 }
 
 #' Constructor for the tlp_input class
-tlp_input <- function(psip, rwd, sym_rwd) {
+tlpinput <- function(psip, rwd, sym_rwd) {
   input <- structure(list(psip, rwd, sym_rwd),
                      .Names=c("psip", "rwd", "sym_rwd"),
             class = "tlp_input")
@@ -67,25 +67,15 @@ estTLP <- function(data, wc.index, wp.index, n_row_above, n_row_below, ...){
 #' @export
 #' @rdname estTLP
 estTLP.default <- function(data, wc.index, wp.index, n_row_above, n_row_below) {
-  
-  data_belowtlp <- data %>%
-    dplyr::arrange(desc({{ wp.index }})) %>%
-    dplyr::slice_tail(n = n_row_below) %>%
-    as.data.frame()
 
-  data_abovetlp <- data %>%
-    dplyr::arrange(desc({{ wp.index }})) %>%
-    dplyr::slice_head(n = n_row_above) %>%
-    as.data.frame()
-
-  osm_obj <- estOsmotic(data = data_belowtlp, wc.index, wp.index, n_row = n_row_below)
+  osm_obj <- estOsmotic(data = data, wc.index, wp.index, n_row = n_row_below)
   
   above_idx <- c(1:n_row_above)
   
   param_list <- psip_rwd_params(
     psip = osm_obj$prespot[above_idx],
-    rwd = osm_obj$rwd[above_idx], 
-    symrwd = osm_obj$sym_rwd[above_idx]
+    rwd = osm_obj$data$rwd[above_idx], 
+    symrwd = osm_obj$symrwd[above_idx]
   ) 
   
   #collect model parameters for below from osm object
@@ -99,7 +89,7 @@ estTLP.default <- function(data, wc.index, wp.index, n_row_above, n_row_below) {
   sym_rwc_tlp <- 100 - sym_rwd_tlp
   pi_tlp <- -1 / (osm_slope * rwd_tlp + osm_intercept)
   modulus <- osm_obj$psip_o / (rwd_tlp / 100)
-  modulus_sym <- osm_obj$psip_o / (sym_rwd_tlp / 100)
+  sym_modulus <- osm_obj$psip_o / (sym_rwd_tlp / 100)
   
   outtlp <- structure(list(
     pi_tlp, rwc_tlp, rwd_tlp, 

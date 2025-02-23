@@ -24,5 +24,11 @@ sma_model(x, y, ...)
 Returns a model function slope and intercept values for the standard major axis regression
 }
 \description{
-Standard major axis(SMA) parameter estimation. The function here will estimate the slope and intercept of the SMA line for a given dependent and independent variable. There is a generic function that will dispatch the appropriate function based on the input data type. There is also an alternative method for objects of class "\strong{osm_input}" which is a list of vectors containing the negative inverse of the leaf water potential and the relative water deficit.
+This function here will construct a standard major axis model from calculated slope and intercept for a given dependent and independent variable.
+This is a generic function that will dispatch 1 of 3 methods based on the input data type (i.e., \emph{default}, \emph{\code{osm_input}}, and \emph{\code{tlp_input}}:
+\itemize{
+\item \emph{default} : slope and intercept are positive
+\item \emph{\code{osm_input}}: slope is forced negative representing the relationship between relative water deficit and the negative inverse of water potential. Intercept is positive.
+\item \emph{\code{tlp_input}}: same as for \code{osm_input} but the input should provide symplastic relative water content as well and as a result the output includes the slope and intercept for both the bulk and symplastic variables.
+}
 }

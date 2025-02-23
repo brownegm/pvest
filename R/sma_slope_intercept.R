@@ -48,7 +48,11 @@ sma_intercept <- function(x, y, slope) {
 
 
 #' Standard major axis model estimation. 
-#' @description Standard major axis(SMA) parameter estimation. The function here will estimate the slope and intercept of the SMA line for a given dependent and independent variable. There is a generic function that will dispatch the appropriate function based on the input data type. There is also an alternative method for objects of class "\strong{osm_input}" which is a list of vectors containing the negative inverse of the leaf water potential and the relative water deficit.
+#' @description This function here will construct a standard major axis model from calculated slope and intercept for a given dependent and independent variable.
+#' This is a generic function that will dispatch 1 of 3 methods based on the input data type (i.e., _default_, _`osm_input`_, and _`tlp_input`_: 
+#' * _default_ : slope and intercept are positive
+#' * _`osm_input`_: slope is forced negative representing the relationship between relative water deficit and the negative inverse of water potential. Intercept is positive. 
+#' * _`tlp_input`_: same as for `osm_input` but the input should provide symplastic relative water content as well and as a result the output includes the slope and intercept for both the bulk and symplastic variables. 
 #' 
 #' @param x independent variable
 #' @param y dependent variable
@@ -112,7 +116,7 @@ sma_model.tlp_input <- function(x, y=NULL, ...){
   if(any(is.na(x[[1]]))|any(is.na(x[[2]]))){
     stop("sma_model:Missing values found in input data. Ensure that there are no missing values.")
   }
-
+  
   slope <- pvest::sma_slope(x$psip, x$rwd) * - 1
   intercept <- pvest::sma_intercept(x$psip, x$rwd, slope)
   

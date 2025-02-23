@@ -38,16 +38,26 @@ test_that("Check that the errors work", {
     wp.index = 2,
     dm.index = 3,
     n_row = Inf,
+    silent = T
+  ))
+  
+
+  expect_error(estRWC(
+    data = data[1,3]<-4,
+    fw.index = 1,
+    wp.index = 2,
+    dm.index = 3,n_row = 4,
+    silent = T
+  ))
+  
+  expect_snapshot(estRWC(
+    data = data,
+    fw.index = 1,
+    wp.index = 2,
+    dm.index = 3,
+    n_row = 4,
     silent = F
   ))
-
-  # expect_error(estRWC(
-  #   data = data,
-  #   fw.index = 1,
-  #   wp.index = 9,
-  #   dm.index = 3,n_row = 4,
-  #   silent = F
-  # ))
   
 })
 
