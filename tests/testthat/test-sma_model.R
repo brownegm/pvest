@@ -5,8 +5,11 @@ test_that("Check input values for NAs", {
   a <- c(1, 2, 3, 4, 5)
   b <- c(1, 2, 3, 4, 5)
   c <- c(1, 2, 3, 4, 5)
+  a1 <- c(1, 2, 3, 4, 5)
+  b1 <- c(1, 2, 3, 4, 5)
+  c1 <- c(1, 2, 3, 4, 5)
   oinput <- pvest:::osminput(x, y)
-  tinput <- pvest:::tlpinput(x, y, z, a, b, c)
+  tinput <- pvest:::tlpinput(x, y, z, a, b, c, a1, b1, c1)
 
   expect_error(sma_model(x, y), "sma_model:Missing values found in input data. Ensure that there are no missing values.")
 

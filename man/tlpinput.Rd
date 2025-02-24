@@ -4,7 +4,17 @@
 \alias{tlpinput}
 \title{Constructor for the tlp_input class}
 \usage{
-tlpinput(psi, psip, rwd, sym_rwd, rwc, sym_rwc)
+tlpinput(
+  psi_above,
+  psip,
+  rwd,
+  symrwd,
+  rwc_above,
+  symrwc_above,
+  psi_below,
+  rwc_below,
+  symrwc_below
+)
 }
 \description{
 Constructor for the tlp_input class

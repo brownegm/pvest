@@ -4,7 +4,17 @@
 \alias{psip_rwd_params}
 \title{Parameters to estimate values at turgor loss point from leaf pressure potential versus bulk and symplastic relative water deficit SMA parameters.}
 \usage{
-psip_rwd_params(psi, psip, rwd, sym_rwd, rwc, sym_rwc)
+psip_rwd_params(
+  psi_above,
+  psip,
+  rwd,
+  symrwd,
+  rwc_above,
+  symrwc_above,
+  psi_below,
+  rwc_below,
+  symrwc_below
+)
 }
 \arguments{
 \item{psip}{A vector of pressure potential values}
