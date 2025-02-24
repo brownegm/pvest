@@ -6,9 +6,15 @@
 #'
 #' @return Bulk and symplastic slopes and intercepts.
 
-psip_rwd_params <- function(psi, psip, rwd, sym_rwd, rwc, sym_rwc) {
+psip_rwd_params <- function(psi_above, psi_below, 
+                            psip, rwd, symrwd, # for modulus
+                            rwc_above, symrwc_above,
+                            rwc_below, symrwc_below) {
   # create an input class for the data
-  tlp_input <- tlpinput(psip, rwd, symrwd)
+  tlp_input <- tlpinput(psi_above, psi_below, 
+                        psip, rwd, symrwd, 
+                        rwc_above, symrwc_above,
+                        rwc_below, symrwc_below)
   # construct bulk and symplastic models
   tlp_model <- sma_model(tlp_input)
   # return the model parameters
@@ -16,13 +22,15 @@ psip_rwd_params <- function(psi, psip, rwd, sym_rwd, rwc, sym_rwc) {
 }
 
 #' Constructor for the tlp_input class
-tlpinput <- function(psi, psip, rwd, sym_rwd, rwc, sym_rwc) {
-  input <- structure(list(psi, 
-                          psip, rwd, sym_rwd, # for modulus
-                          rwc, sym_rwc), # for capacitance
-                     .Names=c("psi",
+tlpinput <- function(psi, psip, rwd, symrwd, rwc, symrwc) {
+  input <- structure(list(psi_above, psi_below, 
+                          psip, rwd, symrwd, # for modulus
+                          rwc_above, symrwc_above,
+                          rwc_below, symrwc_below), # for capacitance
+                     .Names=c("psi_above", "psi_below",
                               "psip", "rwd", "symrwd", 
-                              "rwc", "symrwc"),
+                              "rwc_above", "symrwc_above", 
+                              "rwc_below", "symrwc_below"),
             class = "tlp_input")
   return(input)
 }
@@ -85,12 +93,12 @@ estTLP.default <- function(data, wc.index, wp.index, n_row_above, n_row_below) {
   above_idx <- c(1:n_row_above)
   
   param_list <- psip_rwd_params(
-    psi = osm_obj$data$psi[above_idx], 
-    sym_rwc = osm_obj$data$sym_rwc[above_idx],
-    rwc = osm_obj$data$rwc[above_idx], 
+    psi = osm_obj$data$psi[above_idx],
+    symrwc = osm_obj$symrwc[above_idx],
+    rwc = osm_obj$data$rwc[above_idx],
     psip = osm_obj$prespot[above_idx],
-    rwd = osm_obj$data$rwd[above_idx], 
-    sym_rwd = osm_obj$sym_rwd[above_idx]
+    rwd = osm_obj$data$rwd[above_idx],
+    symrwd = osm_obj$symrwd[above_idx]
   ) 
   
   #collect model parameters for below from osm object
@@ -129,15 +137,21 @@ NULL
 #' @rdname estTLP
 estTLP.osmEst <- function(osm_obj, n_row_below = NULL, n_row_above = 4) {
   
+  #collect indices for above and below turgor loss point
   above_idx <- c(1:n_row_above)
-  
+  below_idx <- c(1:osm_obj$est_rows)
+
+  #determine sma parameters
   param_list <- psip_rwd_params(
-    psi = osm_obj$data$psi[above_idx], 
-    sym_rwc = osm_obj$data$sym_rwc[above_idx],
-    rwc = osm_obj$data$rwc[above_idx], 
+    psi_above = osm_obj$data$psi[above_idx], 
+    psi_below = osm_obj$data$psi[below_idx],
+    symrwc_above = osm_obj$symrwc[above_idx],
+    symrwc_below = osm_obj$symrwc[below_idx],
+    rwc_above = osm_obj$data$rwc[above_idx], 
+    rwc_below = osm_obj$data$rwc[below_idx], 
     psip = osm_obj$prespot[above_idx],
     rwd = osm_obj$data$rwd[above_idx], 
-    sym_rwd = osm_obj$sym_rwd[above_idx]
+    symrwd = osm_obj$symrwd[above_idx]
   ) 
 
   #collect model parameters for below from osm object
@@ -152,21 +166,25 @@ estTLP.osmEst <- function(osm_obj, n_row_below = NULL, n_row_above = 4) {
   pi_tlp <- -1 / (osm_slope * rwd_tlp + osm_intercept)
   modulus <- osm_obj$psip_o / (rwd_tlp / 100)
   sym_modulus<- osm_obj$psip_o  / (sym_rwd_tlp / 100)
+  
   # estimate capacitance
-
-  # cap.ft.bulk <- (sma_slope(x = data_abovetlp[, wc.index], y = data_abovetlp[, wp.index])) / 100
-  # cap.ft.sym <- (sma_slope(x = data_abovetlp[, s_wc.index], y = data_abovetlp[, wp.index])) / 100
-  # cap.tlp.bulk <- (sma_slope(x = data_belowtlp[, wc.index], y = data_belowtlp[, wp.index])) / 100
-  # cap.tlp.sym <- (sma_slope(x = data_belowtlp[, s_wc.index], y = data_belowtlp[, wp.index])) / 100
+  cap_bulk_ft <- param_list$slope_cap_ft / 100
+  cap_sym_ft <- param_list$slope_cap_sym_ft / 100
+  cap_tlp_bulk_tlp <- osm_obj$slope_cap_tlp / 100
+  cap_sym_tlp<- osm_obj$slope_cap_sym_tlp/ 100
   
   outtlp <- structure(list(
     pi_tlp, rwc_tlp, rwd_tlp, 
     sym_rwc_tlp, sym_rwd_tlp, 
-    modulus, sym_modulus
+    modulus, sym_modulus,
+    cap_bulk_ft, cap_sym_ft, 
+    cap_bulk_tlp, cap_sym_tlp
     ), 
     .Names = c("pi_tlp", "rwc_tlp", "rwd_tlp", 
                "sym_rwc_tlp", "sym_rwd_tlp", 
-               "modulus", "sym_modulus"),
+               "modulus", "sym_modulus", 
+               "cap_bulk_ft", "cap_sym_ft", 
+               "cap_bulk_tlp", "cap_sym_tlp"),
     units = c("MPa", "%","%",
               "%","%", 
               "MPa", "MPa"),

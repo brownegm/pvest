@@ -7,9 +7,9 @@
 #' @description Estimates the osmotic potential at full turgor from the linear relationship
 #'     between relative water deficit and inverse leaf water potential.
 #'
-#' @param data A data frame. A data frame containing the data set of the last 4 hydration states for a given leaf
-#' @param rwd A vector of relative water deficit values
-#' @param psi A vector of water potential values
+#' @param data Data frame containing the data set of the last 4 hydration states for a given leaf
+#' @param rwd Vector of relative water deficit values.
+#' @param psi Vector of water potential values.
 #'
 #' @return Numeric list containing the slope, intercept and osmotic potential at full turgor, in that order.Output is an object of class "pioEst"
 #'
@@ -26,7 +26,7 @@ estpio <- function(rwd, psi) {
   
   osm_mod <- sma_model(x=input_vals)
   
-  pio <- -1 / osm_mod$intercept
+  pio <- -1 /osm_mod$intercept
 
   output <- structure(list(
     "sma_mod" = osm_mod,
@@ -61,7 +61,7 @@ osminput <- function(rwd, psi) {
 #' @export print.pioEst
 
 print.pioEst <- function(x, ...){
-  cat("Pi estimates: \n")|>eval()
+  cat("Pi estimates: \n")
   cat("Osmotic potential at full turgor:", x$pi.o, "\n")
   return(x$sma_mod)
 }
