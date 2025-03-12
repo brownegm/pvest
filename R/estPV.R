@@ -20,6 +20,8 @@
 #'
 #' @importFrom purrr reduce
 #' @import dplyr
+#' @import rlang
+#' @import cli
 #' @export
 #'
 
@@ -38,22 +40,30 @@ estPV.default <- function(data, group, subgrp = NULL, fw, wp, dm, n_pts, method 
   fw <- rlang::enquo(fw)
   wp <- rlang::enquo(wp)
   dm <- rlang::enquo(dm)
-  subgroup_col <- rlang::enquo(subgrp)
+  sbgrp <- rlang::enquo(subgrp)
 
   # Check that columns exist
-  input_cols <- c(quo_name(grp), quo_name(fw), quo_name(wp), quo_name(dm))
-  
-  if (!all(input_cols %in% names(data))) {
-    stop("One or more specified vars are missing from the data frame.")
-  }
+  input_cols <- c(as_name(grp), as_name(fw), as_name(wp), as_name(dm))
 
-  # Get optional subgrouping
-  if (!is.null(subgroup_col) && !subgroup_col %in% names(data)) {
-    stop("Specified subgroup column does not exist in the data frame.")
+  cli::cli_alert_info("Grouping data by: {as_name(grp)}")
+
+  missing_cols <- setdiff(input_cols, names(data))
+  if (length(missing_cols) > 0) {
+    cli::cli_abort("The following columns are missing from the data frame: {missing_cols}")
   }
+  # Get optional subgrouping
+  if(!is.null(sbgrp) && as_name(sbgrp) %in% names(data)) {
+    
+  cli::cli_alert_info("Subgrouping data by: {as_name(sbgrp)}")
+    
+  } else{
+    
+  cli::cli_abort("Specified subgroup ({as_name(sbgrp)}) does not exist in the data frame.")
+  }
+}
 
   # create unique ID and add inverse psi
-  unique_ids <- paste(data$species, data$leaf, sep = "_") |> unique()
+  unique_ids <- paste(data[{{grp}}], data[{{subgrp}}], sep = "_") |> unique()
   data$inv.water.potential <- -1 / (data[[wp.index]])
 
   unique_ids <- unique(data$unique_id)
@@ -129,4 +139,14 @@ estPV.default <- function(data, group, subgrp = NULL, fw, wp, dm, n_pts, method 
   output_df <- as.data.frame(purrr::reduce(output_est, rbind))
 
   return(output_df)
+}
+
+
+col_quos <- function(...){
+  
+  args <- list2(...)
+  cli::cli_alert_info(c("Grouping data by {as_name(grp)}"))
+  if(sbgrp %in% args){
+  cli::cli_alert_info(c("Subgroup of data: {as_name(sbgrp)}"))
+  }
 }
