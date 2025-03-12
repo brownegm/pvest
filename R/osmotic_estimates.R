@@ -7,7 +7,6 @@
 #' @description Estimates the osmotic potential at full turgor from the linear relationship
 #'     between relative water deficit and inverse leaf water potential.
 #'
-#' @param data Data frame containing the data set of the last 4 hydration states for a given leaf
 #' @param rwd Vector of relative water deficit values.
 #' @param psi Vector of water potential values.
 #'

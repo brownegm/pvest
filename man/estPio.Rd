@@ -10,8 +10,6 @@ estpio(rwd, psi)
 \item{rwd}{Vector of relative water deficit values.}
 
 \item{psi}{Vector of water potential values.}
-
-\item{data}{Data frame containing the data set of the last 4 hydration states for a given leaf}
 }
 \value{
 Numeric list containing the slope, intercept and osmotic potential at full turgor, in that order.Output is an object of class "pioEst"

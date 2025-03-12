@@ -124,11 +124,11 @@ sma_model.tlp_input <- function(x, y=NULL, ...){
   intercept_sym <- pvest::sma_intercept(x$psip, x$symrwd, slope_sym)
   
   #calculate the slopes for capacitance full turgor
-  slope_cap_ft <- pvest::sma_slope(x$psi_above, x$rwc_above)
-  slope_cap_sym_ft <- pvest::sma_slope(x$psi_above, x$symrwc_above)
+  slope_cap_ft <- pvest::sma_slope( x$rwc_above,x$psi_above)*0.01
+  slope_cap_sym_ft <- pvest::sma_slope(x$symrwc_above,x$psi_above)*0.01
   #calculate the slopes for capacitance tlp
-  slope_cap_tlp <- pvest::sma_slope(x$psi_below, x$rwc_below)
-  slope_cap_sym_tlp <- pvest::sma_slope(x$psi_below, x$symrwc_below)
+  slope_cap_tlp <- pvest::sma_slope(x$rwc_below,x$psi_below)*0.01
+  slope_cap_sym_tlp <- pvest::sma_slope(x$symrwc_below,x$psi_below)*0.01
 
   model <- structure(.Data = list(slope, intercept,
                                   slope_sym, intercept_sym,

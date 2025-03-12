@@ -5,7 +5,6 @@
 #' @param symrwd A vector of symplastic relative water deficit values
 #'
 #' @return Bulk and symplastic slopes and intercepts.
-
 psip_rwd_params <- function(psi_above, psip, rwd, symrwd, 
                             rwc_above, symrwc_above,
                             psi_below, rwc_below, symrwc_below) {
@@ -38,20 +37,13 @@ tlpinput <- function(psi_above, psip,
   return(input)
 }
 
-#' Parameters to estimate values at turgor loss point from leaf pressure potential versus bulk and symplastic relative water deficit SMA parameters.
-#'
-#' @param psip A vector of pressure potential values
-#' @param rwd A vector of relative water deficit values
-#' @param symrwd A vector of symplastic relative water deficit values
-#'
-#' @return Bulk and symplastic slopes and intercepts.
-
-
-#' Estimate pressure volume curve parameters at turgor loss
+#' @title Estimate pressure volume curve parameters at turgor loss
 #' 
-#' @description Estimate leaf water potential, relative water content at turgor loss point and modulus of elasticity both bulk parameters and their symplastic counterparts
+#' @description Estimates both bulk parameters and their symplastic counterparts.
 #'
-#' Two methods are provided for this function: \code{estTLP.default} and \code{estTLP.osmEst}. The default method requires a data frame with columns for pressure potential and relative water content. The osmEst method requires an object of class _osmEst_ (i.e., produced by the estOsmotic function). The latter is recommended for simplicity and consistency with other functions in the package. 
+#' Two methods are provided for this function: \code{estTLP.default} and \code{estTLP.osmEst}. 
+#' * The default method requires a data frame with columns for pressure potential and relative water content. 
+#' * The osmEst method requires an object of class _osmEst_ (i.e., produced by the `estOsmotic()` function). This is recommended for simplicity and consistency with other functions in the package.f 
 #'
 #' @details The function estimates the standard major axis model parameters **above** turgor loss between pressure potential and the bulk and symplastic relative water deficit to estimate the bulk and symplastic relative water content at turgor loss point as : 
 #' \deqn{RWD_{TLP} = -\frac{SMA~Intercept}{SMA~Slope}}
@@ -63,7 +55,9 @@ tlpinput <- function(psi_above, psip,
 #' Then, it calculates the bulk and symplastic modulus of elasticity as the ratio of the pressure potential at full turgor and the relative water content at turgor loss point:
 #' \deqn{\epsilon_{TLP} = \frac{P_{0}}{RWC_{TLP}}}
 #' \deqn{Symplastic~\epsilon_{TLP} = \frac{P_{0}}{Symplastic~RWC_{TLP}}}
-#'
+#' 
+#' See attr(., "units") to get the units for each of the outputs.
+#' 
 #' @param data A data frame
 #' @param wc.index Index of relative water content values
 #' @param wp.index Index of water potential values.
@@ -78,8 +72,11 @@ tlpinput <- function(psi_above, psip,
 #' \item{sym_rwd_tlp}{Symplastic relative water deficit at turgor loss point}
 #' \item{modulus}{Bulk modulus of elasticity at turgor loss point}
 #' \item{sym_modulus}{Symplastic modulus of elasticity at turgor loss point}
+#' \item{cap_bulk_ft}{Bulk capacitance at full turgor}
+#' \item{cap_sym_ft}{Symplastic capacitance at full turgor}
+#' \item{cap_bulk_tlp}{Bulk capacitance at turgor loss}
+#' \item{cap_sym_tlp}{Symplastic capacitance at turgor loss}
 #' 
-#' @importFrom dplyr arrange slice_tail slice_head
 #' @export
 #' @rdname estTLP
 
@@ -236,6 +233,10 @@ print.tlpEst <- function(x, ...) {
   cat("Symplastic RWD at TLP:  ", x$sym_rwd_tlp|>round(3), units[5], "\n")
   cat("Bulk modulus at TLP:  ", x$modulus|>round(3), units[6], "\n")
   cat("Symplastic modulus at TLP:  ", x$sym_modulus|>round(3), units[7], "\n")
+  cat("Bulk capacitance at FT:  ", x$cap_bulk_ft|>round(3), units[8], "\n")
+  cat("Symplastic capacitance at FT: ", x$cap_sym_ft|>round(3), units[9], "\n")
+  cat("Bulk Capacitance at TLP:  ", x$cap_bulk_tlp|>round(3), units[10], "\n")
+  cat("Symplastic capacitance at TLP:  ", x$cap_sym_tlp|>round(3), units[11], "\n")
   cat("----------------------------------------------------\n")
 }
 

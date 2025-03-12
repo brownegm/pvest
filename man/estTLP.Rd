@@ -4,7 +4,7 @@
 \alias{estTLP}
 \alias{estTLP.default}
 \alias{estTLP.osmEst}
-\title{Parameters to estimate values at turgor loss point from leaf pressure potential versus bulk and symplastic relative water deficit SMA parameters.}
+\title{Estimate pressure volume curve parameters at turgor loss}
 \usage{
 estTLP(data, wc.index, wp.index, n_row_above, n_row_below, ...)
 
@@ -22,17 +22,8 @@ estTLP(data, wc.index, wp.index, n_row_above, n_row_below, ...)
 \item{n_row_above}{Number of rows above turgor loss point guess for estimating SMA line parameters.}
 
 \item{n_row_below}{Number of rows below turgor loss point guess for estimating SMA line parameters.}
-
-\item{psip}{A vector of pressure potential values}
-
-\item{rwd}{A vector of relative water deficit values}
-
-\item{symrwd}{A vector of symplastic relative water deficit values}
 }
 \value{
-Bulk and symplastic slopes and intercepts.
-Estimate pressure volume curve parameters at turgor loss
-
 Returns an object of class \emph{tlpEst} with the following components:
 \item{pi_tlp}{Osmotic potential at turgor loss point}
 \item{rwc_tlp}{Bulk relative water content at turgor loss point}
@@ -41,11 +32,19 @@ Returns an object of class \emph{tlpEst} with the following components:
 \item{sym_rwd_tlp}{Symplastic relative water deficit at turgor loss point}
 \item{modulus}{Bulk modulus of elasticity at turgor loss point}
 \item{sym_modulus}{Symplastic modulus of elasticity at turgor loss point}
+\item{cap_bulk_ft}{Bulk capacitance at full turgor}
+\item{cap_sym_ft}{Symplastic capacitance at full turgor}
+\item{cap_bulk_tlp}{Bulk capacitance at turgor loss}
+\item{cap_sym_tlp}{Symplastic capacitance at turgor loss}
 }
 \description{
-Estimate leaf water potential, relative water content at turgor loss point and modulus of elasticity both bulk parameters and their symplastic counterparts
+Estimates both bulk parameters and their symplastic counterparts.
 
-Two methods are provided for this function: \code{estTLP.default} and \code{estTLP.osmEst}. The default method requires a data frame with columns for pressure potential and relative water content. The osmEst method requires an object of class \emph{osmEst} (i.e., produced by the estOsmotic function). The latter is recommended for simplicity and consistency with other functions in the package.
+Two methods are provided for this function: \code{estTLP.default} and \code{estTLP.osmEst}.
+\itemize{
+\item The default method requires a data frame with columns for pressure potential and relative water content.
+\item The osmEst method requires an object of class \emph{osmEst} (i.e., produced by the \code{estOsmotic()} function). This is recommended for simplicity and consistency with other functions in the package.f
+}
 }
 \details{
 The function estimates the standard major axis model parameters \strong{above} turgor loss between pressure potential and the bulk and symplastic relative water deficit to estimate the bulk and symplastic relative water content at turgor loss point as :
@@ -58,4 +57,6 @@ Then, the water potential at turgor loss point is calculated using the SMA model
 Then, it calculates the bulk and symplastic modulus of elasticity as the ratio of the pressure potential at full turgor and the relative water content at turgor loss point:
 \deqn{\epsilon_{TLP} = \frac{P_{0}}{RWC_{TLP}}}
 \deqn{Symplastic~\epsilon_{TLP} = \frac{P_{0}}{Symplastic~RWC_{TLP}}}
+
+See attr(., "units") to get the units for each of the outputs.
 }
