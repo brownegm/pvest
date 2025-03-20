@@ -10,7 +10,7 @@ estTLP(data, wc.index, wp.index, n_row_above, n_row_below, ...)
 
 \method{estTLP}{default}(data, wc.index, wp.index, n_row_above, n_row_below)
 
-\method{estTLP}{osmEst}(osm_obj, n_row_below = NULL, n_row_above = 4)
+\method{estTLP}{osmEst}(osm_obj, n_row_above = 4)
 }
 \arguments{
 \item{data}{A data frame}

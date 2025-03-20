@@ -18,25 +18,37 @@
 #'
 #' @return Returns a data frame with the estimated parameters
 #'
-#' @importFrom purrr reduce
 #' @import dplyr
-#' @import rlang
+#' @importFrom rlang enquo as_name
 #' @import cli
 #' @export
-#'
+#' @rdname estPV
 
-estPV <- function(data, group, subgrp = NULL, fw, wp, dm, n_pts, method = NULL, ...) {
+estPV <- function(data,
+                  group,
+                  subgrp = NULL,
+                  fw,
+                  wp,
+                  dm,
+                  n_pts,
+                  method = NULL,
+                  ...) {
   if (n_pts == T & is.null(method)) {
     "Method must be specified when n_pts=T"
   }
-
   UseMethod("estPV")
 }
 
 #'@export
-#'
-estPV.default <- function(data, group, subgrp = NULL, fw, wp, dm, n_pts=F, method = NULL) {
-  
+#'@rdname estPV
+estPV.default <- function(data,
+                          group,
+                          subgrp = NULL,
+                          fw,
+                          wp,
+                          dm,
+                          n_pts = F,
+                          method = NULL) {
   # Convert inputs to quosures for tidy evaluation
   grp <- rlang::enquo(group)
   fw <- rlang::enquo(fw)
@@ -51,6 +63,7 @@ estPV.default <- function(data, group, subgrp = NULL, fw, wp, dm, n_pts=F, metho
                   rlang::as_name(dm))
   
   missing_cols <- setdiff(input_cols, names(data))
+  
   if (length(missing_cols) > 0) {
     cli::cli_abort("The following columns are missing from the data frame: {missing_cols}")
   }
@@ -65,40 +78,38 @@ estPV.default <- function(data, group, subgrp = NULL, fw, wp, dm, n_pts=F, metho
   } else{
     cli::cli_alert_info("Grouping data by: {rlang::as_name(grp)}")
   }
+  # create data list by unique grp and sbgrp combinations
+  raw_data_list_by_sp <- by_grp_sbgrp(data, grp, sbgrp)
 
-  # create unique ID and add inverse psi
-  unique_ids <- data %>% 
-    dplyr::distinct(!!grp, !!sbgrp) %>%
-    tidyr::unite("ids", !!grp, !!sbgrp, sep = "_")%>%
-    dplyr::pull(ids)
-  
-  print(unique_ids)
-  
-  inv_psi <- -1 / (data[[wp.index]])
+  n_row_below <- 4
+  # list of estimates for each unique id
+  output_est <- vector(mode = "list", length = length(raw_data_list_by_sp))
+
+  for (id in seq_along(raw_data_list_by_sp)) {
+    
+    output_est [[id]] <- pvest::estRWC(
+      raw_data_list_by_sp[[id]],
+      fw.index = as_name(fw),
+      wp.index = as_name(wp),
+      dm.index = as_name(dm),
+      n_row = 4, silent = T)|>
+      pvest::estOsmotic(obj=_,##UPDATE 
+                          n_row = n_row_below,
+                          silent = T)|>
+      pvest::estTLP(osm_obj=_,
+                     n_row_above = 5) ##UPDATE
+
+    names(output_est)[id] <- raw_data_list_by_sp[[id]]["ids"]|>unique()
+  }
+  # combine all leaf estimates into one data frame.
+  # output_df <- as.data.frame(purrr::reduce(output_est, rbind))
+  return(output_est)
 }
-#   unique_ids <- unique(data$unique_id)
-# 
-#   output_est <- list() # list of estimates for each unique id
-# 
-#   d_names <- names(data)
-# 
-#   for (i in unique_ids) {
-#     leaf_estimate <- data[data$unique_id == i, ]
-# 
-#     # fw.index=water mass, wp.index= water potential
-#     swc_swm_est <- SaturatedWaterContent(leaf_estimate, fw.index = fw.index, wp.index = wp.index, dm.index = dm.index)
-# 
-#     leaf_estimate[, "saturated.water.mass"] <- swc_swm_est[[1]]
-# 
-#     leaf_estimate[, "saturated.water.content"] <- swc_swm_est[[2]]
-# 
-#     leaf_estimate[, c("relative.water.content", "relative.water.deficit")] <- RelativeWaterCD(leaf_estimate, fw.index = fw.index)
-# 
 #     if (n_pts == T) {
 #       pts.vec <- check_n_pts(leaf_estimate, wp.index = "inv.water.potential", wm.index = "relative.water.deficit", method = method)
-# 
+#
 #       if (is.character(pts.vec)) { # sometimes it is the case that none of the estimated cv values are < 10%; if this is the case set as 4
-# 
+#
 #         pts <- 4
 #       } else {
 #         pts <- pts.vec[1]
@@ -106,57 +117,54 @@ estPV.default <- function(data, group, subgrp = NULL, fw, wp, dm, n_pts=F, metho
 #     } else {
 #       pts <- 4
 #     }
-# 
+#
 #     ## need to change the amount of points included for estimation after TLP is estimated.
 #     tlp_est <- OsmoticEstimates(data = leaf_estimate, wc.index = "relative.water.deficit", wp.index = "inv.water.potential", n_row = pts) %>%
 #       EstimateTLP(., wc.index = "relative.water.deficit", wp.index = "inv.water.potential", n_row_below = pts) %>%
 #       dplyr::pull(leaf.waterpotential.attlp) %>%
 #       unique()
-# 
+#
 #     ## n rows above and below this tlp estimate
 #     row_above_tlp <- leaf_estimate %>%
 #       dplyr::filter(.data[[d_names[wp.index]]] > tlp_est) %>%
 #       nrow()
-# 
+#
 #     row_below_tlp <- leaf_estimate %>%
 #       dplyr::filter(.data[[d_names[wp.index]]] < tlp_est) %>%
 #       nrow()
-# 
+#
 #     if (row_above_tlp | row_below_tlp > nrow(data) - 4) {
 #       row_below_tlp <- 4
-# 
+#
 #       row_above_tlp <- nrow(data) - row_below_tlp
 #     } else {
-# 
+#
 #     }
 #     leaf_estimate <- OsmoticEstimates(data = leaf_estimate, wc.index = "relative.water.deficit", wp.index = "inv.water.potential", n_row = row_below_tlp) # osmotic variables are estimated based on inv.psi vs RWD below TLP
-# 
-#     leaf_estimate <- EstimateTLP(df = leaf_estimate, wc.index = "relative.water.deficit", wp.index = "inv.water.potential", n_row_above = row_above_tlp, n_row_below = row_below_tlp)
-# 
-#     # estimate other parameters:capacitance above and below tlp.
-# 
-#     leaf_estimate_cap <- capacitance_fttlp(df = leaf_estimate, wc.index = "relative.water.content", s_wc.index = "sym.rwc", wp.index = "water.potential")
-# 
-#     # check this but should maybe work
-#     leaf_estimate[, "cap.ft.bulk"] <- rep(leaf_estimate_cap[1], nrow(leaf_estimate))
-#     leaf_estimate[, "cap.ft.sym"] <- rep(leaf_estimate_cap[2], nrow(leaf_estimate))
-#     leaf_estimate[, "cap.tlp.bulk"] <- rep(leaf_estimate_cap[3], nrow(leaf_estimate))
-#     leaf_estimate[, "cap.tlp.sym"] <- rep(leaf_estimate_cap[4], nrow(leaf_estimate))
-# 
-#     output_est[[i]] <- leaf_estimate
-#   }
-#   # combine all leaf estimates into one data frame.
-#   output_df <- as.data.frame(purrr::reduce(output_est, rbind))
-# 
-#   return(output_df)
-# }
-
+#
+#     leaf_estimate <- EstimateTLP(df = leaf_estimate, wc.index = "relative.water.deficit", wp.index = "inv.water.potential", n_row_above = row_above_tlp, n_row_below = row_below_tlp
 
 # col_quos <- function(...){
-#   
+#
 #   args <- list2(...)
 #   cli::cli_alert_info(c("Grouping data by {as_name(grp)}"))
 #   if(sbgrp %in% args){
 #   cli::cli_alert_info(c("Subgroup of data: {as_name(sbgrp)}"))
 #   }
 # }
+
+#' by_grp_sbgrp
+#' @param x A dataframe
+#' @param grp Grouping variable
+#' @param sbgrp Subgrouping variable
+by_grp_sbgrp <- function(x, grp, sbgrp = NULL) {
+  data_with_unique_id <- x |>
+    tidyr::unite("ids", !!grp, !!sbgrp, sep = "_", remove = FALSE)
+  
+  unique_ids <- dplyr::distinct(data_with_unique_id, ids) |>
+    dplyr::pull(ids)
+  
+  obj <- lapply(unique_ids, \(id) filter(data_with_unique_id, ids == id))
+  
+  invisible(obj)
+}

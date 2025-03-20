@@ -1,8 +1,14 @@
 #' Parameters to estimate values at turgor loss point from leaf pressure potential versus bulk and symplastic relative water deficit SMA parameters.
 #'
-#' @param psip A vector of pressure potential values
-#' @param rwd A vector of relative water deficit values
+#' @param psip Pressure potential
+#' @param rwd Relative water deficit
 #' @param symrwd A vector of symplastic relative water deficit values
+#' @param psi_above Water potential _above_ turgor loss
+#' @param rwc_above Relative water content _above_ turgor loss 
+#' @param psi_below Water potential _below_ turgor loss
+#' @param rwc_below Relative water content _below_ turgor loss
+#' @param symrwc_above Symplastic relative water content _above_ turgor loss
+#' @param symrwc_below Symplastic relative water content _below_ turgor loss
 #'
 #' @return Bulk and symplastic slopes and intercepts.
 psip_rwd_params <- function(psi_above, psip, rwd, symrwd, 
@@ -25,7 +31,8 @@ tlpinput <- function(psi_above, psip,
                     rwd, symrwd, # for modulus
                     rwc_above, symrwc_above,
                     psi_below, rwc_below, symrwc_below) {
-  input <- structure(list(psi_above, psip, 
+  
+return(structure(list(psi_above, psip, 
                         rwd, symrwd, # for modulus
                         rwc_above, symrwc_above,
                         psi_below, rwc_below, symrwc_below), # for capacitance
@@ -34,7 +41,7 @@ tlpinput <- function(psi_above, psip,
                               "rwc_above", "symrwc_above", 
                               "psi_below","rwc_below", "symrwc_below"),
             class = "tlp_input")
-  return(input)
+)
 }
 
 #' @title Estimate pressure volume curve parameters at turgor loss
@@ -97,14 +104,14 @@ estTLP.default <- function(data, wc.index, wp.index, n_row_above, n_row_below) {
   #determine sma parameters
   param_list <- psip_rwd_params(
     #above
-    psi_above = osm_obj$data$psi[above_idx], 
+    psi_above = osm_obj$psi[above_idx], 
     symrwc_above = osm_obj$symrwc[above_idx],
     rwc_above = osm_obj$data$rwc[above_idx], 
     psip = osm_obj$prespot[above_idx],
     rwd = osm_obj$data$rwd[above_idx], 
     symrwd = osm_obj$symrwd[above_idx],
     #below
-    psi_below = osm_obj$data$psi[below_idx],
+    psi_below = osm_obj$psi[below_idx],
     symrwc_below = osm_obj$symrwc[below_idx],
     rwc_below = osm_obj$data$rwc[below_idx] 
   ) 
@@ -155,7 +162,7 @@ NULL
 
 #' @export
 #' @rdname estTLP
-estTLP.osmEst <- function(osm_obj, n_row_below = NULL, n_row_above = 4) {
+estTLP.osmEst <- function(osm_obj, n_row_above = 4) {
   
   #collect indices for above and below turgor loss point
   above_idx <- c(1:n_row_above)
@@ -164,14 +171,14 @@ estTLP.osmEst <- function(osm_obj, n_row_below = NULL, n_row_above = 4) {
   #determine sma parameters
   param_list <- psip_rwd_params(
     #above
-    psi_above = osm_obj$data$psi[above_idx], 
+    psi_above = osm_obj$psi[above_idx], 
     symrwc_above = osm_obj$symrwc[above_idx],
     rwc_above = osm_obj$data$rwc[above_idx], 
     psip = osm_obj$prespot[above_idx],
     rwd = osm_obj$data$rwd[above_idx], 
     symrwd = osm_obj$symrwd[above_idx],
     #below
-    psi_below = osm_obj$data$psi[below_idx],
+    psi_below = osm_obj$psi[below_idx],
     symrwc_below = osm_obj$symrwc[below_idx],
     rwc_below = osm_obj$data$rwc[below_idx]
   ) 

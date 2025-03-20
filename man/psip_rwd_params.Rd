@@ -17,11 +17,23 @@ psip_rwd_params(
 )
 }
 \arguments{
-\item{psip}{A vector of pressure potential values}
+\item{psi_above}{Water potential \emph{above} turgor loss}
 
-\item{rwd}{A vector of relative water deficit values}
+\item{psip}{Pressure potential}
+
+\item{rwd}{Relative water deficit}
 
 \item{symrwd}{A vector of symplastic relative water deficit values}
+
+\item{rwc_above}{Relative water content \emph{above} turgor loss}
+
+\item{symrwc_above}{Symplastic relative water content \emph{above} turgor loss}
+
+\item{psi_below}{Water potential \emph{below} turgor loss}
+
+\item{rwc_below}{Relative water content \emph{below} turgor loss}
+
+\item{symrwc_below}{Symplastic relative water content \emph{below} turgor loss}
 }
 \value{
 Bulk and symplastic slopes and intercepts.

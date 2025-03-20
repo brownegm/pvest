@@ -2,9 +2,12 @@
 % Please edit documentation in R/estPV.R
 \name{estPV}
 \alias{estPV}
+\alias{estPV.default}
 \title{Estimate all pressure volume curve parameters for all leaves}
 \usage{
 estPV(data, group, subgrp = NULL, fw, wp, dm, n_pts, method = NULL, ...)
+
+\method{estPV}{default}(data, group, subgrp = NULL, fw, wp, dm, n_pts = F, method = NULL)
 }
 \arguments{
 \item{data}{A data frame. Input data frame with the raw values}

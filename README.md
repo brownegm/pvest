@@ -31,4 +31,4 @@ estParams()# this function estimates all pressure volume curve parameters for yo
 ## TBD 
 - Check coverage
 - Export statistics along with sma_model
-- The inputs to the functions tlp, osm , rwc need standardization.
+- The function `estPV()` is not yet fully tested.The transfer of data from the rwc estimate to the pv estimate is not yet fully functional.

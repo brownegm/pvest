@@ -87,7 +87,6 @@ NULL
 #' within the sma_intercept function(\code{\link{sma_intercept}}) because of the negative inverse of leaf water potential.
 #' Also, note that unlike in the saturated water content estimation the x values is inverse.
 #'
-#'
 #' @return Returns data frame with new columns containing the osmotic and pressure potential variables namely:
 #'    \itemize{
 #'     \item osmotic potential at full turgor
@@ -159,7 +158,7 @@ estOsmotic.default <- function(data, wc.index, wp.index, n_row = 4, silent=T) {
   rwd <- 100 - rwc
   psi <- data_belowtlp[[varnames$wp]]
   minus_inv_psi <- -1/psi
-
+ 
   pio <- estpio(rwd, minus_inv_psi)
   
   #calculate osmotic and pressure potential at full turgor
@@ -188,71 +187,76 @@ estOsmotic.default <- function(data, wc.index, wp.index, n_row = 4, silent=T) {
                  class = "osmEst")
 }
 
-#@rdname estOsmotic
-#@export
-# estOsmotic.rwcEst <- function(rwc_obj, n_row = 4, silent=T) {
-#   
-#   is_char <- all(is.character(c(wc.index,wp.index)))
-#   is_num <- all(is.numeric(c(wc.index,wp.index)))
-#   
-#   if (!(is_char|is_num)) {
-#     stop("estOsmotic: Column indices must both be either character strings or numeric integers referencing the preferred column.")
-#   }
-#   
-#   if(is_char){
-#     varnames <- list(
-#       "wc" = wc.index,
-#       "wp" = wp.index
-#     )
-#   }else if(is_num){
-#     varnames <- list(
-#       "wc" = names(data)[wc.index],
-#       "wp" = names(data)[wp.index]
-#     )
-#   }
-#   
-#   check_var <- all(varnames[c("wc", "wp")] %in% names(data))
-#   
-#   if (check_var == FALSE) {
-#     stop("estOsmotic: The column names provided do not exist in the input data.")
-#   }
-#   
-#   if (silent == FALSE) {
-#     cat("\nEstimating osmotic variables...\n\n")
-#     
-#     print(head(data))
-# 
-#     cat("Using the following columns for the estimation:\n",
-#       "{RWC/RWD}: ", varnames$wc, "\n",
-#       "{Water potential}: ", varnames$wp, "\n\n",
-#       sep = ""
-#     )
-#     
-#   }
-#   
-#   data_belowtlp <- data %>%
-#     dplyr::arrange(desc(varnames$wp)) %>%
-#     dplyr::slice_tail(n = n_row) %>%
-#     as.data.frame()
-#   
-#   # create vectors
-#   rwc <- data_belowtlp[[varnames$wc]]
-#   rwd <- 100 - rwc
-#   psi <- data_belowtlp[[varnames$wp]]
-#   minus_inv_psi <- -1/psi
-# 
-#   pio <- estpio(rwd, minus_inv_psi)
-#   
-#   #calculate osmotic and pressure potential at full turgor
-#   osm_pot_fullturgor <- pio$pio
-#   max_psip <- osm_pot_fullturgor * -1
-# 
-#   osmotic_potential <- -1 / (pio$sma_mod$intercept + (pio$sma_mod$slope * data$rwd))
-#   pressure_potential <- psi - osmotic_potential
-#   apoplastic_fraction <- 100 + (pio$sma_mod$intercept / pio$sma_mod$slope)
-#   sym
-#   
-# }
+#'@rdname estOsmotic
+#'@param obj An object of class "rwcEst"
+#'@param n_row Number of rows above turgor loss 
+#'@param silent Silence printing of head(data) and columns used
+#'@export
+estOsmotic.rwcEst <- function(obj, n_row = 4, silent=T) {
+  
+  rwcEstData <- attr(obj, "df")
+  
+  if (silent == FALSE) {
+    cat("\nEstimating osmotic variables...\n\n")
+    
+    print(head(rwcEstData))
+    
+    obj_names <- names(obj)
+    cat("Using the following columns for the estimation:\n",
+        "{RWC/RWD}: ", obj_names[c(3:4)], "\n",
+        "{Water potential}: psi", "\n\n",
+        sep = ""
+    )
+    
+  }
+  
+  # create vectors
+  rwd_n <- tail(obj$rwd, n = n_row)
+  psi_n <- tail(rwcEstData$water.potential, n = n_row)
+  minus_inv_psi <- -1/psi_n
+  
+  pio <- estpio(rwd_n, minus_inv_psi)
+  
+  #calculate osmotic and pressure potential at full turgor
+  osm_pot_fullturgor <- pio$pio
+  max_psip <- osm_pot_fullturgor * -1
+  
+  osmotic_potential <- -1 / (pio$sma_mod$intercept + (pio$sma_mod$slope * (100-rwcEstData$rwc)))
+  pressure_potential <- rwcEstData$water.potential - osmotic_potential
+  apoplastic_fraction <- 100 + (pio$sma_mod$intercept / pio$sma_mod$slope)
+  sym_rwc <- ((rwcEstData$rwc - apoplastic_fraction)/(100 - apoplastic_fraction)) * 100
+  sym_rwd <- 100 - sym_rwc
+  
+  dataUpd <- do.call(cbind,
+                     list(
+                       rwcEstData,
+                       pio = osm_pot_fullturgor,
+                       psip_o = max_psip,
+                       osmpot = osmotic_potential,
+                       prespot = pressure_potential,
+                       af = apoplastic_fraction,
+                       symrwc = sym_rwc,
+                       symrwd = sym_rwd
+                       )
+                     )
+  
+  osm <- structure(list("psi" = rwcEstData$water.potential, 
+                 "invpsi" = -1/rwcEstData$water.potential,
+                 "pio" = osm_pot_fullturgor,
+                 "psip_o"= max_psip,
+                 "osmpot" = osmotic_potential,
+                 "prespot" = pressure_potential, 
+                 "af" = apoplastic_fraction, 
+                 "symrwc" = sym_rwc, 
+                 "symrwd" = sym_rwd,
+                 "data" = dataUpd, # bring the data and model estimates along
+                 "est_rows" = n_row,
+                 "model" = pio$sma_mod), 
+            units = c("MPa","-MPa^-1", "MPa", "MPa","MPa", "MPa" ,"%", "%", "%"),
+            class = "osmEst")
+  
+  return(osm)
+}
 
 # Print method of osmEst class objects
 #'@export
