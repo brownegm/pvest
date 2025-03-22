@@ -5,6 +5,6 @@ test_that("validate inputs", {
 ah <- estPV(pvest::quag, species, subgrp = leaf, fw = fresh.weight, water.potential, dry.weight, n_pts=F)
 
   
-  expect_error(estPV.default(data, species, leaf, fresh.rain, water.potential, hot.weight))
+  expect_error(estPV(data, species, leaf, fresh.rain, water.potential, hot.weight))
   
 })

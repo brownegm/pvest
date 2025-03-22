@@ -1,4 +1,4 @@
-test_that("test tlp values same across versions", {
+testthat::test_that("test tlp values same across versions", {
   # expected values
   tlp <- -2.579838
   rwctlp <- 82.3598
@@ -33,7 +33,7 @@ test_that("test tlp values same across versions", {
   # index names
   wp.index <- "psi"
   wc.index <- "rwc"
-
+  
   ## default
   default_obj <- estTLP(
     data = data, wp.index = wp.index, wc.index = wc.index,

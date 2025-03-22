@@ -31,4 +31,5 @@ estParams()# this function estimates all pressure volume curve parameters for yo
 ## TBD 
 - Check coverage
 - Export statistics along with sma_model
-- The function `estPV()` is not yet fully tested.The transfer of data from the rwc estimate to the pv estimate is not yet fully functional.
+- something is happening with the osmotic default function. Check that the values selected make sense 
+- check the input from rwc estimate. 

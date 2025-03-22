@@ -97,7 +97,6 @@ NULL
 #'     \item symplastic relative water content(sym.rwc; for each hydration state)
 #'     }
 #'
-#' @importFrom dplyr arrange slice_tail
 #' @export estOsmotic
 #' @seealso [estRWC()], [sma_model()]
 #' @rdname estOsmotic
@@ -148,18 +147,12 @@ estOsmotic.default <- function(data, wc.index, wp.index, n_row = 4, silent=T) {
     
   }
   
-  data_belowtlp <- data %>%
-    dplyr::arrange(desc(varnames$wp)) %>%
-    dplyr::slice_tail(n = n_row) %>%
-    as.data.frame()
-  
   # create vectors
-  rwc <- data_belowtlp[[varnames$wc]]
-  rwd <- 100 - rwc
-  psi <- data_belowtlp[[varnames$wp]]
-  minus_inv_psi <- -1/psi
- 
-  pio <- estpio(rwd, minus_inv_psi)
+  rwd_n <- tail(data$rwd, n = n_row)
+  psi_n <- tail(data$psi, n = n_row)
+  minus_inv_psi <- -1/psi_n
+  
+  pio <- estpio(rwd_n, minus_inv_psi)
   
   #calculate osmotic and pressure potential at full turgor
   osm_pot_fullturgor <- pio$pio
@@ -171,8 +164,20 @@ estOsmotic.default <- function(data, wc.index, wp.index, n_row = 4, silent=T) {
   sym_rwc <- ((data[[varnames$wc]] - apoplastic_fraction)/(100 - apoplastic_fraction)) * 100
   sym_rwd <- 100 - sym_rwc
 
-  structure(list("psi" = psi, 
-                 "invpsi" = minus_inv_psi,
+  dataUpd <- do.call(cbind,
+                     list(
+                       data,
+                       pio = osm_pot_fullturgor,
+                       psip_o = max_psip,
+                       osmpot = osmotic_potential,
+                       prespot = pressure_potential,
+                       af = apoplastic_fraction,
+                       symrwc = sym_rwc,
+                       symrwd = sym_rwd
+                     )
+  )
+  structure(list("psi" = data$psi, 
+                 "invpsi" = -1/data$psi,
                  "pio" = osm_pot_fullturgor,
                  "psip_o"= max_psip,
                  "osmpot" = osmotic_potential,
@@ -180,7 +185,7 @@ estOsmotic.default <- function(data, wc.index, wp.index, n_row = 4, silent=T) {
                  "af" = apoplastic_fraction, 
                  "symrwc" = sym_rwc, 
                  "symrwd" = sym_rwd,
-                 "data" = data, # bring the data and model estimates along
+                 "data" = dataUpd, # bring the data and model estimates along
                  "est_rows" = n_row,
                  "model" = pio$sma_mod), 
                  units = c("MPa","-MPa^-1", "MPa", "MPa","MPa", "MPa" ,"%", "%", "%"),

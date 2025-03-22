@@ -103,7 +103,7 @@ estPV.default <- function(data,
   }
   # combine all leaf estimates into one data frame.
   # output_df <- as.data.frame(purrr::reduce(output_est, rbind))
-  return(output_est)
+  invisible(output_est)
 }
 #     if (n_pts == T) {
 #       pts.vec <- check_n_pts(leaf_estimate, wp.index = "inv.water.potential", wm.index = "relative.water.deficit", method = method)

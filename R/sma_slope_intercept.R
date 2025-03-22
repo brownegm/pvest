@@ -112,7 +112,7 @@ sma_model.osm_input <- function(x,y = NULL, ...){
 #' @rdname sma_model
 #' @export
 sma_model.tlp_input <- function(x, y=NULL, ...){
-  
+  print(x)
   if(any(is.na(x[[1]]))|any(is.na(x[[2]]))){
     stop("sma_model:Missing values found in input data. Ensure that there are no missing values.")
   }
