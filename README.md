@@ -31,5 +31,4 @@ estParams()# this function estimates all pressure volume curve parameters for yo
 ## TBD 
 - Check coverage
 - Export statistics along with sma_model
-- something is happening with the osmotic default function. Check that the values selected make sense 
 - check the input from rwc estimate. 

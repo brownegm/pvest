@@ -39,8 +39,8 @@ estPV <- function(data,
   UseMethod("estPV")
 }
 
-#'@export
-#'@rdname estPV
+#' @export
+#' @rdname estPV
 estPV.default <- function(data,
                           group,
                           subgrp = NULL,
@@ -55,27 +55,29 @@ estPV.default <- function(data,
   wp <- rlang::enquo(wp)
   dm <- rlang::enquo(dm)
   sbgrp <- rlang::enquo(subgrp)
-  
+
   # Check that columns exist
-  input_cols <- c(rlang::as_name(grp),
-                  rlang::as_name(fw),
-                  rlang::as_name(wp),
-                  rlang::as_name(dm))
-  
+  input_cols <- c(
+    rlang::as_name(grp),
+    rlang::as_name(fw),
+    rlang::as_name(wp),
+    rlang::as_name(dm)
+  )
+
   missing_cols <- setdiff(input_cols, names(data))
-  
+
   if (length(missing_cols) > 0) {
     cli::cli_abort("The following columns are missing from the data frame: {missing_cols}")
   }
   # Get optional subgrouping
   if (!rlang::quo_is_null(sbgrp)) {
     sbgrp_name <- rlang::as_name(sbgrp)
-    
+
     if (!(sbgrp_name %in% names(data))) {
       cli::cli_abort("Specified subgroup ({rlang::as_name(sbgrp)}) does not exist in the data frame.")
     }
     cli::cli_alert_info("Grouping data by: {rlang::as_name(grp)} and {rlang::as_name(sbgrp)}")
-  } else{
+  } else {
     cli::cli_alert_info("Grouping data by: {rlang::as_name(grp)}")
   }
   # create data list by unique grp and sbgrp combinations
@@ -83,26 +85,46 @@ estPV.default <- function(data,
 
   n_row_below <- 4
   # list of estimates for each unique id
-  output_est <- vector(mode = "list", length = length(raw_data_list_by_sp))
+  est <- vector(mode = "list", length = length(raw_data_list_by_sp))
 
   for (id in seq_along(raw_data_list_by_sp)) {
-    
-    output_est [[id]] <- pvest::estRWC(
+    rwc <- pvest::estRWC(
       raw_data_list_by_sp[[id]],
       fw.index = as_name(fw),
       wp.index = as_name(wp),
       dm.index = as_name(dm),
-      n_row = 4, silent = T)|>
-      pvest::estOsmotic(obj=_,##UPDATE 
-                          n_row = n_row_below,
-                          silent = T)|>
-      pvest::estTLP(osm_obj=_,
-                     n_row_above = 5) ##UPDATE
-
-    names(output_est)[id] <- raw_data_list_by_sp[[id]]["ids"]|>unique()
+      n_row = 4, silent = T
+    ) |>
+      pvest::estOsmotic(
+        obj = _, ## UPDATE
+        n_row = n_row_below,
+        silent = T
+      )
+    tlp <- pvest::estTLP(
+      osm_obj = rwc,
+      n_row_above = 5
+    ) ## UPDATE
+    est[[id]] <- do.call(cbind,
+                                             list(
+                                               rwc$data,
+                                               tlp)
+                                             )
+    names(est)[id] <- raw_data_list_by_sp[[id]]["ids"] |> unique()
   }
   # combine all leaf estimates into one data frame.
   # output_df <- as.data.frame(purrr::reduce(output_est, rbind))
+  output_est <- structure(est,
+                        creation_time = Sys.time(),
+                        units = c(NA, NA, NA,
+                                  "g", "g/g", "%",
+                                  "%","MPa","-MPa^-1",
+                                  "MPa", "MPa","MPa",
+                                  "MPa" ,"%", "%",
+                                  "%","MPa", "%","%",
+                                  "%","%","MPa", 
+                                  "MPa","MPa^-1","MPa^-1",
+                                  "MPa^-1","MPa^-1"),
+                        class = "estPV")
   invisible(output_est)
 }
 #     if (n_pts == T) {
@@ -160,11 +182,67 @@ estPV.default <- function(data,
 by_grp_sbgrp <- function(x, grp, sbgrp = NULL) {
   data_with_unique_id <- x |>
     tidyr::unite("ids", !!grp, !!sbgrp, sep = "_", remove = FALSE)
-  
+
   unique_ids <- dplyr::distinct(data_with_unique_id, ids) |>
     dplyr::pull(ids)
-  
+
   obj <- lapply(unique_ids, \(id) filter(data_with_unique_id, ids == id))
-  
+
   invisible(obj)
+}
+
+
+#' @export
+#' @rdname estPV
+print.estPV <- function(x, ...) {
+  estPV_obj <- x
+  units <- attr(estPV_obj, "units")[17:28]
+  
+  for (i in seq_along(estPV_obj)) {
+    est <- estPV_obj[[i]]
+    
+    cat("Estimated PV parameters:\n")
+    cat("----------------------------------------------------\n")
+    cat("Species: ", unique(est$species), "\n")
+    cat("Leaf:  ", unique(est$leaf), "\n")
+    cat("----------------------------------------------------\n")
+    cat("Osmotic potential at TLP:  ",
+        unique(est$pi_tlp) |> round(3),
+        units[1],
+        "\n")
+    cat("Bulk RWC at TLP:  ", unique(est$rwc_tlp) |> round(3), units[2], "\n")
+    cat("Bulk RWD at TLP:  ", unique(est$rwd_tlp) |> round(3), units[3], "\n")
+    cat("Symplastic RWC at TLP:  ",
+        unique(est$sym_rwc_tlp) |> round(3),
+        units[4],
+        "\n")
+    cat("Symplastic RWD at TLP:  ",
+        unique(est$sym_rwd_tlp) |> round(3),
+        units[5],
+        "\n")
+    cat("Bulk modulus at TLP:  ", unique(est$modulus) |> round(3), units[6], "\n")
+    cat("Symplastic modulus at TLP:  ",
+        unique(est$sym_modulus) |> round(3),
+        units[7],
+        "\n")
+    cat("Bulk capacitance at FT:  ",
+        unique(est$cap_bulk_ft )|> round(3),
+        units[8],
+        "\n")
+    cat("Symplastic capacitance at FT: ",
+        unique(est$cap_sym_ft) |> round(3),
+        units[9],
+        "\n")
+    cat("Bulk Capacitance at TLP:  ",
+        unique(est$cap_bulk_tlp) |> round(3),
+        units[10],
+        "\n")
+    cat("Symplastic capacitance at TLP:  ",
+        unique(est$cap_sym_tlp) |> round(3),
+        units[11],
+        "\n")
+    cat("----------------------------------------------------\n")
+    cat("-----------                                ---------\n")
+    cat("----------------------------------------------------\n")
+  }
 }

@@ -3,11 +3,14 @@
 \name{estPV}
 \alias{estPV}
 \alias{estPV.default}
+\alias{print.estPV}
 \title{Estimate all pressure volume curve parameters for all leaves}
 \usage{
 estPV(data, group, subgrp = NULL, fw, wp, dm, n_pts, method = NULL, ...)
 
 \method{estPV}{default}(data, group, subgrp = NULL, fw, wp, dm, n_pts = F, method = NULL)
+
+\method{print}{estPV}(x, ...)
 }
 \arguments{
 \item{data}{A data frame. Input data frame with the raw values}

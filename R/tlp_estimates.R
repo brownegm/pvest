@@ -152,7 +152,7 @@ estTLP.default <- function(data, wc.index, wp.index, n_row_above, n_row_below) {
               "MPa", "MPa", 
               "MPa^-1","MPa^-1",
               "MPa^-1","MPa^-1"),
-    class= "tlpEst")
+    class= c("tlpEst", "list"))
   
   return(outtlp)
 }
@@ -219,12 +219,14 @@ estTLP.osmEst <- function(osm_obj, n_row_above = 4) {
               "MPa", "MPa", 
               "MPa^-1","MPa^-1",
               "MPa^-1","MPa^-1"),
-    class= "tlpEst")
+    class= c("tlpEst", "list"))
   
   return(outtlp)
 }
 
 
+#' @title Print method for tlpEst objects
+#' @rdname estTLP
 #' @export
 print.tlpEst <- function(x, ...) {
   

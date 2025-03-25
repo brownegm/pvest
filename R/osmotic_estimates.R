@@ -151,7 +151,7 @@ estOsmotic.default <- function(data, wc.index, wp.index, n_row = 4, silent=T) {
   rwd_n <- tail(data$rwd, n = n_row)
   psi_n <- tail(data$psi, n = n_row)
   minus_inv_psi <- -1/psi_n
-  
+
   pio <- estpio(rwd_n, minus_inv_psi)
   
   #calculate osmotic and pressure potential at full turgor

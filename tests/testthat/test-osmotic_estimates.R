@@ -79,24 +79,25 @@ test_that("check that the input lengths are the same", {
 })
 
 test_that("Check that the errors work", {
-  rwc <- seq(0.95, 0.6, length.out = 10)
+  rwd <- seq(0.95, 0.6, length.out = 10)
   psi <- seq(0.95, 0.6, length.out = 10)
 
-  test_df <- as.data.frame(list("rwc" = rwc, "psi" = psi))
+  test_df <- as.data.frame(list("rwd" = rwd, "psi" = psi))
 
   # rename the columns
 
   expect_error(pvest::estOsmotic(
     data = test_df,
-    wc.index = "rwc",
+    wc.index = "rwd",
     wp.index = "fake_col_name",
     silent = F
   ))
   
   expect_snapshot(pvest::estOsmotic(
     data = test_df,
-    wc.index = "rwc",
+    wc.index = "rwd",
     wp.index = "psi",
     silent = T
-  ))
+  )) 
+  
 })
