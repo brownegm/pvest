@@ -12,10 +12,6 @@ estsatwater(fresh_mass, psi, dry_mass)
 \item{psi}{Numeric vector of water potential}
 
 \item{dry_mass}{Leaf dry mass}
-
-\item{data}{Data frame containing leaf fresh water mass and leaf water potentials}
-
-\item{n_row}{A number. Indicates number of rows to estimate parameters from within data}
 }
 \value{
 Returns the saturated water content from the relationship between water mass and water potential
@@ -34,8 +30,4 @@ This function calculates the saturated water content as the standard major axis 
 \item \code{\link[=sma_slope]{sma_slope()}} Function used for estimating the SMA slope
 \item \code{\link[=estRWC]{estRWC()}} Estimates the relative water content and relative water deficit using the saturated water content estimate here
 }
-
-Other abovetlp: 
-\code{\link{estRWC}()}
 }
-\concept{abovetlp}

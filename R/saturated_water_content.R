@@ -3,26 +3,21 @@
 #'     the relationship between leaf water mass and leaf water potential. For a
 #'     detailed explanation of the function see \code{vignette('swc-and-rwc-estimation')}
 #'
-#' @param data Data frame containing leaf fresh water mass and leaf water potentials
 #' @param fresh_mass Numeric vector of fresh water mass
 #' @param psi Numeric vector of water potential
 #' @param dry_mass Leaf dry mass
-#' @param n_row A number. Indicates number of rows to estimate parameters from within data
+
 #' @details This function calculates the saturated water content as the standard major axis intercept.
-#'
+
 #' @seealso
 #' * [sma_intercept()] Function used for estimating the SMA intercept
 #' * [sma_slope()] Function used for estimating the SMA slope
 #' * [estRWC()] Estimates the relative water content and relative water deficit using the saturated water content estimate here
-#'
-#' @family abovetlp
-#'
+
 #' @return Returns the saturated water content from the relationship between water mass and water potential
 #' @usage estsatwater(fresh_mass, psi, dry_mass)
 #'
 #' @export
-#'
-#' @importFrom dplyr arrange slice_head
 
 estsatwater <- function(fresh_mass, psi, dry_mass) {
   # check dry mass
@@ -33,7 +28,6 @@ estsatwater <- function(fresh_mass, psi, dry_mass) {
   } else{
     dry_mass <- unique(dry_mass)[1]
   }
-  
   
   fw <- fresh_mass
   wp <- psi
@@ -62,13 +56,13 @@ NULL
 #' @param fw.index Numeric value indicating the column number where the leaf water mass data is within data frame
 #' @param wp.index Water potential column index
 #' @param dm.index Dry mass column index
+#' @param n_row Numeric value indicating number of rows above turgor loss point
 #' @param silent Silence printing of column names
 #'
-#' @return Returns a list of two containing the relative water content(RWC) for each measurement point and
-#'    the relative water deficit(i.e, 100-RWC)
+#' @return Returns a list of two containing the relative water content(RWC) for each measurement point and the relative water deficit(i.e, 100-RWC)
 #'
 #' @export estRWC
-#' @family abovetlp
+
 
 estRWC <- function(data,
                    fw.index,

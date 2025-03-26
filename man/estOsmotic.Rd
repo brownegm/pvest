@@ -6,14 +6,16 @@
 \alias{estOsmotic.rwcEst}
 \title{Osmotic and pressure parameter estimation}
 \usage{
-estOsmotic(data, wc.index, wp.index, n_row = 4, silent = T, ...)
+estOsmotic(data, ...)
 
-\method{estOsmotic}{default}(data, wc.index, wp.index, n_row = 4, silent = T)
+\method{estOsmotic}{default}(data, wc.index, wp.index, n_row = 4, silent = T, ...)
 
-\method{estOsmotic}{rwcEst}(obj, n_row = 4, silent = T)
+\method{estOsmotic}{rwcEst}(data, n_row = 4, silent = T, ...)
 }
 \arguments{
-\item{data}{A data frame. A data frame containing the data set of the last 4 hydration states for a given leaf}
+\item{data}{An object of class "rwcEst"}
+
+\item{...}{Additional parameters passed to method (unused)}
 
 \item{wc.index}{A double. A data frame index which contains the water content (RWD) data passed to estpio()}
 
@@ -22,8 +24,6 @@ estOsmotic(data, wc.index, wp.index, n_row = 4, silent = T, ...)
 \item{n_row}{Number of rows above turgor loss}
 
 \item{silent}{Silence printing of head(data) and columns used}
-
-\item{obj}{An object of class "rwcEst"}
 }
 \value{
 Returns data frame with new columns containing the osmotic and pressure potential variables namely:

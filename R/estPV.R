@@ -1,6 +1,8 @@
 #' Estimate all pressure volume curve parameters for all leaves
 #'
 #' @param data A data frame. Input data frame with the raw values
+#' @param group An unquoted character. The column name of the grouping variable
+#' @param subgrp An unquoted character. The column name of the subgrouping variable
 #' @param fw A numeric. Data frame index for the water content information.
 #' @param wp A numeric. Indicates the index of the data frame including the water potential data
 #' @param dm Numeric index of dry mass data.
@@ -31,8 +33,7 @@ estPV <- function(data,
                   wp,
                   dm,
                   n_pts,
-                  method = NULL,
-                  ...) {
+                  method = NULL) {
   if (n_pts == T & is.null(method)) {
     "Method must be specified when n_pts=T"
   }
@@ -96,12 +97,12 @@ estPV.default <- function(data,
       n_row = 4, silent = T
     ) |>
       pvest::estOsmotic(
-        obj = _, ## UPDATE
+        data = _, ## UPDATE
         n_row = n_row_below,
         silent = T
       )
     tlp <- pvest::estTLP(
-      osm_obj = rwc,
+      data = rwc,
       n_row_above = 5
     ) ## UPDATE
     est[[id]] <- do.call(cbind,
@@ -175,7 +176,7 @@ estPV.default <- function(data,
 #   }
 # }
 
-#' by_grp_sbgrp
+#' Separate input dataframe by group and subgroup
 #' @param x A dataframe
 #' @param grp Grouping variable
 #' @param sbgrp Subgrouping variable
@@ -183,17 +184,19 @@ by_grp_sbgrp <- function(x, grp, sbgrp = NULL) {
   data_with_unique_id <- x |>
     tidyr::unite("ids", !!grp, !!sbgrp, sep = "_", remove = FALSE)
 
-  unique_ids <- dplyr::distinct(data_with_unique_id, ids) |>
-    dplyr::pull(ids)
+  unique_ids <- dplyr::distinct(data_with_unique_id, .data$ids) |>
+    dplyr::pull(.data$ids)
 
-  obj <- lapply(unique_ids, \(id) filter(data_with_unique_id, ids == id))
+  obj <- lapply(unique_ids, \(id) filter(data_with_unique_id, .data$ids == id))
 
   invisible(obj)
 }
 
-
-#' @export
+#' @param x Object of class _estPV_
+#' @param ... Additional parameters passed to method
 #' @rdname estPV
+#' @export
+#' 
 print.estPV <- function(x, ...) {
   estPV_obj <- x
   units <- attr(estPV_obj, "units")[17:28]

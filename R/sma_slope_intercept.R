@@ -48,16 +48,17 @@ sma_intercept <- function(x, y, slope) {
 
 
 #' Standard major axis model estimation. 
-#' @description This function here will construct a standard major axis model from calculated slope and intercept for a given dependent and independent variable.
-#' This is a generic function that will dispatch 1 of 3 methods based on the input data type (i.e., _default_, _`osm_input`_, and _`tlp_input`_: 
+
+#' @description This is a generic function that will dispatch 1 of 3 methods based on the input data type (i.e., _default_, _`osm_input`_, and _`tlp_input`_) to construct a standard major axis model from calculated slope and intercept for a given dependent and independent variable: 
 #' * _default_ : slope and intercept are positive
 #' * _`osm_input`_: slope is forced negative representing the relationship between relative water deficit and the negative inverse of water potential. Intercept is positive. 
 #' * _`tlp_input`_: same as for `osm_input` but the input should provide symplastic relative water content as well and as a result the output includes the slope and intercept for both the bulk and symplastic variables. 
 #' 
 #' @param x independent variable
 #' @param y dependent variable
+#' @param ... additional parameters passed to methods
 #'
-#' @returns Returns a model function slope and intercept values for the standard major axis regression
+#' @return Returns a model function slope and intercept values for the standard major axis regression
 #' 
 #' @export
 #' @rdname sma_model

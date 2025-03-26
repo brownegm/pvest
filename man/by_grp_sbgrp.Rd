@@ -2,7 +2,7 @@
 % Please edit documentation in R/estPV.R
 \name{by_grp_sbgrp}
 \alias{by_grp_sbgrp}
-\title{by_grp_sbgrp}
+\title{Separate input dataframe by group and subgroup}
 \usage{
 by_grp_sbgrp(x, grp, sbgrp = NULL)
 }
@@ -14,5 +14,5 @@ by_grp_sbgrp(x, grp, sbgrp = NULL)
 \item{sbgrp}{Subgrouping variable}
 }
 \description{
-by_grp_sbgrp
+Separate input dataframe by group and subgroup
 }

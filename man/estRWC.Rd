@@ -15,19 +15,15 @@ estRWC(data, fw.index, wp.index, dm.index, n_row = 4, silent = T)
 
 \item{dm.index}{Dry mass column index}
 
+\item{n_row}{Numeric value indicating number of rows above turgor loss point}
+
 \item{silent}{Silence printing of column names}
 }
 \value{
-Returns a list of two containing the relative water content(RWC) for each measurement point and
-the relative water deficit(i.e, 100-RWC)
+Returns a list of two containing the relative water content(RWC) for each measurement point and the relative water deficit(i.e, 100-RWC)
 }
 \description{
 Estimate the relative water content(RWC) and relative water deficit(RWD) based on the
 saturated water content. For a
 detailed explanation of the function see \code{vignette('swc-and-rwc-estimation')}
 }
-\seealso{
-Other abovetlp: 
-\code{\link{estsatwater}()}
-}
-\concept{abovetlp}

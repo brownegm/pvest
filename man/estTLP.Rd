@@ -2,21 +2,23 @@
 % Please edit documentation in R/tlp_estimates.R
 \name{estTLP}
 \alias{estTLP}
-\alias{estTLP.default}
+\alias{estTLP.data.frame}
 \alias{estTLP.osmEst}
 \alias{print.tlpEst}
 \title{Estimate pressure volume curve parameters at turgor loss}
 \usage{
-estTLP(data, wc.index, wp.index, n_row_above, n_row_below, ...)
+estTLP(data, ...)
 
-\method{estTLP}{default}(data, wc.index, wp.index, n_row_above, n_row_below)
+\method{estTLP}{data.frame}(data, wc.index, wp.index, n_row_above, n_row_below, ...)
 
-\method{estTLP}{osmEst}(osm_obj, n_row_above = 4)
+\method{estTLP}{osmEst}(data, n_row_above = 4, ...)
 
 \method{print}{tlpEst}(x, ...)
 }
 \arguments{
 \item{data}{A data frame}
+
+\item{...}{Additional parameters passed to method}
 
 \item{wc.index}{Index of relative water content values}
 
@@ -25,6 +27,8 @@ estTLP(data, wc.index, wp.index, n_row_above, n_row_below, ...)
 \item{n_row_above}{Number of rows above turgor loss point guess for estimating SMA line parameters.}
 
 \item{n_row_below}{Number of rows below turgor loss point guess for estimating SMA line parameters.}
+
+\item{x}{Object of class tlpEst}
 }
 \value{
 Returns an object of class \emph{tlpEst} with the following components:
@@ -42,8 +46,7 @@ Returns an object of class \emph{tlpEst} with the following components:
 }
 \description{
 Estimates both bulk parameters and their symplastic counterparts.
-
-Two methods are provided for this function: \code{estTLP.default} and \code{estTLP.osmEst}.
+Two methods are provided for this generic: \code{estTLP.default} and \code{estTLP.osmEst}.
 \itemize{
 \item The default method requires a data frame with columns for pressure potential and relative water content.
 \item The osmEst method requires an object of class \emph{osmEst} (i.e., produced by the \code{estOsmotic()} function). This is recommended for simplicity and consistency with other functions in the package.f

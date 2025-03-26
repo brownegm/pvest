@@ -6,7 +6,7 @@
 \alias{print.estPV}
 \title{Estimate all pressure volume curve parameters for all leaves}
 \usage{
-estPV(data, group, subgrp = NULL, fw, wp, dm, n_pts, method = NULL, ...)
+estPV(data, group, subgrp = NULL, fw, wp, dm, n_pts, method = NULL)
 
 \method{estPV}{default}(data, group, subgrp = NULL, fw, wp, dm, n_pts = F, method = NULL)
 
@@ -14,6 +14,10 @@ estPV(data, group, subgrp = NULL, fw, wp, dm, n_pts, method = NULL, ...)
 }
 \arguments{
 \item{data}{A data frame. Input data frame with the raw values}
+
+\item{group}{An unquoted character. The column name of the grouping variable}
+
+\item{subgrp}{An unquoted character. The column name of the subgrouping variable}
 
 \item{fw}{A numeric. Data frame index for the water content information.}
 
@@ -24,6 +28,10 @@ estPV(data, group, subgrp = NULL, fw, wp, dm, n_pts, method = NULL, ...)
 \item{n_pts}{Logical. If \code{TRUE}, the number of rows to use for predicting pio is based on the lowest number of rows with a CV less than 10\%.}
 
 \item{method}{Optional character parameter for when n_pts=T. Determines which method to pick number of rows below TLP.Options include "r2","pio","cv". See \code{?check_n_points} for more information}
+
+\item{x}{Object of class \emph{estPV}}
+
+\item{...}{Additional parameters passed to method}
 }
 \value{
 Returns a data frame with the estimated parameters

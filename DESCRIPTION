@@ -12,11 +12,11 @@ Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
 Imports: 
     dplyr, 
-    purrr, 
-    tibble, 
     rlang,
-    tidyselect,
-    smatr
+    smatr, 
+    cli, 
+    utils, 
+    tidyr
 Depends: 
     R (>= 2.10)
 Suggests: 

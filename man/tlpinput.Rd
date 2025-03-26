@@ -16,6 +16,25 @@ tlpinput(
   symrwc_below
 )
 }
+\arguments{
+\item{psi_above}{Water potential values above turgor loss}
+
+\item{psip}{Pressure potential}
+
+\item{rwd}{Relative water deficit}
+
+\item{symrwd}{Symplastic relative water deficit}
+
+\item{rwc_above}{Relative water content above turgor loss}
+
+\item{symrwc_above}{Symplastic relative water content above turgor loss}
+
+\item{psi_below}{Water potential values below turgor loss}
+
+\item{rwc_below}{Relative water content below turgor loss}
+
+\item{symrwc_below}{Symplastic relative water content below turgor loss}
+}
 \description{
 Constructor for the tlp_input class
 }

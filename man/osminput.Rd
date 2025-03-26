@@ -7,9 +7,9 @@
 osminput(rwd, psi)
 }
 \arguments{
-\item{psi}{Values of water potential}
+\item{rwd}{Values of relative water content and deficit}
 
-\item{rwc}{Values of relative water content and deficit}
+\item{psi}{Values of water potential}
 }
 \description{
 Constructor for osmotic inputs

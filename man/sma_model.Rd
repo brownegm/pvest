@@ -19,13 +19,14 @@ sma_model(x, y, ...)
 \item{x}{independent variable}
 
 \item{y}{dependent variable}
+
+\item{...}{additional parameters passed to methods}
 }
 \value{
 Returns a model function slope and intercept values for the standard major axis regression
 }
 \description{
-This function here will construct a standard major axis model from calculated slope and intercept for a given dependent and independent variable.
-This is a generic function that will dispatch 1 of 3 methods based on the input data type (i.e., \emph{default}, \emph{\code{osm_input}}, and \emph{\code{tlp_input}}:
+This is a generic function that will dispatch 1 of 3 methods based on the input data type (i.e., \emph{default}, \emph{\code{osm_input}}, and \emph{\code{tlp_input}}) to construct a standard major axis model from calculated slope and intercept for a given dependent and independent variable:
 \itemize{
 \item \emph{default} : slope and intercept are positive
 \item \emph{\code{osm_input}}: slope is forced negative representing the relationship between relative water deficit and the negative inverse of water potential. Intercept is positive.
