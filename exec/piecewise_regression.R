@@ -23,8 +23,6 @@ NULL
 #' @param model a linear model
 #' @return Return statistic : R^2
 #' @noRd
-
-
 extract_stat <- function(model) {
   # Use a relevant metric, e.g., R-squared
   return(summary(model)$r.squared)
@@ -37,11 +35,9 @@ NULL
 #' Iterate through possible segment divisions
 #' 
 #' @param df A data.frame containing inverse water potential and relative water deficit
-#'
 #' @return Returns list of two best fitting models over the two sections of data
-#'
-#' @export
-#'
+#' @importFrom stats lm predict
+#' @noRd
 
 piecewise_reg <- function(df){
 

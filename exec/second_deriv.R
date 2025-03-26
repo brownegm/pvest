@@ -1,5 +1,15 @@
 ## calculate second derivative of loess 
 
+
+#' calculate second derivative
+#'
+#' @param fit lm fit
+#' @param ind_var individual variable
+#'
+#' @return first and second derivative
+#' 
+#'
+#' @importFrom stats predict
 sec_der <- function(fit, ind_var){
   
   y_pred <- predict(fit)
