@@ -42,7 +42,7 @@ estsatwater <- function(fresh_mass, psi, dry_mass) {
   wp <- psi
   
   # estimate the SMA model
-  sma_abovetlp <- sma_model(fw, wp)
+  sma_abovetlp <- sma_model(y = fw, x = wp)
   
   #estimate the saturated water content
   sat_water_mass <- sma_abovetlp$intercept
