@@ -4,32 +4,60 @@
 \alias{sma_model}
 \alias{sma_model.default}
 \alias{sma_model.osm_input}
-\alias{sma_model.tlp_input}
-\title{Standard major axis model estimation.}
+\alias{plot.sma_model}
+\title{Standard major axis model fitting}
 \usage{
-sma_model(x, y, ...)
+sma_model(x, y)
 
-\method{sma_model}{default}(x, y, ...)
+\method{sma_model}{default}(x, y)
 
-\method{sma_model}{osm_input}(x, y = NULL, ...)
+\method{sma_model}{osm_input}(x, y = NULL)
 
-\method{sma_model}{tlp_input}(x, y = NULL, ...)
+\method{plot}{sma_model}(x, ...)
 }
 \arguments{
-\item{x}{independent variable}
+\item{x}{Independent variable}
 
-\item{y}{dependent variable}
+\item{y}{Dependent variable}
 
-\item{...}{additional parameters passed to methods}
+\item{...}{Other parameters passed to print and plot methods}
 }
 \value{
-Returns a model function slope and intercept values for the standard major axis regression
+Fitted model parameters (i.e., slope and intercept), fitted values, residuals, as well as model fit metrics as model attributes:
+\item{slope}{The SMA slope (\eqn{\beta_{SMA}})}
+\item{intercept}{The SMA intercept (\eqn{\alpha_{SMA}})}
+\item{fitted}{Values fitted using model parameters}
+\item{residuals}{Residuals of fitted values}
+\item{model attributes}{The coefficient of determination (\eqn{R^{2}}), root mean square error (rmse), and corrected Aikaike Information Criterion (\eqn{AIC_{C}}). See \code{attributes(fitted_model)}. }
 }
 \description{
-This is a generic function that will dispatch 1 of 3 methods based on the input data type (i.e., \emph{default}, \emph{\code{osm_input}}, and \emph{\code{tlp_input}}) to construct a standard major axis model from calculated slope and intercept for a given dependent and independent variable:
-\itemize{
-\item \emph{default} : slope and intercept are positive
-\item \emph{\code{osm_input}}: slope is forced negative representing the relationship between relative water deficit and the negative inverse of water potential. Intercept is positive.
-\item \emph{\code{tlp_input}}: same as for \code{osm_input} but the input should provide symplastic relative water content as well and as a result the output includes the slope and intercept for both the bulk and symplastic variables.
+This function calculates the standard major axis model (SMA) parameters for
 }
+\details{
+This generic function will dispatch 1 of 2 methods based on the input data type (i.e.,vectors or an object of class \emph{\code{osm_input}}) to construct a standard major axis model from calculated slope and intercept for a given dependent and independent variable:
+\itemize{
+\item \emph{default} : slope and intercept are estimated from input \emph{x} and \emph{y} vectors
+\item \emph{\code{osm_input}}: Input is an object of class \emph{\code{osm_input}}. Model parameters will be estimated from the negative inverse of water potential and relative water deficit.
+\item The SMA model is also used for determining relative water content at turgor loss and capacitance at full turgor and turgor loss in \code{\link[=psip_rwd_params]{psip_rwd_params()}} from the slopes of fitted models.
+}
+
+The SMA slope (\eqn{\beta_{SMA}}) is calculated as:
+
+\deqn{\beta_{SMA} = \text{sign} (r) \times \frac{\sigma_y}{\sigma_x}}
+
+where \eqn{r} is the correlation of x and y, and \eqn{\sigma_y} and \eqn{\sigma_x} are the standard deviations of y and x, respectively.
+
+Then, the SMA intercept (\eqn{\alpha_{SMA}}) is calculated as:
+
+\deqn{\alpha_{SMA} = \bar{y} - \beta_{SMA} * \bar{x}}
+
+where \eqn{\bar{x}}, \eqn{\bar{y}} are means.
+}
+\references{
+Warton DI, Wright IJ, Falster DS, Westoby M. (2006) Bivariate line-fitting methods for allometry. \emph{Biological Reviews}. 81: 259-291. DOI: \url{https://doi.org/10.1017/S1464793106007007}
+
+Jolicoeur P (1990) Bivariate allometry: Interval estimation of the slopes of the ordinary and standardized normal major axes and structural relationship. \emph{Journal of Theoretical Biology} 144: 275–285. DOI: \url{https://doi.org/10.1016/S0022-5193(05)80326-1}
+}
+\seealso{
+\code{\link[=estOsmotic]{estOsmotic()}}, \code{\link[=estTLP]{estTLP()}}, \code{\link[=psip_rwd_params]{psip_rwd_params()}}
 }

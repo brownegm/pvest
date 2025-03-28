@@ -111,7 +111,7 @@ estRWC <- function(data,
   
   # Select values above initial turgor loss guess
   data_abovetlp <- data %>%
-    dplyr::arrange(desc({{ wp.index }})) %>%
+    dplyr::arrange(desc(varnames$wp)) %>%
     dplyr::slice_head(n = nvals - n_row + 1) #rwc is estimated from the values above and including the tlp psi guess
   
   # inputs
