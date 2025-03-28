@@ -6,6 +6,9 @@
 \usage{
 \method{print}{sma_model}(x, ...)
 }
+\value{
+Printed SMA model output
+}
 \description{
 Print method for the SMA model output
 }

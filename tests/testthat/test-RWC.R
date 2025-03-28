@@ -2,7 +2,7 @@
 
 # simple fake dataset
 data <- data.frame(
-  fw = seq(0.450, 0.2, length.out = 10),
+  fw = seq(2.450, 2.450*0.7, length.out = 10),
   wp = seq(-0.5, -2.5, length.out = 10),
   dm = 0.5
 )

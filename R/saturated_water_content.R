@@ -7,7 +7,16 @@
 #' @param psi Numeric vector of water potential
 #' @param dry_mass Leaf dry mass
 
-#' @details This function calculates the saturated water content as the standard major axis intercept.
+#' @details This function calculates the saturated water mass (swm) and saturated water content (swc) as the standard major axis intercept.
+#' 
+#' The saturated water mass is equivalent to the y-intercept of the standard major axis line relating water potential (\eqn{\Psi}) to leaf water content(lwc), or :
+#' 
+#' \deqn{swm = \beta_{SMA}}
+#' 
+#' The saturated water content (mass as a function of total leaf water) is then calculated as: 
+#' 
+#' \deqn{swc = \frac{swm}{dry~mass}}
+#' 
 
 #' @seealso
 #' * [sma_intercept()] Function used for estimating the SMA intercept
@@ -29,7 +38,7 @@ estsatwater <- function(fresh_mass, psi, dry_mass) {
     dry_mass <- unique(dry_mass)[1]
   }
   
-  fw <- fresh_mass
+  fw <- fresh_mass-dry_mass
   wp <- psi
   
   # estimate the SMA model

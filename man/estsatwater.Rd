@@ -22,7 +22,15 @@ the relationship between leaf water mass and leaf water potential. For a
 detailed explanation of the function see \code{vignette('swc-and-rwc-estimation')}
 }
 \details{
-This function calculates the saturated water content as the standard major axis intercept.
+This function calculates the saturated water mass (SWM) and saturated water content(SWC) as the standard major axis intercept.
+
+The saturated water mass is equivalent to the y-intercept of the standard major axis line relating water potential(\eqn{\Psi}) to leaf water content(lwc), or :
+
+\deqn{swm = \beta_{SMA}}
+
+The saturated water content (mass as a function of total leaf water) is then calculated as:
+
+\deqn{swc = \frac{swm}{dry mass}}
 }
 \seealso{
 \itemize{
