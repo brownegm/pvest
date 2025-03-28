@@ -185,16 +185,15 @@ sm <- function(x, y = NULL) {
     }
 
   # establish model object
-  m <- vector(mode = "list", length = 7)
+  m <- vector(mode = "list", length = 6)
   names(m) <- c("slope", "intercept",
-                "data", "call","vars",
+                "data", "call",
                 "fitted", "residuals")
 
   m$call <- match.call()
-  m$vars <- as.character(m$call)[-1]
   
   m$data <- data.frame(x = x, y = y)
-  names(m$data) <- m$vars
+  names(m$data) <-  as.character(m$call)[-1] # set names of the data df columns
   
   # Calculate the covariance and variances
   cor_xy <- stats::cor(x, y)
