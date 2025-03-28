@@ -150,12 +150,106 @@ sma_model.tlp_input <- function(x, y=NULL, ...){
 #' @param ... Other parameters passed to cat
 #'
 #' @returns Printed SMA model output
+
 #' @export print.sma_model
+#' @rdname sma_model
+#' @importFrom withr local_options
 
 print.sma_model <- function(x, ...){
-  cat("SMA model\n")
-  cat("Slope:", x$slope, "\n")
-  cat("Intercept:", x$intercept, "\n")
+  
+  withr::local_options(list(digits = 4))
+  
+  cat("Standard Major Axis (SMA) model\n")
+  cat("-------------------------------")
+  cat("\nCall:\n")
+  print(x$call)
+  cat("\nCoefficients:\n")
+  cat("Slope:     ", x$slope, "\n")
+  cat("Intercept: ", x$intercept, "\n")
+  cat("\nModel Fit Metrics:\n")
+  cat("Residual Standard Error (RMSE):", attr(x,"rmse"), "\n")
+  cat("R-squared:                     ", attr(x,"r_squared"), "\n")
+  cat("AICc:                          ",attr(x,"aicc"), "\n")
 }
 
 
+# Step 1: Create a custom function to calculate SMA slope and intercept
+sm <- function(x, y = NULL) {
+  
+    # Check input data
+    if (!is.numeric(x) || !is.numeric(y)) {
+      stop("Both x and y must be numeric vectors.")
+    }
+    if (length(x) != length(y)) {
+      stop("x and y must have the same length.")
+    }
+
+  # establish model object
+  m <- vector(mode = "list", length = 7)
+  names(m) <- c("slope", "intercept",
+                "data", "call","vars",
+                "fitted", "residuals")
+
+  m$call <- match.call()
+  m$vars <- as.character(m$call)[-1]
+  
+  m$data <- data.frame(x = x, y = y)
+  names(m$data) <- m$vars
+  
+  # Calculate the covariance and variances
+  cor_xy <- stats::cor(x, y)
+  sd_x <- stats::sd(x)
+  sd_y <- stats::sd(y)
+  
+  # Calculate the SMA slope()
+  m$slope <- sign(cor_xy) * (sd_y / sd_x)
+  
+  # Calculate the intercept
+  m$intercept <- mean(y) - m$slope * mean(x)
+
+  # Calculate the fitted values and residuals
+  m$fitted <- m$slope * x + m$intercept
+  m$residuals <- y - m$fitted
+  
+  r <- cor_xy / (sd_x * sd_y)
+  # Estimate summary statistic attributes for the model
+  n <- length(m$residuals)
+  
+  # Residual standard error (Root Mean Square Error - RMSE)
+  rmse <- sqrt(mean(m$residuals^2))
+  
+  # R squared calculation
+  ss_total <- sum((y - mean(y))^2)
+  ss_residual <- sum(m$residuals^2)
+  r_squared <- 1 - (ss_residual / ss_total)
+  
+  # Estimate Corrected AICc
+  k <- 2  # Number of parameters (only ever slope & intercept)
+  aic <- n * log(ss_residual / n) + 2 * k
+  aicc <- aic + (2 * k * (k + 1)) / (n - k - 1)
+  
+  # Create the model object
+  model <- structure(m, 
+                     class = "sma_model",
+                     r_squared = r_squared,
+                     rmse = rmse,
+                     aicc = aicc, r= r
+                     )
+  
+  return(model)
+}
+
+#' Plot method for the SMA model output
+#'@param x An object of the class _sma_model_
+#'@param ... Other parameters passed to plot.default
+#'@rdname sma_model
+#'@export
+
+plot.sma_model <- function(x,...){
+  
+  mod_data <- x$data
+  
+  plot(x = mod_data[,1], y = mod_data[,2], ...)
+  
+  abline(a= x$intercept, b = x$slope, col= "green", lwd = 2)
+}
