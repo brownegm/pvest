@@ -84,7 +84,7 @@ sma_model.default <- function(x, y) {
   m$fitted <- m$slope * x + m$intercept
   m$residuals <- y - m$fitted
   
-  r <- cor_xy / (sd_x * sd_y)
+  #r <- cor_xy / (sd_x * sd_y)
   # Estimate summary statistic attributes for the model
   n <- length(m$residuals)
   
@@ -107,8 +107,7 @@ sma_model.default <- function(x, y) {
     class = "sma_model",
     r_squared = r_squared,
     rmse = rmse,
-    aicc = aicc,
-    r = r
+    aicc = aicc
   )
   
   return(model)

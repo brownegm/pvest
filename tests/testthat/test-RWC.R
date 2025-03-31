@@ -2,9 +2,9 @@
 
 # simple fake dataset
 data <- data.frame(
-  fw = seq(2.450, 2.450*0.7, length.out = 10),
-  wp = seq(-0.5, -2.5, length.out = 10),
-  dm = 0.5
+  fw = seq(2.450, 1.715, length.out = 10),
+  wp = seq(-0.5, -0.85, length.out = 10),
+  dm = 1
 )
 
 test_that("Check that the output makes sense", {
@@ -24,9 +24,12 @@ test_that("Check that the output makes sense", {
   # dont change input fake data
 
   rwcdiff <- all(diff(rwc_estimate$rwc) < 0) #-2.710027
-  modediff <- unique(diff(rwc_estimate$rwc) |> round(5)) == -5.42005
+  modediff <- unique(diff(rwc_estimate$rwc) |> round(5)) == -3.26667
   expect_true(rwcdiff)
   expect_true(modediff)
+  
+  expect_equal(rwc_estimate$swm, 2.5)
+  expect_equal(rwc_estimate$swm,rwc_estimate$swc)
 })
 
 test_that("Check that the errors work", {
