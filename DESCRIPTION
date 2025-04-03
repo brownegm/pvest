@@ -13,10 +13,10 @@ RoxygenNote: 7.3.2
 Imports: 
     dplyr, 
     rlang,
-    smatr, 
     cli, 
     utils, 
-    tidyr
+    tidyr, 
+    withr
 Depends: 
     R (>= 2.10)
 Suggests: 

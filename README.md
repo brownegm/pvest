@@ -30,5 +30,4 @@ estParams()# this function estimates all pressure volume curve parameters for yo
 
 ## TBD 
 - Check coverage
-- Export statistics along with sma_model
-- check the input from rwc estimate. 
+- FIGURE OUT HOW/WHERE TO IMPLEMENT THE N_PTS ASPECT

@@ -6,6 +6,11 @@
 \usage{
 \method{print}{sma_model}(x, ...)
 }
+\arguments{
+\item{x}{Object of class "sma_model"}
+
+\item{...}{Other parameters passed to print method}
+}
 \value{
 Printed SMA model output
 }

@@ -32,7 +32,6 @@ estPV <- function(data,
                   fw,
                   wp,
                   dm,
-                  n_pts,
                   method = NULL) {
   if (n_pts == T & is.null(method)) {
     "Method must be specified when n_pts=T"
@@ -48,7 +47,6 @@ estPV.default <- function(data,
                           fw,
                           wp,
                           dm,
-                          n_pts = F,
                           method = NULL) {
   # Convert inputs to quosures for tidy evaluation
   grp <- rlang::enquo(group)
@@ -87,23 +85,33 @@ estPV.default <- function(data,
   n_row_below <- 4
   # list of estimates for each unique id
   est <- vector(mode = "list", length = length(raw_data_list_by_sp))
+  
+  
+  optim <- switch(method,
+    NULL = "", 
+    "rmse" = optim_thres(data, fw = input_cols[2] , wp = input_cols[3] , dm = input_cols[4], method = "rmse"), 
+    "aicc" = optim_thres(data, fw = input_cols[2] , wp = input_cols[3] , dm = input_cols[4], method = "aicc"), 
+    "r2" = optim_thres(data, fw = input_cols[2] , wp = input_cols[3] , dm = input_cols[4], method = "r2")
+  )
 
+  rows_above_below <- if(!is.null(optim)) list(optim$n_above, optim$n_below) else list(nrow(data)-4,4)
+  
   for (id in seq_along(raw_data_list_by_sp)) {
     rwc <- pvest::estRWC(
       raw_data_list_by_sp[[id]],
       fw.index = as_name(fw),
       wp.index = as_name(wp),
       dm.index = as_name(dm),
-      n_row = 4, silent = T
+      n_row = rows_above_below[[1]], silent = T
     ) |>
       pvest::estOsmotic(
         data = _, ## UPDATE
-        n_row = n_row_below,
+        n_row = rows_above_below[[2]],
         silent = T
       )
     tlp <- pvest::estTLP(
       data = rwc,
-      n_row_above = 5
+      n_row_above = rows_above_below[[1]]
     ) ## UPDATE
     est[[id]] <- do.call(cbind,
                                              list(

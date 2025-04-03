@@ -12,12 +12,12 @@ estpio(rwd, psi)
 \item{psi}{Vector of water potential values.}
 }
 \value{
-Numeric list containing the slope, intercept and osmotic potential at full turgor, in that order.Output is an object of class "pioEst"
+An object of class "pioEst" containing the slope, intercept and osmotic potential at full turgor.
 }
 \description{
 Estimates the osmotic potential at full turgor from the linear relationship
 between relative water deficit and inverse leaf water potential.
 }
 \seealso{
-\code{\link{sma_slope}}, \code{\link{sma_intercept}}
+\code{\link[=sma_model]{sma_model()}}
 }

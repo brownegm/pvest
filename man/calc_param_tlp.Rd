@@ -4,7 +4,7 @@
 \alias{calc_param_tlp}
 \title{Calculate the slopes for turgor loss inputs}
 \usage{
-calc_param_tlp(x, y = NULL, ...)
+calc_param_tlp(x)
 }
 \arguments{
 \item{x}{Object of class \emph{\code{tlp_input}}}

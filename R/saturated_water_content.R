@@ -19,8 +19,7 @@
 #' 
 
 #' @seealso
-#' * [sma_intercept()] Function used for estimating the SMA intercept
-#' * [sma_slope()] Function used for estimating the SMA slope
+#' * [sma_model()] Function used for estimating the SMA model fit
 #' * [estRWC()] Estimates the relative water content and relative water deficit using the saturated water content estimate here
 
 #' @return Returns the saturated water content from the relationship between water mass and water potential
@@ -68,16 +67,14 @@ NULL
 #' @param n_row Numeric value indicating number of rows above turgor loss point
 #' @param silent Silence printing of column names
 #'
-#' @return Returns a list of two containing the relative water content(RWC) for each measurement point and the relative water deficit(i.e, 100-RWC)
+#' @return Returns a list of two containing the relative water content (RWC) for each measurement point and the relative water deficit (i.e, 100-RWC)
 #'
 #' @export estRWC
-
-
 estRWC <- function(data,
                    fw.index,
                    wp.index,
                    dm.index,
-                   n_row = 4,
+                   n_pts = 4,
                    silent = T) {
   nvals <- nrow(data)
   

@@ -34,8 +34,7 @@ The saturated water content (mass as a function of total leaf water) is then cal
 }
 \seealso{
 \itemize{
-\item \code{\link[=sma_intercept]{sma_intercept()}} Function used for estimating the SMA intercept
-\item \code{\link[=sma_slope]{sma_slope()}} Function used for estimating the SMA slope
+\item \code{\link[=sma_model]{sma_model()}} Function used for estimating the SMA model fit
 \item \code{\link[=estRWC]{estRWC()}} Estimates the relative water content and relative water deficit using the saturated water content estimate here
 }
 }

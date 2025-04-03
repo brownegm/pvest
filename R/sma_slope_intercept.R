@@ -122,7 +122,7 @@ sma_model.osm_input <- function(x, y = NULL) {
     )
   }
   
-  model <- pvest::sma_model(x = x$neg_inv_psi, y = x$rwd)
+  model <- pvest::sma_model(y = x$neg_inv_psi, x = x$rwd)
   
   invisible(model)
   
@@ -137,23 +137,23 @@ sma_model.osm_input <- function(x, y = NULL) {
 #' @param x Object of class _`tlp_input`_
 #' @returns Calculated slopes and intercepts relating pressure potential with relative water deficit, and relative water content with water potential above and below turgor loss point. See attr(x, "model_list") for explicit display of fitted models and data used.
 
-calc_param_tlp <- function(x, y = NULL, ...) {
+calc_param_tlp <- function(x) {
   if (any(is.na(unlist(x, recursive = TRUE)))) {
     stop(
       "calc_param_tlp:Missing values found in input data. Ensure that there are no missing values."
     )
   }
   
-  bulk_psip_rwd <- pvest::sma_model(x$psip, x$rwd)
-  sym_psip_rwd <- pvest::sma_model(x$psip, x$symrwd)
+  bulk_psip_rwd <- pvest::sma_model(y = x$psip, x = x$rwd)
+  sym_psip_rwd <- pvest::sma_model(y = x$psip, x = x$symrwd)
   
   # above tlp
-  bulk_rwc_psi_above <- pvest::sma_model(x$rwc_above, x$psi_above)
-  sym_rwc_psi_above <- pvest::sma_model(x$symrwc_above, x$psi_above)
+  bulk_rwc_psi_above <- pvest::sma_model( x$psi_above, x$rwc_above)
+  sym_rwc_psi_above <- pvest::sma_model( x$psi_above, x$symrwc_above)
   
   # below tlp
-  bulk_rwc_psi_below <- pvest::sma_slope(x$rwc_below, x$psi_below)
-  sym_rwc_psi_below <- pvest::sma_slope(x$symrwc_below, x$psi_below)
+  bulk_rwc_psi_below <- pvest::sma_model(x$psi_below, x$rwc_below)
+  sym_rwc_psi_below <- pvest::sma_model( x$psi_below, x$symrwc_below)
   
   # extract relevant model parameters for rwc and cap
   params <- structure(
@@ -183,6 +183,8 @@ calc_param_tlp <- function(x, y = NULL, ...) {
 
 #' Print method for the SMA model output
 
+#' @param x Object of class "sma_model"
+#' @param ... Other parameters passed to print method
 #' @importFrom withr local_options
 #' @return Printed SMA model output
 #' @export print.sma_model
@@ -206,6 +208,7 @@ print.sma_model <- function(x, ...) {
 #' Plot method for the SMA model output
 #'@param ... Other parameters passed to print and plot methods
 #'@rdname sma_model
+#'@importFrom graphics abline
 #'@export
 
 plot.sma_model <- function(x, ...) {
