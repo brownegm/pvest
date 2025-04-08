@@ -74,7 +74,7 @@ estRWC <- function(data,
                    fw.index,
                    wp.index,
                    dm.index,
-                   n_row = 4,
+                   n_row = numeric(),
                    silent = T) {
   
   nvals <- nrow(data)
@@ -95,7 +95,8 @@ estRWC <- function(data,
   } else{
     list("fw" = fw.index,
          "wp" = wp.index,
-         "dm" = dm.index)
+         "dm" = dm.index
+         )
   }
 
   if (silent == FALSE) {

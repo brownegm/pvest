@@ -67,9 +67,9 @@ estPV.default <- function(data,
     cli::cli_abort("The following columns are missing from the data frame: {missing_cols}")
   }
   
-  if(!is.null(method) & !method %in% c("rmse", "aicc", "r2")) {
-    cli::cli_abort("Invalid method specified. Choose from 'rmse', 'aicc', or 'r2'.")
-  }
+  # if(!is.null(method) && !method %in% c("rmse", "aicc", "r2")) {
+  #   cli::cli_abort("Invalid method specified. Choose from 'rmse', 'aicc', or 'r2'.")
+  # }
   
   # Get optional subgrouping
   if (!rlang::quo_is_null(sbgrp)) {
@@ -88,28 +88,15 @@ estPV.default <- function(data,
   # list of estimates for each unique id
   est <- vector(mode = "list", length = length(raw_data_list_by_sp))
   
-  # set optimized threshold, or NA if not provided
-  # if(is.null(method)) {
-  #   method <- "default"
-  # }else if(!method %in% c("rmse", "aicc", "r2")) {
-  #   cli::cli_abort("Invalid method specified. Choose from 'rmse', 'aicc', or 'r2'.")
-  # }else if(method == "rmse") {
-  # 
-  # }else if(method == "aicc") {
-  #   
-  #   method <- NA
-  
   for (id in seq_along(raw_data_list_by_sp)) {
-    print(raw_data_list_by_sp[[id]])
     if (!is.null(method)) {
       rows_above_below <- apply_optim(raw_data_list_by_sp[[id]],
                                       input_cols = input_cols,
                                       method = method)
     }else{
-      rows_above_below <- list(nrow(raw_data_list_by_sp[[id]]) - 4, 4)
+      rows_above_below <- c(nrow(raw_data_list_by_sp[[id]]) - 4, 4)
     }
-    
-print(rows_above_below)
+
     rwc <- pvest::estRWC(
       raw_data_list_by_sp[[id]],
       fw.index = as_name(fw),
@@ -134,7 +121,6 @@ print(rows_above_below)
     names(est)[id] <- raw_data_list_by_sp[[id]]["ids"] |> unique()
   }
   # combine all leaf estimates into one data frame.
-  # output_df <- as.data.frame(purrr::reduce(output_est, rbind))
   output_est <- structure(est,
                         creation_time = Sys.time(),
                         units = c(NA, NA, NA,

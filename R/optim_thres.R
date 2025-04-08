@@ -84,10 +84,10 @@ optim_thres <- function(data, fw, wp, dm, method = "rmse") {
 #' 
 #' @returns A list containing the number of points above and below turgor loss point.
 #' 
-apply_optim <- function(data, input_cols, method) {
+apply_optim <- function(data, input_cols, method=NULL) {
   # Check if the method is valid
-  if (!method %in% c("rmse", "aicc", "r2")) {
-    stop("Invalid method specified. Choose from 'rmse', 'aicc', or 'r2'.")
+  if (!method %in% c("rmse", "aicc", "r2", NULL)) {
+    stop("Invalid method specified. Choose from 'rmse', 'aicc', 'r2', or leave empty for default method.")
   }
   
   optim <- switch(

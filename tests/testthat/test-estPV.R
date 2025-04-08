@@ -6,7 +6,7 @@ test_that("validate inputs", {
   expect_error(estPV(data, species, leaf, fresh.rain, water.potential, hot.weight))
   
   #inspect output
-  ah <- estPV(pvest::quag, species, subgrp = leaf, fw = fresh.weight, water.potential, dry.weight, method ="rmse")
+  ah <- estPV(pvest::quag, species, subgrp = leaf, fw = fresh.weight, water.potential, dry.weight)
   
   expect_error(estPV(pvest::quag, species, subgrp = leaf, fw = fresh.weight, water.potential, dry.weight, method = "justguess"))
   expect_equal(unique(ah[[1]]$species), "quag_gj")

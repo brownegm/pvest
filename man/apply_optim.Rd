@@ -4,7 +4,7 @@
 \alias{apply_optim}
 \title{Check and apply optimization for method}
 \usage{
-apply_optim(data, input_cols, method)
+apply_optim(data, input_cols, method = NULL)
 }
 \arguments{
 \item{data}{Data frame containing leaf fresh water mass and leaf water potentials}

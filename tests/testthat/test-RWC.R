@@ -13,6 +13,7 @@ test_that("Check that the output makes sense", {
     fw.index = 1,
     wp.index = 2,
     dm.index = 3,
+    n_row = 4,
     silent = T
   )
 
