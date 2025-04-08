@@ -74,13 +74,14 @@ estRWC <- function(data,
                    fw.index,
                    wp.index,
                    dm.index,
-                   n_pts = 4,
+                   n_row = 4,
                    silent = T) {
+  
   nvals <- nrow(data)
   
   if (nvals < n_row) {
     stop(
-      "The number of rows to estimate parameters from is greater than the number of rows in the data."
+      "estRWC:The number of rows to estimate parameters from is greater than the number of rows in the data."
     )
   }
   

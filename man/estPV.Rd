@@ -25,13 +25,11 @@ estPV(data, group, subgrp = NULL, fw, wp, dm, method = NULL)
 
 \item{dm}{Numeric index of dry mass data.}
 
-\item{method}{Optional character parameter for when n_pts=T. Determines which method to pick number of rows below TLP.Options include "r2","pio","cv". See \code{?check_n_points} for more information}
+\item{method}{Specifies which method to pick number of rows below TLP. Options include "r2", "rmse", "aicc". See \code{?optim_thres()} for more information. If NULL, defaults to 4 rows.}
 
-\item{x}{Object of class \emph{estPV}}
+\item{x}{Object of classg \emph{estPV}}
 
 \item{...}{Additional parameters passed to method}
-
-\item{n_pts}{Logical. If \code{TRUE}, the number of rows to use for predicting pio is based on the lowest number of rows with a CV less than 10\%.}
 }
 \value{
 Returns a data frame with the estimated parameters

@@ -4,7 +4,7 @@
 \alias{estRWC}
 \title{RWC and RWD estimation}
 \usage{
-estRWC(data, fw.index, wp.index, dm.index, n_pts = 4, silent = T)
+estRWC(data, fw.index, wp.index, dm.index, n_row = 4, silent = T)
 }
 \arguments{
 \item{data}{Data frame containing leaf fresh water mass and leaf water potentials}
@@ -15,9 +15,9 @@ estRWC(data, fw.index, wp.index, dm.index, n_pts = 4, silent = T)
 
 \item{dm.index}{Dry mass column index}
 
-\item{silent}{Silence printing of column names}
-
 \item{n_row}{Numeric value indicating number of rows above turgor loss point}
+
+\item{silent}{Silence printing of column names}
 }
 \value{
 Returns a list of two containing the relative water content (RWC) for each measurement point and the relative water deficit (i.e, 100-RWC)

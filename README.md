@@ -31,3 +31,7 @@ estParams()# this function estimates all pressure volume curve parameters for yo
 ## TBD 
 - Check coverage
 - FIGURE OUT HOW/WHERE TO IMPLEMENT THE N_PTS ASPECT
+- Decide at what stage you want the water data to enter the function....
+  - If I want to include dry mass in the calculation the values in the test data need to be the raw leaf water data 
+  
+  

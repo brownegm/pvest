@@ -7,13 +7,15 @@
 optim_thres(data, fw, wp, dm, method = "rmse")
 }
 \arguments{
-\item{data}{a data frame}
+\item{data}{A data frame}
+
+\item{fw}{Index number or string containing the column name of the water mass data (i.e., water mass or relative water content)}
+
+\item{wp}{Number or string containing the column name of the water potential data}
+
+\item{dm}{Index number or string containing the column name of the dry mass data}
 
 \item{method}{Specify statistic used to optimize the number of rows above and below turgor loss.}
-
-\item{x_var}{number or string containing the column name of the water potential data}
-
-\item{y_var}{index number or string containing the column name of the water mass data (i.e., water mass or relative water content)}
 }
 \value{
 Returns list with:

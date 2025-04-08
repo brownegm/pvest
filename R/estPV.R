@@ -6,8 +6,7 @@
 #' @param fw A numeric. Data frame index for the water content information.
 #' @param wp A numeric. Indicates the index of the data frame including the water potential data
 #' @param dm Numeric index of dry mass data.
-#' @param n_pts Logical. If `TRUE`, the number of rows to use for predicting pio is based on the lowest number of rows with a CV less than 10%.
-#' @param method Optional character parameter for when n_pts=T. Determines which method to pick number of rows below TLP.Options include "r2","pio","cv". See `?check_n_points` for more information
+#' @param method Specifies which method to pick number of rows below TLP. Options include "r2", "rmse", "aicc". See `?optim_thres()` for more information. If NULL, defaults to 4 rows.
 #'
 #' @details
 #'     Data needs to have species or individual information as well as leaf identifiers.
@@ -22,7 +21,7 @@
 #'
 #' @import dplyr
 #' @importFrom rlang enquo as_name
-#' @import cli
+#' @importFrom cli cli_alert_info cli_abort
 #' @export
 #' @rdname estPV
 
@@ -33,9 +32,7 @@ estPV <- function(data,
                   wp,
                   dm,
                   method = NULL) {
-  if (n_pts == T & is.null(method)) {
-    "Method must be specified when n_pts=T"
-  }
+
   UseMethod("estPV")
 }
 
@@ -48,6 +45,7 @@ estPV.default <- function(data,
                           wp,
                           dm,
                           method = NULL) {
+  
   # Convert inputs to quosures for tidy evaluation
   grp <- rlang::enquo(group)
   fw <- rlang::enquo(fw)
@@ -68,6 +66,11 @@ estPV.default <- function(data,
   if (length(missing_cols) > 0) {
     cli::cli_abort("The following columns are missing from the data frame: {missing_cols}")
   }
+  
+  if(!is.null(method) & !method %in% c("rmse", "aicc", "r2")) {
+    cli::cli_abort("Invalid method specified. Choose from 'rmse', 'aicc', or 'r2'.")
+  }
+  
   # Get optional subgrouping
   if (!rlang::quo_is_null(sbgrp)) {
     sbgrp_name <- rlang::as_name(sbgrp)
@@ -82,37 +85,47 @@ estPV.default <- function(data,
   # create data list by unique grp and sbgrp combinations
   raw_data_list_by_sp <- by_grp_sbgrp(data, grp, sbgrp)
 
-  n_row_below <- 4
   # list of estimates for each unique id
   est <- vector(mode = "list", length = length(raw_data_list_by_sp))
   
-  
-  optim <- switch(method,
-    NULL = "", 
-    "rmse" = optim_thres(data, fw = input_cols[2] , wp = input_cols[3] , dm = input_cols[4], method = "rmse"), 
-    "aicc" = optim_thres(data, fw = input_cols[2] , wp = input_cols[3] , dm = input_cols[4], method = "aicc"), 
-    "r2" = optim_thres(data, fw = input_cols[2] , wp = input_cols[3] , dm = input_cols[4], method = "r2")
-  )
-
-  rows_above_below <- if(!is.null(optim)) list(optim$n_above, optim$n_below) else list(nrow(data)-4,4)
+  # set optimized threshold, or NA if not provided
+  # if(is.null(method)) {
+  #   method <- "default"
+  # }else if(!method %in% c("rmse", "aicc", "r2")) {
+  #   cli::cli_abort("Invalid method specified. Choose from 'rmse', 'aicc', or 'r2'.")
+  # }else if(method == "rmse") {
+  # 
+  # }else if(method == "aicc") {
+  #   
+  #   method <- NA
   
   for (id in seq_along(raw_data_list_by_sp)) {
+    print(raw_data_list_by_sp[[id]])
+    if (!is.null(method)) {
+      rows_above_below <- apply_optim(raw_data_list_by_sp[[id]],
+                                      input_cols = input_cols,
+                                      method = method)
+    }else{
+      rows_above_below <- list(nrow(raw_data_list_by_sp[[id]]) - 4, 4)
+    }
+    
+print(rows_above_below)
     rwc <- pvest::estRWC(
       raw_data_list_by_sp[[id]],
       fw.index = as_name(fw),
       wp.index = as_name(wp),
       dm.index = as_name(dm),
-      n_row = rows_above_below[[1]], silent = T
+      n_row = rows_above_below[1], silent = T
     ) |>
       pvest::estOsmotic(
-        data = _, ## UPDATE
-        n_row = rows_above_below[[2]],
+        data = _,
+        n_row = rows_above_below[2],
         silent = T
       )
     tlp <- pvest::estTLP(
       data = rwc,
-      n_row_above = rows_above_below[[1]]
-    ) ## UPDATE
+      n_row_above = rows_above_below[1]
+    )
     est[[id]] <- do.call(cbind,
                                              list(
                                                rwc$data,
@@ -200,7 +213,7 @@ by_grp_sbgrp <- function(x, grp, sbgrp = NULL) {
   invisible(obj)
 }
 
-#' @param x Object of class _estPV_
+#' @param x Object of classg _estPV_
 #' @param ... Additional parameters passed to method
 #' @rdname estPV
 #' @export

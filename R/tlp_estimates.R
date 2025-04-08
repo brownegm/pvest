@@ -54,7 +54,7 @@ tlpinput <- function(psi_above, psip,
       "rwc_above", "symrwc_above",
       "psi_below", "rwc_below", "symrwc_below"
     ),
-    class = "tlp_input"
+    class = c("tlpEst", "list")
   ))
 }
 
