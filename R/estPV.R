@@ -71,7 +71,7 @@ estPV.default <- function(data,
   #   cli::cli_abort("Invalid method specified. Choose from 'rmse', 'aicc', or 'r2'.")
   # }
   
-  # Get optional subgrouping
+  # Get subgrouping
   if (!rlang::quo_is_null(sbgrp)) {
     sbgrp_name <- rlang::as_name(sbgrp)
 
@@ -94,7 +94,8 @@ estPV.default <- function(data,
                                       input_cols = input_cols,
                                       method = method)
     }else{
-      rows_above_below <- c(nrow(raw_data_list_by_sp[[id]]) - 4, 4)
+      above_count <- nrow(raw_data_list_by_sp[[id]])-3
+      rows_above_below <- c(above_count, 4)# the above should include the value below tlp too
     }
 
     rwc <- pvest::estRWC(

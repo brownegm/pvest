@@ -37,7 +37,7 @@ estsatwater <- function(fresh_mass, psi, dry_mass) {
     dry_mass <- unique(dry_mass)[1]
   }
   
-  fw <- fresh_mass-dry_mass
+  fw <- fresh_mass
   wp <- psi
   
   # estimate the SMA model

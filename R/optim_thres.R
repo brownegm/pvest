@@ -31,7 +31,7 @@ optim_thres <- function(data, fw, wp, dm, method = "rmse") {
     n_below <- nrow(data_below)
     
     # Check that both segments have enough data points
-    if (n_above < 3 | n_below < 4)
+    if (n_above < 4 | n_below < 4)
       return(Inf)  # Penalize small groups
     
     # Fit models using your function
