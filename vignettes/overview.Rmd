@@ -1,0 +1,50 @@
+---
+title: "overview"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{overview}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+bibliography: references.bib
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(pvest)
+```
+
+# Objectives
+
+The aim of this package is provide a tool for estimating pressure volume (PV) curve parameters. This framework is built on previous worksheets used to estimate these parameters manual but enhances that workflow by removing operator bias in determining the turgor loss point threshold and more closely matches the expected functional form of the relationship between water potential and water content. Indeed, other attempts at accomplishing this goal have implemented an assumption that before turgor loss the relationship between water potential and water content is nonlinear. Here, we make three key assumptions:
+
+\(1\) Before the turgor loss, water potential and water content exhibit a negative and linear relationship
+
+\(2\) The osmotic potential at full turgor ($\pi_{o}$) is equal to the negative pressure potential at full turgor.
+
+\(3\) The user's last 4 combined measurements of water potential and water content are below turgor loss point; all other points can be assumed to be above turgor loss.\*
+
+\* We do provide alternative threshold optimization protocols (i.e., maximizing R squared and minimizing the root mean squared error (RMSE)).
+
+# Workflow
+
+1.  fit line to the points below TLP for 1/psiL vs 1-RWC. The y-intercept of this line is pi_o, the negative of that number is max psi_p
+
+<!-- -->
+
+2.  calculate psi_p based on subtracting psi_s (from the line in previous step) for each psiL point
+3.  
+    3.  fit a line through psi_p vs 1-RWC. The x-intercept is the RWDtlp. 1-RWDtlp is the RWCtlp
+
+<!-- -->
+
+4.  put the RWDtlp into the eqn from item 1 to get the psi_tlp
+
+<!-- -->
+
+5.  to estimate e, use maxpsi_p/(1-RWCtlp)

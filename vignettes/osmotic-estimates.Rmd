@@ -32,15 +32,15 @@ See `RelativeWaterCD` for information on the estimation of those
 parameters. The functions are an adaptation of the worksheet template
 from [@Sack2011] and relationships drawn in [@Bartlett2012].
 
-| Symbol         | Units    | Definition                                                                                                    |
-|----------------|----------|---------------------------------------------------------------------------------------------------------------|
-| $\pi_{o}$      | MPa      | Osmotic potential at full turgor.                                                                             |
-| Max $\Psi_{p}$ | MPa      | Maximum pressure potential                                                                                    |
-| $\Psi_s$       | MPa      | Osmotic potential for each hydration state                                                                    |
-| $\Psi_{p}$     | MPa      | Pressure potential                                                                                            |
-| $\Psi_{leaf}$  | MPa      | Leaf water potential. Sum of leaf osmotic and pressure potential                                              |
-| a~f~           | \%       | Percent of total leaf water in the outside of cytoplasm                                                       |
-| RWC~sym~       | g\*g^-1^ | Mass of water relative to full saturation within the symplast. Estimated with respect to apoplastic fraction. |
+| Symbol | Units | Definition |
+|-----------|-----------|--------------------------------------------------|
+| $\pi_{o}$ | MPa | Osmotic potential at full turgor. |
+| Max $\Psi_{p}$ | MPa | Maximum pressure potential |
+| $\Psi_s$ | MPa | Osmotic potential for each hydration state |
+| $\Psi_{p}$ | MPa | Pressure potential |
+| $\Psi_{leaf}$ | MPa | Leaf water potential. Sum of leaf osmotic and pressure potential |
+| a~f~ | \% | Percent of total leaf water in the outside of cytoplasm |
+| RWC~sym~ | g\*g^-1^ | Mass of water relative to full saturation within the symplast. Estimated with respect to apoplastic fraction. |
 
 : **Table 1.** Variables, units and symbols of osmotic estimates.
 
