@@ -17,4 +17,5 @@ test_that("validate inputs", {
   #check method use
   rmse <- estPV(pvest::quag, species, subgrp = leaf, fw = fresh.weight, water.potential, dry.weight, method = "rmse")
   r2 <- estPV(pvest::quag, species, subgrp = leaf, fw = fresh.weight, water.potential, dry.weight, method = "r2")
+  aicc <- estPV(pvest::quag, species, subgrp = leaf, fw = fresh.weight, water.potential, dry.weight, method = "aicc")
 })

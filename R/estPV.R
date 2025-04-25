@@ -133,7 +133,7 @@ estPV.default <- function(data,
                                   "%","%","MPa", 
                                   "MPa","MPa^-1","MPa^-1",
                                   "MPa^-1","MPa^-1"),
-                        class = "estPV")
+                        class = c("estPV", "data.frame"))
   invisible(output_est)
 }
 #     if (n_pts == T) {

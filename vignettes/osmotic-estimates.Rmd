@@ -33,7 +33,7 @@ parameters. The functions are an adaptation of the worksheet template
 from [@Sack2011] and relationships drawn in [@Bartlett2012].
 
 | Symbol | Units | Definition |
-|-----------|-----------|--------------------------------------------------|
+|--------------|--------------|--------------------------------------------|
 | $\pi_{o}$ | MPa | Osmotic potential at full turgor. |
 | Max $\Psi_{p}$ | MPa | Maximum pressure potential |
 | $\Psi_s$ | MPa | Osmotic potential for each hydration state |

@@ -1,5 +1,5 @@
 ---
-title: "overview"
+title: "Pvest: R package for estimating PV curve parameters"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{overview}
@@ -17,6 +17,8 @@ knitr::opts_chunk$set(
 
 ```{r setup}
 library(pvest)
+library(here)
+library(gt)
 ```
 
 # Objectives
@@ -27,24 +29,67 @@ The aim of this package is provide a tool for estimating pressure volume (PV) cu
 
 \(2\) The osmotic potential at full turgor ($\pi_{o}$) is equal to the negative pressure potential at full turgor.
 
-\(3\) The user's last 4 combined measurements of water potential and water content are below turgor loss point; all other points can be assumed to be above turgor loss.\*
+\(3\) The user's last 4 combined measurements of water potential and water content are below turgor loss point; all other points can be assumed to be above turgor loss.^A^
 
-\* We do provide alternative threshold optimization protocols (i.e., maximizing R squared and minimizing the root mean squared error (RMSE)).
+^A^ We do provide alternative threshold optimization protocols (i.e., maximizing R squared and minimizing the root mean squared error (RMSE)).
 
 # Workflow
 
-1.  fit line to the points below TLP for 1/psiL vs 1-RWC. The y-intercept of this line is pi_o, the negative of that number is max psi_p
+To appropriately construct the PV curves, we utilize the following workflow:
 
-<!-- -->
+1.  First, we estimate the saturated water content (\[estRWC()\] and \[estsatwater()\]) as the y intercept of points above turgor loss.
+2.  Second, we fit the standard major axis line to the points below turgor loss for the negative inverse of water potential and relative water deficit (100-relative water content). The y-intercept of this line is ($\pi_{o}$), the negative of that number is the pressure potential at full turgor ($\Psi_{p,o}$).
+3.  Next, fit SMA for the relationship between $\Psi_{p,o}$ and relative water deficit (RWD). The x-intercept is the relative water deficit at turgor loss ($RWD_{tlp}$) and $RWC_{tlp} = 100-RWD_{tlp}$).
+4.  Solve for the water potential at turgor loss by inputting the $RWD_{tlp}$ using SMA fit parameters used to estimate $\pi_{o}$.
+5.  All other parameters are then estimated as described in [@Sack2011].
 
-2.  calculate psi_p based on subtracting psi_s (from the line in previous step) for each psiL point
-3.  
-    3.  fit a line through psi_p vs 1-RWC. The x-intercept is the RWDtlp. 1-RWDtlp is the RWCtlp
+The estimation of parameters relies on the standard major axis (SMA) regression [@Warton2006]. Further, defining the threshold of turgor loss can be estimated simply from the last four observations of water potential and tissue water mass. Alternatively, if the user prefers to not provide the default threshold *a priori*, methods are available to minimize the sum of RMSE or AICc or maximizing the R^2^ for SMA regressions above and below turgor loss (see \[optim_thres()\] for more information).
 
-<!-- -->
+# Estimated parameters
 
-4.  put the RWDtlp into the eqn from item 1 to get the psi_tlp
+| Symbol | Formula | Units | Definition |
+|-------------|-------------|-------------|---------------------------------|
+| SWC | $SMA_{intercept}$ | $g*g-1$ | Saturated water content |
+| RWD | $100-RWC$ | \% | Relative water deficit |
+| RWC | $\frac{Water~Mass}{SWC}$ | \% | Relative water content |
+| $\pi_{o}$ | $\frac{1}{SMA_{intercept}}$ | MPa | Osmotic potential at full turgor. The intercept is the standard major axis intercept of observations of negative inverse water potential and relative water content. |
+| Max $\Psi_{p}$ | $-1 * \pi_{o}$ | MPa | Maximum pressure potential |
+| $\Psi_s$ | $\frac{-1}{intercept+ (slope* RWD)}$ | MPa | Osmotic potential for each hydration state |
+| $\Psi_{p}$ | $\Psi_{leaf} - \Psi_{s}$ | MPa | Pressure potential |
+| $\Psi_{leaf}$ | $\Psi_{p} + \Psi_{s}$ | MPa | Leaf water potential. Sum of leaf osmotic and pressure potential |
+| a~f~ | $100 + \frac{intercept}{slope}$ | \% | Percent of total leaf water in the outside of cytoplasm |
+| RWC~sym~ |  | g\*g^-1^ | Mass of water relative to full saturation within the symplast. Estimated with respect to apoplastic fraction. |
 
-<!-- -->
+: **Table 1.** Variables, units and symbols of osmotic estimates.
 
-5.  to estimate e, use maxpsi_p/(1-RWCtlp)
+# Creating pressure volume (PV) curve
+
+PV curves can be constructed simply using `pvest::estPV()`. The function uses tidy evaluation so unquoted strings are passed to the funciton parameters defining variables used. As a result of this structure,  dataframes can be piped into the function similar to other workflows in the tidyverse. The user can define the inflection ($\pi_{tlp}$) using the methods mentioned above. 
+
+```{r show-test-data}
+# use QUAL data
+head(pvest::quag)
+names(pvest::quag)
+```
+
+```{r test-pv-estimate}
+default <- estPV(pvest::quag, species, subgrp = leaf, fw = fresh.weight, water.potential, dry.weight)
+
+default
+```
+
+Note that there is a print method for the output object. The output will produce a summary of your data for each group and subgroup. To see the values of each curve as a dataframe, you can select from indices of the output which is structurally a list of data frames. 
+
+```{r output-df}
+#| include: false
+
+default_table <- Reduce(rbind, default)%>% 
+  dplyr::group_by(ids)%>%
+  gt::gt()|>
+  gt::fmt_number(n_sigfig = 3 )
+
+default_table
+
+```
+
+
