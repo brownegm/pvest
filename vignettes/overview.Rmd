@@ -1,5 +1,5 @@
 ---
-title: "Pvest: R package for estimating PV curve parameters"
+title: "__pvest__: Estimation PV curve parameters"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{overview}
@@ -13,12 +13,6 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
-```
-
-```{r setup}
-library(pvest)
-library(here)
-library(gt)
 ```
 
 # Objectives
@@ -66,6 +60,14 @@ The estimation of parameters relies on the standard major axis (SMA) regression 
 
 PV curves can be constructed simply using `pvest::estPV()`. The function uses tidy evaluation so unquoted strings are passed to the funciton parameters defining variables used. As a result of this structure,  dataframes can be piped into the function similar to other workflows in the tidyverse. The user can define the inflection ($\pi_{tlp}$) using the methods mentioned above. 
 
+
+```{r setup, echo = TRUE, warning = FALSE, message = FALSE}
+library(pvest)
+library(here)
+library(gt)
+library(dplyr)
+```
+
 ```{r show-test-data}
 # use QUAL data
 head(pvest::quag)
@@ -73,22 +75,40 @@ names(pvest::quag)
 ```
 
 ```{r test-pv-estimate}
-default <- estPV(pvest::quag, species, subgrp = leaf, fw = fresh.weight, water.potential, dry.weight)
+default <- pvest::quag |>
+  estPV(species, subgrp = leaf, fw = fresh.weight, water.potential, dry.weight)
 
-default
+#default as a dataframe
+default_df <- Reduce(rbind, default)
+
 ```
-
 Note that there is a print method for the output object. The output will produce a summary of your data for each group and subgroup. To see the values of each curve as a dataframe, you can select from indices of the output which is structurally a list of data frames. 
 
 ```{r output-df}
-#| include: false
+#| echo: false
 
-default_table <- Reduce(rbind, default)%>% 
-  dplyr::group_by(ids)%>%
+default_table <- default_df |>
+  dplyr::group_by(ids)|>
   gt::gt()|>
-  gt::fmt_number(n_sigfig = 3 )
+  gt::fmt_number(n_sigfig = 3)|>
+  gt::tab_header(
+    title = "PV curve estimates"
+  )
+
+param_names <- 
+sp_default_summary_tab <- default_df|>
+  dplyr::select(!c(ids:rwd,prespot,osmpot))|>
+  dplyr::summarise(across(where(is.numeric), mean, na.rm = TRUE)) |>
+  gt::gt() |>
+  gt::fmt_number(n_sigfig = 3) |>
+  gt::tab_header(
+    title = "PV curve estimates"
+  )|>
+  gt::tab_options(table.width = px(800))
 
 default_table
+sp_default_summary_tab
+
 
 ```
 
