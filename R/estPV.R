@@ -90,9 +90,12 @@ estPV.default <- function(data,
   
   for (id in seq_along(raw_data_list_by_sp)) {
     if (!is.null(method)) {
-      rows_above_below <- apply_optim(raw_data_list_by_sp[[id]],
+      
+      opt <- apply_optim(raw_data_list_by_sp[[id]],
                                       input_cols = input_cols,
                                       method = method)
+      
+      rows_above_below <- opt[[1]]
     }else{
       above_count <- nrow(raw_data_list_by_sp[[id]])-3
       rows_above_below <- c(above_count, 4)# the above should include the value below tlp too
