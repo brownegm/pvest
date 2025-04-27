@@ -18,9 +18,9 @@
     Output
       Osmotic and pressure potential estimates: 
       -----------------------------------------------
-      Osmotic potential at full turgor: -155.72 MPa 
-      Pressure potential at full turgor: 155.72 MPa 
-      Apoplastic fraction: 100 % 
+      Osmotic potential at full turgor: 0.33 MPa 
+      Pressure potential at full turgor: -0.33 MPa 
+      Apoplastic fraction: 98.69 % 
       Number of hydration states used: 4 
       -----------------------------------------------
 

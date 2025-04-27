@@ -21,7 +21,7 @@ psip_rwd_params <- function(psi_above, psip, rwd, symrwd,
     psi_below, rwc_below, symrwc_below
   )
   # construct bulk and symplastic models
-  tlp_model <- sma_model(tlp_input)
+  tlp_model <- calc_param_tlp(tlp_input)
   # return the model parameters
   invisible(tlp_model)
 }
@@ -54,7 +54,7 @@ tlpinput <- function(psi_above, psip,
       "rwc_above", "symrwc_above",
       "psi_below", "rwc_below", "symrwc_below"
     ),
-    class = "tlp_input"
+    class = c("tlpEst", "list")
   ))
 }
 

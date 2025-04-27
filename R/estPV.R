@@ -6,8 +6,7 @@
 #' @param fw A numeric. Data frame index for the water content information.
 #' @param wp A numeric. Indicates the index of the data frame including the water potential data
 #' @param dm Numeric index of dry mass data.
-#' @param n_pts Logical. If `TRUE`, the number of rows to use for predicting pio is based on the lowest number of rows with a CV less than 10%.
-#' @param method Optional character parameter for when n_pts=T. Determines which method to pick number of rows below TLP.Options include "r2","pio","cv". See `?check_n_points` for more information
+#' @param method Specifies which method to pick number of rows below TLP. Options include "r2", "rmse", "aicc". See `?optim_thres()` for more information. If NULL, defaults to 4 rows.
 #'
 #' @details
 #'     Data needs to have species or individual information as well as leaf identifiers.
@@ -22,7 +21,7 @@
 #'
 #' @import dplyr
 #' @importFrom rlang enquo as_name
-#' @import cli
+#' @importFrom cli cli_alert_info cli_abort
 #' @export
 #' @rdname estPV
 
@@ -32,11 +31,8 @@ estPV <- function(data,
                   fw,
                   wp,
                   dm,
-                  n_pts,
                   method = NULL) {
-  if (n_pts == T & is.null(method)) {
-    "Method must be specified when n_pts=T"
-  }
+
   UseMethod("estPV")
 }
 
@@ -48,8 +44,8 @@ estPV.default <- function(data,
                           fw,
                           wp,
                           dm,
-                          n_pts = F,
                           method = NULL) {
+  
   # Convert inputs to quosures for tidy evaluation
   grp <- rlang::enquo(group)
   fw <- rlang::enquo(fw)
@@ -70,7 +66,12 @@ estPV.default <- function(data,
   if (length(missing_cols) > 0) {
     cli::cli_abort("The following columns are missing from the data frame: {missing_cols}")
   }
-  # Get optional subgrouping
+  
+  # if(!is.null(method) && !method %in% c("rmse", "aicc", "r2")) {
+  #   cli::cli_abort("Invalid method specified. Choose from 'rmse', 'aicc', or 'r2'.")
+  # }
+  
+  # Get subgrouping
   if (!rlang::quo_is_null(sbgrp)) {
     sbgrp_name <- rlang::as_name(sbgrp)
 
@@ -84,27 +85,38 @@ estPV.default <- function(data,
   # create data list by unique grp and sbgrp combinations
   raw_data_list_by_sp <- by_grp_sbgrp(data, grp, sbgrp)
 
-  n_row_below <- 4
   # list of estimates for each unique id
   est <- vector(mode = "list", length = length(raw_data_list_by_sp))
-
+  
   for (id in seq_along(raw_data_list_by_sp)) {
+    if (!is.null(method)) {
+      
+      opt <- apply_optim(raw_data_list_by_sp[[id]],
+                                      input_cols = input_cols,
+                                      method = method)
+      
+      rows_above_below <- opt[[1]]
+    }else{
+      above_count <- nrow(raw_data_list_by_sp[[id]])-3
+      rows_above_below <- c(above_count, 4)# the above should include the value below tlp too
+    }
+
     rwc <- pvest::estRWC(
       raw_data_list_by_sp[[id]],
       fw.index = as_name(fw),
       wp.index = as_name(wp),
       dm.index = as_name(dm),
-      n_row = 4, silent = T
+      n_row = rows_above_below[1], silent = T
     ) |>
       pvest::estOsmotic(
-        data = _, ## UPDATE
-        n_row = n_row_below,
+        data = _,
+        n_row = rows_above_below[2],
         silent = T
       )
     tlp <- pvest::estTLP(
       data = rwc,
-      n_row_above = 5
-    ) ## UPDATE
+      n_row_above = rows_above_below[1]
+    )
     est[[id]] <- do.call(cbind,
                                              list(
                                                rwc$data,
@@ -113,7 +125,6 @@ estPV.default <- function(data,
     names(est)[id] <- raw_data_list_by_sp[[id]]["ids"] |> unique()
   }
   # combine all leaf estimates into one data frame.
-  # output_df <- as.data.frame(purrr::reduce(output_est, rbind))
   output_est <- structure(est,
                         creation_time = Sys.time(),
                         units = c(NA, NA, NA,
@@ -125,7 +136,7 @@ estPV.default <- function(data,
                                   "%","%","MPa", 
                                   "MPa","MPa^-1","MPa^-1",
                                   "MPa^-1","MPa^-1"),
-                        class = "estPV")
+                        class = c("estPV", "data.frame"))
   invisible(output_est)
 }
 #     if (n_pts == T) {
@@ -192,7 +203,7 @@ by_grp_sbgrp <- function(x, grp, sbgrp = NULL) {
   invisible(obj)
 }
 
-#' @param x Object of class _estPV_
+#' @param x Object of classg _estPV_
 #' @param ... Additional parameters passed to method
 #' @rdname estPV
 #' @export

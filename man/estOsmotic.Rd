@@ -44,13 +44,10 @@ as well as the osmotic potential and pressure potential for each hydration state
 This function estimates osmotic variables from the values \strong{below} turgor loss point. Here we assume that the data points at
 last 4 hydration states all represent points below turgor loss point.
 
-It is implemented \strong{after} estimation of leaf saturated water content, relative water content and relative
-water deficit.See \code{estRWC} for information on the estimation of those parameters.
+It is implemented \strong{after} estimation of leaf saturated water content, relative water content and relative water deficit.See \code{estRWC} for information on the estimation of those parameters.
 
 Here, we estimate the osmotic potential at full turgor as the x-intercept of the relationship between
-inverse leaf water potential and relative water deficit below turgor loss point. The slope needs to be negative
-within the sma_intercept function(\code{\link{sma_intercept}}) because of the negative inverse of leaf water potential.
-Also, note that unlike in the saturated water content estimation the x values is inverse.
+inverse leaf water potential and relative water deficit below turgor loss point.
 }
 \seealso{
 \code{\link[=estRWC]{estRWC()}}, \code{\link[=sma_model]{sma_model()}}

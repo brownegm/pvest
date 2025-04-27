@@ -4,7 +4,7 @@
 \alias{estRWC}
 \title{RWC and RWD estimation}
 \usage{
-estRWC(data, fw.index, wp.index, dm.index, n_row = 4, silent = T)
+estRWC(data, fw.index, wp.index, dm.index, n_row = numeric(), silent = T)
 }
 \arguments{
 \item{data}{Data frame containing leaf fresh water mass and leaf water potentials}
@@ -20,7 +20,7 @@ estRWC(data, fw.index, wp.index, dm.index, n_row = 4, silent = T)
 \item{silent}{Silence printing of column names}
 }
 \value{
-Returns a list of two containing the relative water content(RWC) for each measurement point and the relative water deficit(i.e, 100-RWC)
+Returns a list of two containing the relative water content (RWC) for each measurement point and the relative water deficit (i.e, 100-RWC)
 }
 \description{
 Estimate the relative water content(RWC) and relative water deficit(RWD) based on the

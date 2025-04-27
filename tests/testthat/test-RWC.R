@@ -2,9 +2,9 @@
 
 # simple fake dataset
 data <- data.frame(
-  fw = seq(0.450, 0.2, length.out = 10),
-  wp = seq(-0.5, -2.5, length.out = 10),
-  dm = 0.5
+  fw = seq(3.43, 0.0686, length.out = 10),
+  wp = seq(-0.01, -0.5, length.out = 10),
+  dm = 1
 )
 
 test_that("Check that the output makes sense", {
@@ -13,18 +13,24 @@ test_that("Check that the output makes sense", {
     fw.index = 1,
     wp.index = 2,
     dm.index = 3,
+    n_row = 4,
     silent = T
   )
 
   expect_equal(length(rwc_estimate$swc), 1)
   expect_equal(length(rwc_estimate$rwc), nrow(data))
   expect_equal(length(rwc_estimate$rwd), nrow(data))
+  expect_equal(rwc_estimate$swc, 3.4986)
+  expect_equal(rwc_estimate$swm, 3.4986)
+  
+  expect_equal(round(rwc_estimate$rwc[1],4), 98.0392)
+  expect_equal(rwc_estimate$rwd[1], rwc_estimate$rwc[10])
 
   # check that the rwc values are increasing
   # dont change input fake data
 
   rwcdiff <- all(diff(rwc_estimate$rwc) < 0) #-2.710027
-  modediff <- unique(diff(rwc_estimate$rwc) |> round(5)) == -5.42005
+  modediff <- unique(diff(rwc_estimate$rwc) |> round(5)) == -10.67538
   expect_true(rwcdiff)
   expect_true(modediff)
 })

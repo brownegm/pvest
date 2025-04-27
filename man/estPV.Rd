@@ -6,9 +6,9 @@
 \alias{print.estPV}
 \title{Estimate all pressure volume curve parameters for all leaves}
 \usage{
-estPV(data, group, subgrp = NULL, fw, wp, dm, n_pts, method = NULL)
+estPV(data, group, subgrp = NULL, fw, wp, dm, method = NULL)
 
-\method{estPV}{default}(data, group, subgrp = NULL, fw, wp, dm, n_pts = F, method = NULL)
+\method{estPV}{default}(data, group, subgrp = NULL, fw, wp, dm, method = NULL)
 
 \method{print}{estPV}(x, ...)
 }
@@ -25,11 +25,9 @@ estPV(data, group, subgrp = NULL, fw, wp, dm, n_pts, method = NULL)
 
 \item{dm}{Numeric index of dry mass data.}
 
-\item{n_pts}{Logical. If \code{TRUE}, the number of rows to use for predicting pio is based on the lowest number of rows with a CV less than 10\%.}
+\item{method}{Specifies which method to pick number of rows below TLP. Options include "r2", "rmse", "aicc". See \code{?optim_thres()} for more information. If NULL, defaults to 4 rows.}
 
-\item{method}{Optional character parameter for when n_pts=T. Determines which method to pick number of rows below TLP.Options include "r2","pio","cv". See \code{?check_n_points} for more information}
-
-\item{x}{Object of class \emph{estPV}}
+\item{x}{Object of classg \emph{estPV}}
 
 \item{...}{Additional parameters passed to method}
 }
