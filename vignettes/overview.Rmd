@@ -42,7 +42,7 @@ The estimation of parameters relies on the standard major axis (SMA) regression 
 # Estimated parameters
 
 | Symbol | Formula | Units | Definition |
-|-------------|-------------|-------------|---------------------------------|
+|---------------|---------------|---------------|-----------------------------|
 | SWC | $SMA_{intercept}$ | $g*g-1$ | Saturated water content |
 | RWD | $100-RWC$ | \% | Relative water deficit |
 | RWC | $\frac{Water~Mass}{SWC}$ | \% | Relative water content |
@@ -58,8 +58,7 @@ The estimation of parameters relies on the standard major axis (SMA) regression 
 
 # Creating pressure volume (PV) curve
 
-PV curves can be constructed simply using `pvest::estPV()`. The function uses tidy evaluation so unquoted strings are passed to the funciton parameters defining variables used. As a result of this structure,  dataframes can be piped into the function similar to other workflows in the tidyverse. The user can define the inflection ($\pi_{tlp}$) using the methods mentioned above. 
-
+PV curves can be constructed simply using `pvest::estPV()`. The function uses tidy evaluation so unquoted strings are passed to the funciton parameters defining variables used. As a result of this structure, dataframes can be piped into the function similar to other workflows in the tidyverse. The user can define the inflection ($\pi_{tlp}$) using the methods mentioned above.
 
 ```{r setup, echo = TRUE, warning = FALSE, message = FALSE}
 library(pvest)
@@ -82,34 +81,24 @@ default <- pvest::quag |>
 default_df <- Reduce(rbind, default)
 
 ```
-Note that there is a print method for the output object. The output will produce a summary of your data for each group and subgroup. To see the values of each curve as a dataframe, you can select from indices of the output which is structurally a list of data frames. 
+
+Note that there is a print method for the output object. The output will produce a summary of your data for each group and subgroup. To see the values of each curve as a dataframe, you can select from indices of the output which is structurally a list of data frames.
 
 ```{r output-df}
-#| echo: false
+#| eval: false
+#| include: false
 
-default_table <- default_df |>
-  dplyr::group_by(ids)|>
-  gt::gt()|>
-  gt::fmt_number(n_sigfig = 3)|>
-  gt::tab_header(
-    title = "PV curve estimates"
-  )
-
-param_names <- 
 sp_default_summary_tab <- default_df|>
   dplyr::select(!c(ids:rwd,prespot,osmpot))|>
   dplyr::summarise(across(where(is.numeric), mean, na.rm = TRUE)) |>
-  gt::gt() |>
+  gt::gt()|>
   gt::fmt_number(n_sigfig = 3) |>
   gt::tab_header(
     title = "PV curve estimates"
   )|>
-  gt::tab_options(table.width = px(800))
+  gt::tab_options(table.width = px(200))
 
-default_table
 sp_default_summary_tab
-
+##>param_names <- names()
 
 ```
-
-

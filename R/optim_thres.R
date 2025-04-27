@@ -22,7 +22,7 @@ optim_thres <- function(data, fw, wp, dm, method = "rmse") {
   # create leaf water column
   data$lw <- data[[fw]] - data[[dm]]
   # Define objective function for optimization
-  objective_function <- function(threshold) {
+  mod_perform_test <- function(threshold) {
     data_above <- data[c(1:threshold), ]
     data_below <- data[c(threshold:nrow(data)), ]
    
@@ -37,9 +37,13 @@ optim_thres <- function(data, fw, wp, dm, method = "rmse") {
     # Fit models using your function
     fit_above <- sma_model(x = data_above[[wp]], y = data_above$lw)
     fit_below <- sma_model(x = data_below[[wp]], y = data_below$lw)
-
+    fit_all <- structure(list(above = fit_above[["m"]], 
+                         below = fit_below[["m"]]),
+                         method = method,
+                         pmetric = NULL,
+                         class = "sma_model2")
     # Use RMSE for minimization, R² for maximization
-    objective_value <- switch(
+    performance_metric <- switch(
       method,
       "rmse" = attr(fit_below, "rmse") + attr(fit_above, "rmse"),
       "r2" = -(attr(fit_below, "r_squared") + attr(fit_above, "r_squared")),
@@ -47,17 +51,21 @@ optim_thres <- function(data, fw, wp, dm, method = "rmse") {
       "aicc" = attr(fit_below, "aicc") + attr(fit_above, "aicc")
     )
     
-    # Store the number of points
-    attr(objective_value, "below_above") <- c(n_above, n_below)
+    # set combined model objval attribute 
+    attr(fit_all, "pmetric") <- performance_metric
     
-    invisible(objective_value)
+    # Store the number of points
+    attr(performance_metric, "below_above") <- c(n_above, n_below)
+    attr(performance_metric, "model") <- fit_all#combined models
+    
+    invisible(performance_metric)
   }
   
   # Optimize over threshold range
   init_row_below <- median(1:nrow(data))|>round()
   max_row <- nrow(data)
   
-  objvals <- lapply(c(init_row_below:max_row), \(n) objective_function(threshold = n))
+  objvals <- lapply(c(init_row_below:max_row), \(n) mod_perform_test(threshold = n))
   testvals_vec <- unlist(objvals)
   
   # Get optimal threshold
@@ -68,6 +76,9 @@ optim_thres <- function(data, fw, wp, dm, method = "rmse") {
   above_lowest <- lowest[1]
   below_lowest <- lowest[2]
   
+  # Get final model
+  mod <-  attr(lowest, "model")
+  # return output
   return(structure(list(
     est_objvals = objvals,
     lowest = lowest,
@@ -120,7 +131,26 @@ apply_optim <- function(data, input_cols, method=NULL) {
     "default" = NA
   )
   
-  return(attr(optim$lowest, "below_above"))
+  return(list(attr(optim$lowest, "below_above"), 
+              model = attr(optim$lowest, "model")))
+}
+
+
+
+#' Print method for SMA model with two segments 
+#' @export
+#' @param x An object of class `sma_model2`
+#' @param ... Additional arguments (not used)
+#' @return Prints the model summary
+
+print.sma_model2 <- function(x, ...) {
+  cat("SMA Model with two segments\n")
+  cat("Above TLP:\n")
+  print(x$above)
+  cat("\nBelow TLP:\n")
+  print(x$below)
+  cat("\nMethod used:", x$method, "\n")
+  cat("Performance metric:", x$pmetric, "\n")
 }
 
 # maybe do this later
