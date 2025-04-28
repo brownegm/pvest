@@ -99,7 +99,7 @@ estPV.default <- function(data,
     }else{
       above_count <- nrow(raw_data_list_by_sp[[id]])-3
       rows_above_below <- c(above_count, 4)# the above should include the value below tlp too
-    }
+      }
 
     rwc <- pvest::estRWC(
       raw_data_list_by_sp[[id]],
@@ -122,6 +122,7 @@ estPV.default <- function(data,
                                                rwc$data,
                                                tlp)
                                              )
+    attr(est[[id]], "breakpoint") <- rows_above_below
     names(est)[id] <- raw_data_list_by_sp[[id]]["ids"] |> unique()
   }
   # combine all leaf estimates into one data frame.
@@ -136,7 +137,8 @@ estPV.default <- function(data,
                                   "%","%","MPa", 
                                   "MPa","MPa^-1","MPa^-1",
                                   "MPa^-1","MPa^-1"),
-                        class = c("estPV", "data.frame"))
+                        class = c("estPV", "data.frame")
+                        )
   invisible(output_est)
 }
 #     if (n_pts == T) {

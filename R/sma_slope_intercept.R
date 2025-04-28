@@ -128,6 +128,20 @@ sma_model.osm_input <- function(x, y = NULL) {
   
 }
 
+#' @inheritParams sma_model
+#' @export
+sma_model2 <- function(){
+fit_above <- pvest::sma_model(x = data_above[[wp]], y = data_above$lw)
+fit_below <- pvest::sma_model(x = data_below[[wp]], y = data_below$lw)
+fit_all <- structure(list(above = fit_above[["m"]], 
+                          below = fit_below[["m"]]),
+                     method = method,
+                     pmetric = NULL,
+                     class = "sma_model2")
+
+return(fit_all)
+}
+
 
 #' Calculate the slopes for turgor loss inputs
 #' @description
