@@ -163,6 +163,7 @@ estOsmotic.default <- function(data, wc.index, wp.index, n_row = 4, silent = T, 
     cbind,
     list(
       data,
+      invpsi = -1 / data$psi,
       pio = osm_pot_fullturgor,
       psip_o = max_psip,
       osmpot = osmotic_potential,
@@ -236,6 +237,7 @@ estOsmotic.rwcEst <- function(data, n_row = 4, silent = T, ...) {
     cbind,
     list(
       rwcEstData,
+      invpsi = -1 / rwcEstData$water.potential,
       pio = osm_pot_fullturgor,
       psip_o = max_psip,
       osmpot = osmotic_potential,

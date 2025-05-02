@@ -1,6 +1,6 @@
 #' Stat function for plotting pv curve on data
 
-#'@importFrom ggplot2 ggplot ggproto Stat
+#'@importFrom ggplot2 ggplot ggproto Stat geom_point geom_line aes
 #'@import patchwork
 #@inheritParams ggplot2::stat_smooth
 #'@export
@@ -14,39 +14,41 @@ plotPV <- function(obj, ...) {
   splitpv <- pvest:::split_all_dfs(obj, pvbp)
   # Fit models using your function
   fits <- lapply(splitpv, \(df) sma_model2(df, wp = "water.potential", lw = "fresh.weight"))
-  
+  fits_tlp <- lapply(splitpv, \(df) sma_model2(df, wp = "inv.", lw = "fresh.weight"))
   # Create and return the plot
   psiwater <- ggplot() +
-    geom_point(data = obj[[1]],
+    ggplot2::geom_point(data = obj[[1]],
                aes(x = fresh.weight, y = water.potential),
                size = 3) +
-    geom_abline(
+    ggplot2::geom_abline(
       slope = fits[[1]]$above$slope,
       intercept = fits[[1]]$above$intercept,
       color = "red"
     ) +
-    geom_abline(
+    ggplot2::geom_abline(
       slope = fits[[1]]$below$slope,
       intercept = fits[[1]]$below$intercept,
       color = "blue"
     ) +
-    theme_classic(base_size = 16) +
-    labs(y = "Water Potential", x = "Leaf water")
+    ggplot2::theme_classic(base_size = 16) +
+    ggplot2::labs(y = "Water Potential", x = "Leaf water")
   
   invpsi_rwc <- ggplot() +
-    geom_point(data = obj[[1]],
+    ggplot2::geom_point(data = obj[[1]],
                aes(x = rwd, y = -1 / water.potential),
                size = 3) +
-    geom_abline(
+    ggplot2::geom_abline(
       slope = fits[[1]]$below$slope,
       intercept = fits[[1]]$below$intercept,
       color = "blue"
     ) +
-    theme_classic(base_size = 16) +
-    labs(y = "-1/Water Potential", x = "Relative Water Deficit (%)")+
-    geom_smooth(data = obj[[1]], aes(x = rwc, y = -1/water.potential ))
+    ggplot2::theme_classic(base_size = 16) +
+    ggplot2::labs(y = "-1/Water Potential", x = "Relative Water Deficit (%)")+
+    ggplot2::geom_smooth(data = obj[[1]], aes(x = rwc, y = -1/water.potential ))
   
   pvplot <- psiwater/invpsi_rwc 
+  
+  return(pvplot)
 }
 #' 
 #' StatPV <- ggplot2::ggproto(
