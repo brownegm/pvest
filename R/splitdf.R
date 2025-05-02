@@ -2,7 +2,7 @@
 #' Split Data Frame by Vector
 #' @param df A data frame to be split.
 #' @param split_vector A vector of two integers indicating the number of rows to take from the head and tail of the data frame.
-#' @return A list containing two data frames: one with the specified number of rows from the head and another with the specified number of rows from the tail.
+#' @return A list containing two data frames: one with the specified number of rows from the head and another with the specified number of rows from the tail.                              
 split_df <- function(df, split_vector) {
   h <- split_vector[1]
   t <- split_vector[2]

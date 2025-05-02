@@ -130,16 +130,20 @@ sma_model.osm_input <- function(x, y = NULL) {
 
 #' @inheritParams sma_model
 #' @export
-sma_model2 <- function(){
-fit_above <- pvest::sma_model(x = data_above[[wp]], y = data_above$lw)
-fit_below <- pvest::sma_model(x = data_below[[wp]], y = data_below$lw)
-fit_all <- structure(list(above = fit_above[["m"]], 
-                          below = fit_below[["m"]]),
+sma_model2 <- function(dfs, wp, lw, method = "default", pmetric = NULL) {
+
+  above <- dfs$above
+  below <- dfs$below
+
+fit_above <- pvest::sma_model(y = above[[wp]], x = above[[lw]])
+fit_below <- pvest::sma_model(y = below[[wp]], x = below[[lw]])
+fit_all <- structure(list(above = fit_above, 
+                          below = fit_below),
                      method = method,
-                     pmetric = NULL,
+                     pmetric = pmetric,
                      class = "sma_model2")
 
-return(fit_all)
+  invisible(fit_all)
 }
 
 
@@ -219,6 +223,22 @@ print.sma_model <- function(x, ...) {
   cat("AICc:                          ", attr(x, "aicc"), "\n")
 }
 
+
+#' Print method for SMA model with two segments 
+#' @export
+#' @param x An object of class `sma_model2`
+#' @param ... Additional arguments (not used)
+#' @return Prints the model summary
+
+print.sma_model2 <- function(x, ...) {
+  cat("SMA Model with two segments\n")
+  cat("Above TLP:\n")
+  print(x$above)
+  cat("\nBelow TLP:\n")
+  print(x$below)
+  cat("\nMethod used:", x$method, "\n")
+  cat("Performance metric:", x$pmetric, "\n")
+}
 #' Plot method for the SMA model output
 #'@param ... Other parameters passed to print and plot methods
 #'@rdname sma_model
