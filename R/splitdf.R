@@ -1,4 +1,3 @@
-
 #' Split Data Frame by Vector
 #' @param df A data frame to be split.
 #' @param split_vector A vector of two integers indicating the number of rows to take from the head and tail of the data frame.

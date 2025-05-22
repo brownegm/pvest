@@ -3,6 +3,8 @@
 #'@importFrom ggplot2 ggplot ggproto Stat geom_point geom_line aes
 #'@import patchwork
 #@inheritParams ggplot2::stat_smooth
+#' @param obj object of class estPV
+#' @param ... additional arguments
 #'@export
 
 ## Create ggproto object
@@ -18,18 +20,22 @@ plotPV <- function(obj, ...) {
   
   # Create and return the plot
   ## use a list to hold
+  pvp_list <- vector(mode = "list", length = length(fits))
+  
+  for(i in seq_along(fits)){
+    
   psiwater <- ggplot() +
-    ggplot2::geom_point(data = obj[[1]],
+    ggplot2::geom_point(data = obj[[i]],
                aes(x = fresh.weight, y = water.potential),
                size = 4) +
     ggplot2::geom_abline(
-      slope = fits[[1]]$above$slope,
-      intercept = fits[[1]]$above$intercept,
+      slope = fits[[i]]$above$slope,
+      intercept = fits[[i]]$above$intercept,
       color = "forestgreen", linewidth = 1.5
     ) +
     ggplot2::geom_abline(
-      slope = fits[[1]]$below$slope,
-      intercept = fits[[1]]$below$intercept,
+      slope = fits[[i]]$below$slope,
+      intercept = fits[[i]]$below$intercept,
       color = "black", linewidth = 1.5
     ) +
     ggplot2::expand_limits(y=-0.1)+
@@ -37,12 +43,12 @@ plotPV <- function(obj, ...) {
     ggplot2::labs(y = expression(paste(Psi["leaf"], " (MPa)")), x = "Water Mass (g)", title = "Plateau effect, Saturated Water Content")
   
   invpsi_rwc <- ggplot() +
-    ggplot2::geom_point(data = obj[[1]],
+    ggplot2::geom_point(data = obj[[i]],
                aes(x = rwd, y = invpsi),
                size = 4) +
     ggplot2::geom_abline(
-      slope = fits_tlp[[1]]$below$slope,
-      intercept = fits_tlp[[1]]$below$intercept,
+      slope = fits_tlp[[i]]$below$slope,
+      intercept = fits_tlp[[i]]$below$intercept,
       color = "black", linewidth = 1.5
     ) +
     ggplot2::theme_classic(base_size = 18) +
@@ -51,7 +57,11 @@ plotPV <- function(obj, ...) {
   
   pvplot <- psiwater/invpsi_rwc 
   
-  return(pvplot)
+  pvp_list[[i]] <- pvplot
+  
+  }
+  #return(pvplot)
+  return(pvp_list)
 }
 #' 
 #' StatPV <- ggplot2::ggproto(
