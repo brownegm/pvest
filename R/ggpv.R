@@ -26,14 +26,11 @@ plotPV <- function(obj, ...) {
   fits_tlp <- purrr::map(splitpv, ~ sma_model2(.x, wp = "invpsi", lw = "rwd"))
 
   # Create and return the plots
+  pvp_list <- map(fits, \(f) {
 
-  xrange <- range(obj[[i]]$fresh.weight, na.rm = TRUE)
-
-  pvp_list <- imap(fits, \(fit, i) {
-
-    pvd <- obj[[i]]
-    fit_tlp <- fits_tlp[[i]]
-    bp <- pvbp[[i]]
+    pvd <- obj[[f]]
+    fit_tlp <- fits_tlp[[f]]
+    bp <- pvbp[[f]]
 
   # Define x-ranges for segments
   x_fw <- range(data$fresh.weight, na.rm = TRUE)
