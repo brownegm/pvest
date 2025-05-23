@@ -14,39 +14,43 @@
 ## Create ggproto object
 
 plotPV <- function(obj, ...) {
-  pvbp <- lapply(seq_along(obj), \(x) attributes(obj[[x]])$breakpoint)
+  
+  # get breakpoints
+  pvbp <- map(obj, ~ attributes(.x)$breakpoint)
 
+  # split dfs into above and below 
   splitpv <- pvest:::split_all_dfs(obj, pvbp)
+
   # Fit models using your function
-  fits <- lapply(
-    splitpv,
-    \(df) sma_model2(df, wp = "water.potential", lw = "fresh.weight")
-  )
-  fits_tlp <- lapply(splitpv, \(df) sma_model2(df, wp = "invpsi", lw = "rwd"))
+  fits <- purrr::map(splitpv, ~ sma_model2(.x, wp = "water.potential", lw = "fresh.weight"))
+  fits_tlp <- purrr::map(splitpv, ~ sma_model2(.x, wp = "invpsi", lw = "rwd"))
 
-  # Create and return the plot
-  ## use a list to hold
-  pvp_list <- vector(mode = "list", length = length(fits))
+  # Create and return the plots
 
-  for (i in seq_along(fits)) {
-    psiwater <- ggplot() +
-      ggplot2::geom_point(
-        data = obj[[i]],
-        aes(x = fresh.weight, y = water.potential),
-        size = 4
-      ) +
-      ggplot2::geom_abline(
-        slope = fits[[i]]$above$slope,
-        intercept = fits[[i]]$above$intercept,
-        color = "forestgreen",
-        linewidth = 1.5
-      ) +
-      ggplot2::geom_abline(
-        slope = fits[[i]]$below$slope,
-        intercept = fits[[i]]$below$intercept,
-        color = "black",
-        linewidth = 1.5
-      ) +
+  xrange <- range(obj[[i]]$fresh.weight, na.rm = TRUE)
+
+  pvp_list <- imap(fits, \(fit, i) {
+
+    pvd <- obj[[i]]
+    fit_tlp <- fits_tlp[[i]]
+    bp <- pvbp[[i]]
+
+  # Define x-ranges for segments
+  x_fw <- range(data$fresh.weight, na.rm = TRUE)
+  x_rwd <- range(data$rwd, na.rm = TRUE)
+  
+   # Below and above breakpoint ranges for fresh weight
+    x_below <- c(x_fw[1], bp)
+    x_above <- c(bp, x_fw[2])
+    
+    psiwater <- ggplot2::ggplot(data = pvd, aes(x = fresh.weight, y = water.potential)) +
+      ggplot2::geom_point(size = 4) +
+
+      # draw lines
+      drawSegment(pvd$below, x_below, color = "black", linewidth = 1.5)+
+      drawSegment(pvd$above, x_above, color = "forestgreen", linewidth = 1.5)+
+
+      # aesthetics
       ggplot2::expand_limits(y = -0.1) +
       ggplot2::theme_classic(base_size = 18) +
       ggplot2::labs(
@@ -56,13 +60,10 @@ plotPV <- function(obj, ...) {
       )
 
     invpsi_rwc <- ggplot() +
-      ggplot2::geom_point(data = obj[[i]], aes(x = rwd, y = invpsi), size = 4) +
-      ggplot2::geom_abline(
-        slope = fits_tlp[[i]]$below$slope,
-        intercept = fits_tlp[[i]]$below$intercept,
-        color = "black",
-        linewidth = 1.5
-      ) +
+      ggplot2::geom_point(data = pvd, aes(x = rwd, y = invpsi), size = 4) +
+      # draw linese
+      drawSegment(fit_tlp$below, x_rwd, color = "black", linewidth = 1.5) +
+      # aesthetics
       ggplot2::theme_classic(base_size = 18) +
       ggplot2::labs(
         y = expression(frac(-1, paste(Psi["leaf"])), "(MPa)"),
@@ -70,11 +71,9 @@ plotPV <- function(obj, ...) {
         title = "Turgor Loss Point"
       )
 
-    pvplot <- psiwater / invpsi_rwc
-
-    pvp_list[[i]] <- pvplot
-  }
-  #return(pvplot)
+   psiwater / invpsi_rwc
+  })
+  
   return(pvp_list)
 }
 
@@ -89,7 +88,7 @@ plotPV <- function(obj, ...) {
 #' @return Segments for the segmented regression 
 #' @export 
 
-drawSegments <- function(fit, x_range, color = "black", ...) {
+drawSegment <- function(fit, x_range, color = "black", ...) {
   data.frame(
     x = x_range[1],
     xend = x_range[2],
