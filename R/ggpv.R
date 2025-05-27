@@ -26,15 +26,15 @@ plotPV <- function(obj, ...) {
   fits_tlp <- purrr::map(splitpv, ~ sma_model2(.x, wp = "invpsi", lw = "rwd"))
 
   # Create and return the plots
-  pvp_list <- map(fits, \(f) {
+  pvp_list <- imap(fits, \(f) {
 
     pvd <- obj[[f]]
     fit_tlp <- fits_tlp[[f]]
     bp <- pvbp[[f]]
 
   # Define x-ranges for segments
-  x_fw <- range(data$fresh.weight, na.rm = TRUE)
-  x_rwd <- range(data$rwd, na.rm = TRUE)
+  x_fw <- range(pvd$fresh.weight, na.rm = TRUE)
+  x_rwd <- range(pvd$rwd, na.rm = TRUE)
   
    # Below and above breakpoint ranges for fresh weight
     x_below <- c(x_fw[1], bp)
@@ -86,11 +86,14 @@ plotPV <- function(obj, ...) {
 #' @export 
 
 drawSegment <- function(fit, x_range, color = "black", ...) {
+  xvals <- fit$data[[1]]
+  yvals <- fit$fitted
+
   data.frame(
-    x = x_range[1],
+    x = fit$data[[1]],
     xend = x_range[2],
-    y = fit$slope * x_range[1] + fit$intercept,
-    yend = fit$slope * x_range[2] + fit$intercept
+    y = fit$fitted,
+    yend = sk
   ) %>%
-    ggplot2::geom_segment(aes(x = x, y = y, xend = xend, yend = yend), color = color, ...)
+    ggplot2::geom_segment(aes(x = xvals , y = yvals, xend = , yend = yend), color = color, ...)
 }
