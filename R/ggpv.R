@@ -7,7 +7,7 @@
 #' 
 #' @importFrom ggplot2 ggplot ggproto Stat geom_point geom_line aes
 #' @importFrom patchwork plot_layout
-# @importFrom purrr map
+#' @importFrom purrr map
 #' 
 #' @export
 
@@ -16,7 +16,7 @@
 plotPV <- function(obj, ...) {
   
   # get breakpoints
-  pvbp <- map(obj, ~ attributes(.x)$breakpoint)
+  pvbp <- purrr::map(obj, ~ attributes(.x)$breakpoint)
 
   # split dfs into above and below 
   splitpv <- pvest:::split_all_dfs(obj, pvbp)

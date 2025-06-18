@@ -16,7 +16,8 @@ Imports:
     cli, 
     utils, 
     tidyr, 
-    withr
+    withr, 
+    purrr
 Depends: 
     R (>= 2.10)
 Suggests: 
