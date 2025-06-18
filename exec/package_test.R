@@ -74,6 +74,89 @@ pv_dat_fil <- pv_dat %>%
 
 test<-pv_dat_fil%>%filter(species=="heca")
 
+testPV<-estPV(test, species, leaf, fresh.weight, water.potential, dry.weight, method = "r2")
+
+pv_params <- estPV(pv_dat_fil, species, leaf, fresh.weight, water.potential, dry.weight, method = "r2")
+
+pv_params_df <- do.call(rbind, pv_params)
+
+pv_params_leaf <- pv_params_df %>%
+  select(ids:leaf, swm, swc, pio, af, pi_tlp:cap_sym_tlp)%>%
+  group_by(species, leaf)%>%
+  unique()
+
+pvleaf_long <- pv_params_leaf %>%
+  pivot_longer(cols = c(swm:cap_sym_tlp), names_to = "params_pvest", values_to = "value")
+
+itvpv_long <- itvpv |> 
+  pivot_longer(cols = c(swc:cap_tlp_sym), names_to = "params_itvpv", values_to = "value")
+
+com_long <- full_join(itvpv_long, pvleaf_long, 
+                       by = join_by(unique_id==ids), 
+                       suffix = c("_itvpv", "_pvest"))
+
+com <- full_join(itvpv, pv_params_leaf, by = join_by(unique_id == ids), suffix = c("", "_est"))
+
+plot_comp <- function(data, x, y){
+  
+  p<-ggplot(data, aes_string(x = x, y = y)) +
+    geom_point(pch = 21, size = 5,
+               col = "black", 
+               fill = "#4f8359", 
+               alpha = 0.6) +
+    geom_abline(slope = 1, intercept = 0, lwd = 1.2) +
+    geom_smooth(method = "lm",
+                col = "#4f8359", 
+                lwd = 1.2, linetype = "dashed", se = T) +
+    labs(x = "Estimate", y = "Original") +
+    theme_classic(base_size = 24)+
+    ggpmisc::stat_poly_eq(
+      aes(label = paste(..eq.label.., ..rr.label.., sep = "~~")),
+      formula = y ~ x,
+      parse = TRUE,
+      size = 5
+    )
+  
+  return(p)
+}
+
+
+pcpv1 <- plot_comp(com,"swc_est", "swc" ) +
+  labs(title = "Saturated Water Content")
+
+pcpv2 <- plot_comp(com, "pio", "pi_o") +
+  labs(title = "Pi[o]")
+
+pcpv3 <- plot_comp(com, "pi_tlp", "psi_tlp") +
+  labs(title = "Turgor Loss Point")
+
+pcpv4 <- plot_comp(com, "af_est", "af") +
+  labs(title = "Apoplastic Fraction")
+
+pcpv5 <- plot_comp(com, "rwc_tlp_est", "rwc_tlp") +
+  labs(title = "RWC at turgor loss")
+
+pcpv6 <- plot_comp(com, "modulus_est", "modulus") +
+  labs(title = "Modulus")
+
+pcpv7 <- plot_comp(com, "cap_bulk_ft", "cap_ft") +
+  labs(title = "Capacitance at FT")
+
+pcpv8 <- plot_comp(com, "cap_bulk_tlp", "cap_tlp") +
+  labs(title = "Capacitance at TLP")
+
+pcpv9 <- plot_comp(com, "cap_sym_tlp", "cap_tlp_sym") +
+  labs(title = "Capacitance at TLP (sym)")
+
+# Combine plots
+pcpvall<- patchwork::wrap_plots(
+  pcpv1, pcpv2, pcpv3, pcpv4, 
+  pcpv5, pcpv6, pcpv7, pcpv8,
+  pcpv9,
+  ncol = 3
+)
+
+ggsave(here("inst/extdata", "pv_params_comparison.png"), pcpvall, width = 14, height = 10, dpi = 500)
 # compute pv parameters
 pv_params <- estParams(pv_dat_fil,
                        fw.index = 5, wp.index = 4, dm.index = 3, 
@@ -119,6 +202,7 @@ uniques <- readxl::read_xlsx(here("inst", "extdata", "summary_main.xlsx"), sheet
 
 pv_leaf_uniques <- pv_params_byleaf %>%
   filter(unique_id %in% uniques)
+
 
 # summarize by species
 
