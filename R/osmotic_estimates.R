@@ -149,11 +149,17 @@ estOsmotic.default <- function(data, wc.index, wp.index, n_row = 4, silent = T, 
 
   pio <- estpio(rwd_n, minus_inv_psi)
 
+  
   # calculate osmotic and pressure potential at full turgor
   osm_pot_fullturgor <- pio$pio
   max_psip <- osm_pot_fullturgor * -1
 
-  osmotic_potential <- -1 / (pio$sma_mod$intercept + (pio$sma_mod$slope * (100 - data[[varnames$wc]])))
+  osmotic_potential_old <- -1 / (pio$sma_mod$intercept + (pio$sma_mod$slope * (100 - data[[varnames$wc]])))
+  
+  r <- data[[varnames$wc]]/100
+  r_tlp <- (pio$sma_mod$intercept / pio$sma_mod$slope) / 100
+  # osmotic potential at full turgor
+  osmotic_potential_new <- -pio * ((r - r_tlp)/(1 - r_tlp)) ^ b
   pressure_potential <- data[[varnames$wp]] - osmotic_potential
   apoplastic_fraction <- 100 + (pio$sma_mod$intercept / pio$sma_mod$slope)
   sym_rwc <- ((data[[varnames$wc]] - apoplastic_fraction) / (100 - apoplastic_fraction)) * 100
