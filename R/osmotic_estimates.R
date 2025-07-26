@@ -154,16 +154,36 @@ estOsmotic.default <- function(data, wc.index, wp.index, n_row = 4, silent = T, 
   osm_pot_fullturgor <- pio$pio
   max_psip <- osm_pot_fullturgor * -1
 
+  pi_ft <- osm_pot_fullturgor
+
+  pio$sma_mod$intercept
   osmotic_potential_old <- -1 / (pio$sma_mod$intercept + (pio$sma_mod$slope * (100 - data[[varnames$wc]])))
   
-  r <- data[[varnames$wc]]/100
+  test_df |>
+    mutate( 
+           apoplasticfraction = 100 + (test$sma_mod$intercept / test$sma_mod$slope),
+           symplasticrelativewatercontent = ((test_df$rwc - apoplasticfraction) / (100 - apoplasticfraction)) * 100,
+           solutepotentialold = -1/test$sma_mod$intercept + (test$sma_mod$slope * (100 - symplasticrelativewatercontent)),
+           solutepotential = test$pio/(symplasticrelativewatercontent/100), 
+           symrwctlp = (test$sma_mod$intercept / test$sma_mod$slope)/100,
+           symmodulus = -test$pio / (symrwctlp / 100),
+           psitlp = -1 / (test$sma_mod$slope * symrwctlp + test$sma_mod$intercept), 
+           pressurepotential = -symrwctlp * psitlp *((symplasticrelativewatercontent-symrwctlp)/(1-symrwctlp))^((symmodulus *(1- symrwctlp))/(-symrwctlp* psitlp)))
+  
+  
+  r_star <- data[[varnames$wc]]/100
   r_tlp <- (pio$sma_mod$intercept / pio$sma_mod$slope) / 100
-  # osmotic potential at full turgor
-  osmotic_potential_new <- -pio * ((r - r_tlp)/(1 - r_tlp)) ^ b
-  pressure_potential <- data[[varnames$wp]] - osmotic_potential
+  
   apoplastic_fraction <- 100 + (pio$sma_mod$intercept / pio$sma_mod$slope)
   sym_rwc <- ((data[[varnames$wc]] - apoplastic_fraction) / (100 - apoplastic_fraction)) * 100
   sym_rwd <- 100 - sym_rwc
+  
+  solutepotential = pi_ft/symplasticrelativewatercontent
+  
+  # osmotic potential at full turgor
+  osmotic_potential_new <- -pio * ((r - r_tlp)/(1 - r_tlp)) ^ b
+  pressure_potential <- data[[varnames$wp]] - osmotic_potential
+
 
   dataUpd <- do.call(
     cbind,
