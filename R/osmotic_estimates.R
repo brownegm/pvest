@@ -4,7 +4,7 @@
 #'     between relative water deficit and inverse leaf water potential.
 #'
 #' @param rwd Vector of relative water deficit values.
-#' @param psi Vector of water potential values.
+#' @param psi Vector of negative inverse of water potential values.
 #'
 #' @return An object of class "pioEst" containing the slope, intercept and osmotic potential at full turgor. 
 #'
@@ -162,13 +162,17 @@ estOsmotic.default <- function(data, wc.index, wp.index, n_row = 4, silent = T, 
   test_df |>
     mutate( 
            apoplasticfraction = 100 + (test$sma_mod$intercept / test$sma_mod$slope),
-           symplasticrelativewatercontent = ((test_df$rwc - apoplasticfraction) / (100 - apoplasticfraction)) * 100,
-           solutepotentialold = -1/test$sma_mod$intercept + (test$sma_mod$slope * (100 - symplasticrelativewatercontent)),
-           solutepotential = test$pio/(symplasticrelativewatercontent/100), 
-           symrwctlp = (test$sma_mod$intercept / test$sma_mod$slope)/100,
-           symmodulus = -test$pio / (symrwctlp / 100),
-           psitlp = -1 / (test$sma_mod$slope * symrwctlp + test$sma_mod$intercept), 
-           pressurepotential = -symrwctlp * psitlp *((symplasticrelativewatercontent-symrwctlp)/(1-symrwctlp))^((symmodulus *(1- symrwctlp))/(-symrwctlp* psitlp)))
+           symplasticrelativewatercontent = ((test_df$rwc - apoplasticfraction) / (100 - apoplasticfraction)),
+           srwd = 1 - symplasticrelativewatercontent,
+           solutepotentialold = -1/test$sma_mod$intercept + (test$sma_mod$slope * (srwd)),
+           solutepotential = pi_ft/(symplasticrelativewatercontent), 
+           symrwdtlp = -(test$sma_mod$intercept / test$sma_mod$slope)/100,
+           symrwctlp = 100 - symrwdtlp,
+           symmodulus = max_psip / (symrwctlp),
+           psitlp = -1 / (test$sma_mod$slope * (1-symrwctlp)+ test$sma_mod$intercept), 
+           pressurepotential = -(symrwctlp * psitlp) *((symplasticrelativewatercontent-symrwctlp)/(1-symrwctlp))^((symmodulus *(1- symrwctlp))/(-symrwctlp* psitlp)), 
+           testpsiold = pressurepotential + solutepotentialold, 
+           testpsinew = pressurepotential + solutepotential)
   
   
   r_star <- data[[varnames$wc]]/100
