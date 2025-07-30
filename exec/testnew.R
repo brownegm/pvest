@@ -187,11 +187,12 @@ ggplot(df, aes(x = r)) +
   geom_line(aes(y = psi_p_pred), color = "red", linewidth = 1) +  # Fitted curve
   geom_vline(xintercept = r_tlp_est, linetype = "dashed", color = "gray") + # TLP line
   annotate("text", x = r_tlp_est, y = max(df$psi_p),
-           label = paste0("RWC_tlp = ", round(r_tlp_est, 2)), vjust = -1) +
-  scale_y_reverse() +  # Invert y-axis (negative MPa values plotted downward)
+           label = paste0("RWC_tlp = ", round(r_tlp_est, 2)), vjust = 1) +
+  #scale_y_reverse() +  # Invert y-axis (negative MPa values plotted downward)
   labs(x = "Symplastic Relative Water Content (RWC)",
        y = "Pressure Potential (Ψp, MPa)",
        title = "Pressure-Volume Curve Fit") +
   theme_minimal()
+
 
 ```
