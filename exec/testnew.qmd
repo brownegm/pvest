@@ -70,9 +70,7 @@ pioEst <- estpio(forpio$rwd, -1/forpio$water.potential)
 
 pio <- pioEst$pio
 
-
-
-
+srwc <- sat_rwc(rwc$rwc, pioEst$sma_mod)
 
 srwd <- 1-srwc
 
@@ -83,7 +81,7 @@ max_psip <- -1 * pio
 temppsip <- rwcdf$water.potential - psio
 
 # at turgor loss the pressure potential is zero so the water potential there equals tlp
-tlp_guess <- psio[6] # this is a guess, we will refine it later
+tlp_guess <- psio[5] # this is a guess, we will refine it later
 
 srwc_tlp <- (pio) / (tlp_guess)
 
@@ -97,21 +95,21 @@ plot(rwcdf$water.potential~psiest, ylim = c(0, -4), xlim=c(0,-4))
 ## this is based on the values from the quag1 data and 
 ## based on pi at full turgor.  
 
-test_df |>
-  mutate( 
-    apoplasticfraction = 100 + (test$sma_mod$slope / test$sma_mod$intercept),
-    symplasticrelativewatercontent = ((test_df$rwc - apoplasticfraction) / (100 - apoplasticfraction)),
-    srwd = 1 - symplasticrelativewatercontent,
-    solutepotentialold = -1/test$sma_mod$intercept + (test$sma_mod$slope * (srwd)),
-    solutepotential = pi_ft/(symplasticrelativewatercontent), 
-    symrwdtlp = -(test$sma_mod$intercept / test$sma_mod$slope)/100,
-    symrwctlp = 100 - symrwdtlp,
-    symmodulus = max_psip / (symrwctlp),
-    psitlp = -1 / (test$sma_mod$slope * (1-symrwctlp)+ test$sma_mod$intercept), 
-    pressurepotential = -(symrwctlp * psitlp) *((symplasticrelativewatercontent-symrwctlp)/(1-symrwctlp))^((symmodulus *(1- symrwctlp))/(-symrwctlp* psitlp)), 
-    testpsiold = pressurepotential + solutepotentialold, 
-    testpsinew = pressurepotential + solutepotential)
-
+# test_df |>
+#   mutate( 
+#     apoplasticfraction = 100 + (test$sma_mod$slope / test$sma_mod$intercept),
+#     symplasticrelativewatercontent = ((test_df$rwc - apoplasticfraction) / (100 - apoplasticfraction)),
+#     srwd = 1 - symplasticrelativewatercontent,
+#     solutepotentialold = -1/test$sma_mod$intercept + (test$sma_mod$slope * (srwd)),
+#     solutepotential = pi_ft/(symplasticrelativewatercontent), 
+#     symrwdtlp = -(test$sma_mod$intercept / test$sma_mod$slope)/100,
+#     symrwctlp = 100 - symrwdtlp,
+#     symmodulus = max_psip / (symrwctlp),
+#     psitlp = -1 / (test$sma_mod$slope * (1-symrwctlp)+ test$sma_mod$intercept), 
+#     pressurepotential = -(symrwctlp * psitlp) *((symplasticrelativewatercontent-symrwctlp)/(1-symrwctlp))^((symmodulus *(1- symrwctlp))/(-symrwctlp* psitlp)), 
+#     testpsiold = pressurepotential + solutepotentialold, 
+#     testpsinew = pressurepotential + solutepotential)
+# 
 
 
 
@@ -153,25 +151,30 @@ calc_psi <- function(srwc, pio, psio, p){
 }
 
 # Simulate observed Ψp data with random noise added
-psi_p_sim <-  #calc_psi_p(r=srwc, pi_sat, srwc_tlp, b_guess)
+psi_p_sim <-  calc_psi_p(r=srwc, pi_sat, srwc_tlp, b_guess)
 
 # Combine into a data frame for fitting
-df <- data.frame(r = srwc, psi_p = psi_p_sim)
 
+df <- data.frame(r = srwc, psi_p = psi_p_sim)
+df <- data.frame(r = srwc, psi_w = quag1$water.potential)
 # --- 2. Nonlinear model fitting (Estimate parameters from data) ---
 # We use nlsLM (Levenberg–Marquardt) for stability and ability to enforce parameter bounds.
 
 fit <- nlsLM(
-  psi_p ~ ifelse(r > r_tlp,
+  
+  psi_w ~ (pi_sat/r) + ifelse(r > r_tlp,
                  -pi_sat * ((r - r_tlp) / (1 - r_tlp))^(b),
-                 0),                  # Model equation
+                 0),
+  # psi_p ~ ifelse(r > r_tlp,
+  #                -pi_sat * ((r - r_tlp) / (1 - r_tlp))^(b),
+  #                0),                  # Model equation
   data = df,                          # Data frame
-  start = list( # Starting guess for osmotic potential at full turgor
-               r_tlp = median(srwc), 
-               b = sym_modulus),          # Starting guess for RWC at TLP # Starting guess for elasticity exponent
-  lower = c(0.6, 1),            # Lower bounds (physiological constraints)
-  upper = c(0.9, 14),              # Upper bounds
-  control = nls.lm.control(maxiter = 500)  # Increase iterations for stability
+  start = list(
+              r_tlp = median(srwc), 
+               b = 8),          # Starting guess for RWC at TLP # Starting guess for elasticity exponent
+  lower = c(0.6, 4),            # Lower bounds (physiological constraints)
+  upper = c(0.9, 10),              # Upper bounds
+  control = nls.lm.control(maxiter = 50)  # Increase iterations for stability
 )
 
 btheo <- -pi_sat/1-coef(fit)["r_tlp"]  # Extract fitted elasticity exponent
@@ -205,6 +208,5 @@ ggplot(df, aes(x = r)) +
        y = "Pressure Potential (Ψp, MPa)",
        title = "Pressure-Volume Curve Fit") +
   theme_minimal()
-
 
 ```
