@@ -6,6 +6,14 @@
 \usage{
 plotPV(obj, ...)
 }
+\arguments{
+\item{obj}{object of class estPV}
+
+\item{...}{additional arguments not used}
+}
+\value{
+A list of patchwork plots (length = number of species) of water potential and water content relationships
+}
 \description{
 Stat function for plotting pv curve on data
 }

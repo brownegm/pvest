@@ -9,7 +9,7 @@ estpio(rwd, psi)
 \arguments{
 \item{rwd}{Vector of relative water deficit values.}
 
-\item{psi}{Vector of water potential values.}
+\item{psi}{Vector of negative inverse of water potential values.}
 }
 \value{
 An object of class "pioEst" containing the slope, intercept and osmotic potential at full turgor.

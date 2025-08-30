@@ -6,7 +6,7 @@
 #' @param rwd Vector of relative water deficit values.
 #' @param psi Vector of negative inverse of water potential values.
 #'
-#' @return An object of class "pioEst" containing the slope, intercept and osmotic potential at full turgor. 
+#' @return An object of class "pioEst" containing the slope, intercept and osmotic potential at full turgor.
 #'
 #' @export
 #'
@@ -40,7 +40,8 @@ estpio <- function(rwd, psi) {
 #' @param psi Values of water potential
 
 osminput <- function(rwd, psi) {
-  inputs <- structure(list(rwd, psi),
+  inputs <- structure(
+    list(rwd, psi),
     .Names = c("rwd", "neg_inv_psi"),
     class = "osm_input"
   )
@@ -82,7 +83,7 @@ NULL
 #'
 #' Here, we estimate the osmotic potential at full turgor as the x-intercept of the relationship between
 #' inverse leaf water potential and relative water deficit below turgor loss point.
-#' 
+#'
 #' @return Returns data frame with new columns containing the osmotic and pressure potential variables namely:
 #'    \itemize{
 #'     \item osmotic potential at full turgor
@@ -104,12 +105,21 @@ estOsmotic <- function(data, ...) {
 
 #' @rdname estOsmotic
 #' @export
-estOsmotic.default <- function(data, wc.index, wp.index, n_row = 4, silent = T, ...) {
+estOsmotic.default <- function(
+  data,
+  wc.index,
+  wp.index,
+  n_row = 4,
+  silent = T,
+  ...
+) {
   is_char <- all(c(is.character(wc.index), is.character(wp.index)))
   is_num <- all(c(is.numeric(wc.index), is.numeric(wp.index)))
 
   if (!(is_char | is_num)) {
-    stop("estOsmotic: Column indices must both be either character strings or numeric integers referencing the preferred column.")
+    stop(
+      "estOsmotic: Column indices must both be either character strings or numeric integers referencing the preferred column."
+    )
   }
 
   if (is_char) {
@@ -127,7 +137,9 @@ estOsmotic.default <- function(data, wc.index, wp.index, n_row = 4, silent = T, 
   check_var <- all(varnames[c("wc", "wp")] %in% names(data))
 
   if (check_var == FALSE) {
-    stop("estOsmotic: The column names provided do not exist in the input data.")
+    stop(
+      "estOsmotic: The column names provided do not exist in the input data."
+    )
   }
 
   if (silent == FALSE) {
@@ -135,59 +147,54 @@ estOsmotic.default <- function(data, wc.index, wp.index, n_row = 4, silent = T, 
 
     print(head(data))
 
-    cat("Using the following columns for the estimation:\n",
-      "{RWC/RWD}: ", varnames$wc, "\n",
-      "{Water potential}: ", varnames$wp, "\n\n",
+    cat(
+      "Using the following columns for the estimation:\n",
+      "{RWC/RWD}: ",
+      varnames$wc,
+      "\n",
+      "{Water potential}: ",
+      varnames$wp,
+      "\n\n",
       sep = ""
     )
   }
 
-  # create vectors
+  # create output
   rwd_n <- tail(data$rwd, n = n_row)
   psi_n <- tail(data$psi, n = n_row)
   minus_inv_psi <- -1 / psi_n
 
   pio <- estpio(rwd_n, minus_inv_psi)
 
-  
   # calculate osmotic and pressure potential at full turgor
   osm_pot_fullturgor <- pio$pio
   max_psip <- osm_pot_fullturgor * -1
 
-  pi_ft <- osm_pot_fullturgor
-
-  pio$sma_mod$intercept
-  osmotic_potential_old <- -1 / (pio$sma_mod$intercept + (pio$sma_mod$slope * (100 - data[[varnames$wc]])))
-  
-  test_df |>
-    mutate( 
-           apoplasticfraction = 100 + (test$sma_mod$intercept / test$sma_mod$slope),
-           symplasticrelativewatercontent = ((test_df$rwc - apoplasticfraction) / (100 - apoplasticfraction)),
-           srwd = 1 - symplasticrelativewatercontent,
-           solutepotentialold = -1/test$sma_mod$intercept + (test$sma_mod$slope * (srwd)),
-           solutepotential = pi_ft/(symplasticrelativewatercontent), 
-           symrwdtlp = -(test$sma_mod$intercept / test$sma_mod$slope)/100,
-           symrwctlp = 100 - symrwdtlp,
-           symmodulus = max_psip / (symrwctlp),
-           psitlp = -1 / (test$sma_mod$slope * (1-symrwctlp)+ test$sma_mod$intercept), 
-           pressurepotential = -(symrwctlp * psitlp) *((symplasticrelativewatercontent-symrwctlp)/(1-symrwctlp))^((symmodulus *(1- symrwctlp))/(-symrwctlp* psitlp)), 
-           testpsiold = pressurepotential + solutepotentialold, 
-           testpsinew = pressurepotential + solutepotential)
-  
-  
-  r_star <- data[[varnames$wc]]/100
-  r_tlp <- (pio$sma_mod$intercept / pio$sma_mod$slope) / 100
-  
   apoplastic_fraction <- 100 + (pio$sma_mod$intercept / pio$sma_mod$slope)
-  sym_rwc <- ((data[[varnames$wc]] - apoplastic_fraction) / (100 - apoplastic_fraction)) * 100
+  sym_rwc <- ((rwcEstData$rwc - apoplastic_fraction) /
+    (100 - apoplastic_fraction)) *
+    100
   sym_rwd <- 100 - sym_rwc
-  
-  solutepotential = pi_ft/symplasticrelativewatercontent
-  
-  # osmotic potential at full turgor
-  osmotic_potential_new <- -pio * ((r - r_tlp)/(1 - r_tlp)) ^ b
-  pressure_potential <- data[[varnames$wp]] - osmotic_potential
 
+  osmotic_potential <- osm_pot_fullturgor / (sym_rwc / 100)
+
+  # calculate nonlinear pressure potential parameters
+  pressure_potential_lin <- rwcEstData$water.potential - osmotic_potential
+
+  rtlp_mod <- sma_model(
+    head(sym_rwc / 100, n = nrow(rwcEstData) - n_row),
+    head(pressure_potential_lin, n = nrow(rwcEstData) - n_row)
+  )
+
+  r_tlp_init <- -rtlp_mod$intercept / rtlp_mod$slope
+
+  psip_mod <- calc_nonlin_psip(
+    data = data.frame(r = sym_rwc / 100, psip_linear = pressure_potential_lin),
+    pi_sat = osm_pot_fullturgor,
+    r_tlp = r_tlp_init
+  )
+
+  presure_potential <- fitted(psip_mod)
 
   dataUpd <- do.call(
     cbind,
@@ -239,14 +246,18 @@ estOsmotic.rwcEst <- function(data, n_row = 4, silent = T, ...) {
     print(head(rwcEstData))
 
     obj_names <- names(osm_obj)
-    cat("Using the following columns for the estimation:\n",
-      "{RWC/RWD}: ", obj_names[c(3:4)], "\n",
-      "{Water potential}: psi", "\n\n",
+    cat(
+      "Using the following columns for the estimation:\n",
+      "{RWC/RWD}: ",
+      obj_names[c(3:4)],
+      "\n",
+      "{Water potential}: psi",
+      "\n\n",
       sep = ""
     )
   }
 
-  # create vectors
+  # create output
   rwd_n <- tail(osm_obj$rwd, n = n_row)
   psi_n <- tail(rwcEstData$water.potential, n = n_row)
   minus_inv_psi <- -1 / psi_n
@@ -257,11 +268,31 @@ estOsmotic.rwcEst <- function(data, n_row = 4, silent = T, ...) {
   osm_pot_fullturgor <- pio$pio
   max_psip <- osm_pot_fullturgor * -1
 
-  osmotic_potential <- -1 / (pio$sma_mod$intercept + (pio$sma_mod$slope * (100 - rwcEstData$rwc)))
-  pressure_potential <- rwcEstData$water.potential - osmotic_potential
   apoplastic_fraction <- 100 + (pio$sma_mod$intercept / pio$sma_mod$slope)
-  sym_rwc <- ((rwcEstData$rwc - apoplastic_fraction) / (100 - apoplastic_fraction)) * 100
+  sym_rwc <- ((rwcEstData$rwc - apoplastic_fraction) /
+    (100 - apoplastic_fraction)) *
+    100
   sym_rwd <- 100 - sym_rwc
+
+  osmotic_potential <- osm_pot_fullturgor / (sym_rwc / 100)
+
+  # calculate nonlinear pressure potential parameters
+  pressure_potential_lin <- rwcEstData$water.potential - osmotic_potential
+
+  rtlp_mod <- sma_model(
+    head(sym_rwc / 100, n = nrow(rwcEstData) - n_row),
+    head(pressure_potential_lin, n = nrow(rwcEstData) - n_row)
+  )
+
+  r_tlp_init <- -rtlp_mod$intercept / rtlp_mod$slope
+
+  psip_mod <- calc_nonlin_psip(
+    data = data.frame(r = sym_rwc / 100, psip_linear = pressure_potential_lin),
+    pi_sat = osm_pot_fullturgor,
+    r_tlp = r_tlp_init
+  )
+
+  presure_potential <- fitted(psip_mod)
 
   dataUpd <- do.call(
     cbind,
@@ -300,7 +331,67 @@ estOsmotic.rwcEst <- function(data, n_row = 4, silent = T, ...) {
   return(osm)
 }
 
-# Print method of osmEst class objects
+#' Nonlinear pressure potential estimate
+#' @description Estimate the pressure potential using a nonlinear model
+#'
+#' @param data A data frame. A data frame containing the data set of the hydration states for a given leaf above turgor loss estimate
+#' @param pi_sat A double. Osmotic potential at full turgor
+#' @param r_tlp A double. Relative water content at turgor loss point
+#' @param psi_w A double. Leaf water potential (optional, used if full = TRUE)
+#' @param full Logical. If TRUE, fits the full model including water potential, otherwise fits only the pressure potential model
+#' @details Here we fit a nonlinear model to estimate the pressure potential based on the osmotic potential at full turgor where the pressure potential decreases nonlinearly before turgor loss with a slope of b :
+#' $$\Psi_p = -\pi_{sat} \left(\frac{RWC - RWC_{TLP}}{1 - RWC_{TLP}}\right)^b$$
+#' @returns Pressure potential estimator
+#'
+#' @importFrom minpack.lm nlsLM
+#'
+#' @export
+
+calc_nonlin_psip <- function(data, pi_sat, r_tlp, psi_w = NULL, full = FALSE) {
+  if (full == FALSE) {
+    fit <- nlsLM(
+      # Model equation
+      pressure_potential_linear ~
+        ifelse(r > r_tlp, -pi_sat * ((r - r_tlp) / (1 - r_tlp))^(b), 0),
+      # Data frame
+      data = data,
+      start = list(b = 2),
+      # Lower bounds
+      lower = c(b = 0),
+      # Upper bounds
+      upper = c(b = 10),
+
+      control = nls.lm.control(maxiter = 100)
+    )
+  } else {
+    tryCatch(
+      {
+        fit <- nlsLM(
+          psi_w ~
+            (pi_sat / r) +
+              ifelse(r > r_tlp, -pi_sat * ((r - r_tlp) / (1 - r_tlp))^(b), 0),
+          # Model equation
+          data = data,
+          # Data frame
+          start = list(b = 2),
+          # Lower bounds
+          lower = c(b = 0),
+          # Upper bounds
+          upper = c(b = 10),
+          # Upper bounds
+          control = nls.lm.control(maxiter = 100)
+        )
+      },
+      error = function(e) {
+        message("Non-linear model fitting failed: ", e$message)
+        return(NULL)
+      }
+    )
+  }
+  return(fit)
+}
+
+#' Print method of osmEst class objects
 #' @export
 print.osmEst <- function(x, ...) {
   cat("Osmotic and pressure potential estimates: \n")

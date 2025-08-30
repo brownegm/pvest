@@ -4,8 +4,6 @@
 ## Load required libraries
 ```{r}
 library(pvest)
-
-
 ```
 
 ## New model structure
@@ -124,8 +122,40 @@ library(ggplot2)     # For plotting results
 # --- 1. Example data generation (Replace with your own PV data) ---
 set.seed(123)  # Ensures reproducibility of simulated data
 
-# Symplastic relative water content (RWC) values (independent variable)
-r <- srwc
+test <- rwcdf |> 
+  mutate(r = sat_rwc(rwc, pioEst$sma_mod), 
+# Symplastic relative water content (RWC) values
+         symrwd = 1 - r,
+         psis = pio/r, 
+         psip_linear = water.potential - psis, 
+         across(rwc:rwd, ~.x /100))
+
+
+psip_rwd_mod <- pvest::sma_model(y = test$psip_linear[c(1:5)], x = test$r[c(1:5)])
+
+(srwctlp_init <- -psip_rwd_mod$intercept/psip_rwd_mod$slope)
+
+
+fitp <- calc_nonlin_psip(test, pi_sat = pio, r_tlp = srwctlp_init)
+
+fitp_fullformula <- calc_nonlin_psip(test, pi_sat = pio, r_tlp = srwctlp_init, psi_w = test$water.potential, full = T)
+
+
+test$psip_nonlin <- fitted(fitp)
+test$psi_apo_maybe <- (test$psip_linear-test$psip_nonlin)
+# test <- test |> 
+#   mutate(psip_nonlin = psi_p(r = r, psi_pi_sat = pio, r_tlp = 0.816, b = 0.950))
+# (psicomponents <- test |> 
+#     tidyr::pivot_longer(c(water.potential, psis:psip_nonlin), 
+#                  names_to = "variable", 
+#                  values_to = "mpa" ))# plot the components of psi over time... 
+
+autoplot.pv(test, main = "Hofler Diagram")
+plot_psicomp <- ggplot(psicomponents, aes(x = rwd, y = mpa, color = variable)) +
+  geom_line() +
+  theme_classic() +
+  labs(x = "1-RWC", y = expression(Psi))
+ # implement into full scripts.
 
 # Initial guess values
 pi_sat <- pio  # Osmotic potential at full turgor (MPa)
@@ -133,7 +163,7 @@ rwctlp <- srwc_tlp        # Relative water content at turgor loss point (TLP) gu
 b_guess <- sym_modulus            # Elasticity exponent controlling curve shape
 
 # Define the pressure potential function
-calc_psi_p <- function(r, pi_sat, r_tlp, b) {
+calc_psi_p <- function(r, pi_sat, r_tlp) {
   # For r > r_tlp: calculate Ψp based on nonlinear elastic response
   # For r ≤ r_tlp: Ψp = 0 (no turgor below TLP)
   p <- ifelse(r > r_tlp,
@@ -150,16 +180,25 @@ calc_psi <- function(srwc, pio, psio, p){
   
 }
 
-# Simulate observed Ψp data with random noise added
+# Simulate observed psip as the subbed values 
 psi_p_sim <-  calc_psi_p(r=srwc, pi_sat, srwc_tlp, b_guess)
 
 # Combine into a data frame for fitting
 
 df <- data.frame(r = srwc, psi_p = psi_p_sim)
-df <- data.frame(r = srwc, psi_w = quag1$water.potential)
+df <- data.frame(r = srwc, 
+                 psi_w = quag1$water.potential) |> 
+  mutate(
+                 psi_s = pi_sat/r, 
+                 psi_p_lin = psi_w - psi_s) 
+
+rough_mod <- sma_model(df$r[1:6], df$psi_p_lin[1:6])
+
+rwc_tlp_guess_lin <- -rough_mod$intercept/rough_mod$slope
+
 # --- 2. Nonlinear model fitting (Estimate parameters from data) ---
 # We use nlsLM (Levenberg–Marquardt) for stability and ability to enforce parameter bounds.
-
+r_tlp <- rwc_tlp_guess_lin
 fit <- nlsLM(
   
   psi_w ~ (pi_sat/r) + ifelse(r > r_tlp,
@@ -170,12 +209,18 @@ fit <- nlsLM(
   #                0),                  # Model equation
   data = df,                          # Data frame
   start = list(
-              r_tlp = median(srwc), 
-               b = 8),          # Starting guess for RWC at TLP # Starting guess for elasticity exponent
-  lower = c(0.6, 4),            # Lower bounds (physiological constraints)
-  upper = c(0.9, 10),              # Upper bounds
-  control = nls.lm.control(maxiter = 50)  # Increase iterations for stability
+              b = 8 
+              ),          # Starting guess for RWC at TLP # Starting guess for elasticity exponent
+  lower = c(b = 1),            # Lower bounds (physiological constraints)
+  upper = c(b = 10),              # Upper bounds
+  control = nls.lm.control(maxiter = 1000)  # Increase iterations for stability
 )
+
+fit
+
+bi <- coef(fit)["b"]
+
+
 
 btheo <- -pi_sat/1-coef(fit)["r_tlp"]  # Extract fitted elasticity exponent
 

@@ -76,7 +76,7 @@ estPV.default <- function(data,
     sbgrp_name <- rlang::as_name(sbgrp)
 
     if (!(sbgrp_name %in% names(data))) {
-      cli::cli_abort("Specified subgroup ({rlang::as_name(sbgrp)}) does not exist in the data frame.")
+    cli::cli_abort("Specified subgroup ({rlang::as_name(sbgrp)}) does not exist in the data frame.")
     }
     cli::cli_alert_info("Grouping data by: {rlang::as_name(grp)} and {rlang::as_name(sbgrp)}")
   } else {
@@ -137,7 +137,7 @@ estPV.default <- function(data,
                                   "%","%","MPa", 
                                   "MPa","MPa^-1","MPa^-1",
                                   "MPa^-1","MPa^-1"),
-                        class = c("estPV", "data.frame")
+                        class = c("estPV", "list")
                         )
   invisible(output_est)
 }

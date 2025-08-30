@@ -19,11 +19,11 @@ knitr::opts_chunk$set(
 
 The aim of this package is provide a tool for estimating pressure volume (PV) curve parameters. This framework is built on previous worksheets used to estimate these parameters manual but enhances that workflow by removing operator bias in determining the turgor loss point threshold and more closely matches the expected functional form of the relationship between water potential and water content. Indeed, other attempts at accomplishing this goal have implemented an assumption that before turgor loss the relationship between water potential and water content is nonlinear. Here, we make three key assumptions:
 
-\(1\) Before the turgor loss, water potential and water content exhibit a negative and linear relationship
+-   Before the turgor loss, water potential and water content exhibit a negative and linear relationship
 
-\(2\) The osmotic potential at full turgor ($\pi_{o}$) is equal to the negative pressure potential at full turgor.
+-   The osmotic potential at full turgor ($\pi_{o}$) is equal to the negative pressure potential at full turgor.
 
-\(3\) The user's last 4 combined measurements of water potential and water content are below turgor loss point; all other points can be assumed to be above turgor loss.^A^
+-   The user's last 4 combined measurements of water potential and water content are below turgor loss point; all other points can be assumed to be above turgor loss.^A^
 
 ^A^ We do provide alternative threshold optimization protocols (i.e., maximizing R squared and minimizing the root mean squared error (RMSE)).
 
@@ -31,18 +31,26 @@ The aim of this package is provide a tool for estimating pressure volume (PV) cu
 
 To appropriately construct the PV curves, we utilize the following workflow:
 
-1.  First, we estimate the saturated water content (\[estRWC()\] and \[estsatwater()\]) as the y intercept of points above turgor loss.
-2.  Second, we fit the standard major axis line to the points below turgor loss for the negative inverse of water potential and relative water deficit (100-relative water content). The y-intercept of this line is ($\pi_{o}$), the negative of that number is the pressure potential at full turgor ($\Psi_{p,o}$).
-3.  Next, fit SMA for the relationship between $\Psi_{p,o}$ and relative water deficit (RWD). The x-intercept is the relative water deficit at turgor loss ($RWD_{tlp}$) and $RWC_{tlp} = 100-RWD_{tlp}$).
+1.  First, we estimate the saturated water content (using `estRWC()` and `estsatwater()`) as the y intercept of points above turgor loss.
+
+2.  Second, we fit the standard major axis line to the points below turgor loss for the negative inverse of water potential and relative water deficit (100-relative water content). The y-intercept of this line is ($\pi_{o}$), the negative of that number is the pressure potential at full turgor ($\Psi_{p,o}$). The osmotic potential at each hydration state is then :
+
+    $$
+    \frac{\pi_{o}}{RWC_{sym}}
+    $$
+
+3.  Next, fit SMA for the relationship between $\Psi_{p,o}$ and relative water deficit (RWD) above a turgor loss point guess. The x-intercept is the relative water deficit at turgor loss ($RWD_{tlp}$) and $RWC_{tlp} = 100-RWD_{tlp}$).
+
 4.  Solve for the water potential at turgor loss by inputting the $RWD_{tlp}$ using SMA fit parameters used to estimate $\pi_{o}$.
+
 5.  All other parameters are then estimated as described in [@Sack2011].
 
-The estimation of parameters relies on the standard major axis (SMA) regression [@Warton2006]. Further, defining the threshold of turgor loss can be estimated simply from the last four observations of water potential and tissue water mass. Alternatively, if the user prefers to not provide the default threshold *a priori*, methods are available to minimize the sum of RMSE or AICc or maximizing the R^2^ for SMA regressions above and below turgor loss (see \[optim_thres()\] for more information).
+The estimation of parameters relies on the standard major axis (SMA) regression [@Warton2006]. Further, defining the threshold of turgor loss can be estimated simply from the last four observations of water potential and tissue water mass. Alternatively, if the user prefers to not provide the default threshold *a priori*, methods are available to minimize the sum of RMSE or AICc or maximizing the R^2^ for SMA regressions above and below turgor loss (see `?optim_thres()` for more information).
 
-# Estimated parameters
+# Estimated parameters {#tbl-params}
 
 | Symbol | Formula | Units | Definition |
-|---------------|---------------|---------------|-----------------------------|
+|-----------------|-----------------|-----------------|-----------------------|
 | SWC | $SMA_{intercept}$ | $g*g-1$ | Saturated water content |
 | RWD | $100-RWC$ | \% | Relative water deficit |
 | RWC | $\frac{Water~Mass}{SWC}$ | \% | Relative water content |
@@ -52,19 +60,20 @@ The estimation of parameters relies on the standard major axis (SMA) regression 
 | $\Psi_{p}$ | $\Psi_{leaf} - \Psi_{s}$ | MPa | Pressure potential |
 | $\Psi_{leaf}$ | $\Psi_{p} + \Psi_{s}$ | MPa | Leaf water potential. Sum of leaf osmotic and pressure potential |
 | a~f~ | $100 + \frac{intercept}{slope}$ | \% | Percent of total leaf water in the outside of cytoplasm |
-| RWC~sym~ |  | g\*g^-1^ | Mass of water relative to full saturation within the symplast. Estimated with respect to apoplastic fraction. |
+| RWC~sym~ | $RWC_{sym} = \frac{\frac{RWC}{1-a_{f}}}{1-a_{f}}$ | g\*g^-1^ | Mass of water relative to full saturation within the symplast. Estimated with respect to apoplastic fraction. |
 
 : **Table 1.** Variables, units and symbols of osmotic estimates.
 
 # Creating pressure volume (PV) curve
 
-PV curves can be constructed simply using `pvest::estPV()`. The function uses tidy evaluation so unquoted strings are passed to the funciton parameters defining variables used. As a result of this structure, dataframes can be piped into the function similar to other workflows in the tidyverse. The user can define the inflection ($\pi_{tlp}$) using the methods mentioned above.
+PV curves can be constructed simply using `pvest::estPV()`. The function uses tidy evaluation so unquoted strings are passed to the function parameters defining variables used. As a result of this structure, data.frames can be piped into the function similar to other workflows in the tidyverse. The user can define the inflection ($\pi_{tlp}$) using the methods mentioned above.
 
 ```{r setup, echo = TRUE, warning = FALSE, message = FALSE}
 library(pvest)
 library(here)
 library(gt)
 library(dplyr)
+library(purrr)
 ```
 
 ```{r show-test-data}
@@ -74,15 +83,17 @@ names(pvest::quag)
 ```
 
 ```{r test-pv-estimate}
-default <- pvest::quag |>
-  estPV(species, subgrp = leaf, fw = fresh.weight, water.potential, dry.weight)
-
-#default as a dataframe
-default_df <- Reduce(rbind, default)
+default_df <- pvest::quag |>
+  pvest::estPV(species,
+        subgrp = leaf, 
+        fw = fresh.weight, 
+        water.potential,
+        dry.weight) |> 
+  purrr::list_rbind()
 
 ```
 
-Note that there is a print method for the output object. The output will produce a summary of your data for each group and subgroup. To see the values of each curve as a dataframe, you can select from indices of the output which is structurally a list of data frames.
+Note that there is a print method for the output object. The output will produce a summary of your data for each group and subgroup. To see the values of each curve as a data.frame, you can select from indices of the output which is structurally a list of data frames.
 
 ```{r output-df}
 #| eval: false
@@ -90,7 +101,7 @@ Note that there is a print method for the output object. The output will produce
 
 sp_default_summary_tab <- default_df|>
   dplyr::select(!c(ids:rwd,prespot,osmpot))|>
-  dplyr::summarise(across(where(is.numeric), mean, na.rm = TRUE)) |>
+  dplyr::summarise(across(where(is.numeric),\(x) mean(x, na.rm = TRUE))) |>
   gt::gt()|>
   gt::fmt_number(n_sigfig = 3) |>
   gt::tab_header(
@@ -99,6 +110,4 @@ sp_default_summary_tab <- default_df|>
   gt::tab_options(table.width = px(200))
 
 sp_default_summary_tab
-##>param_names <- names()
-
 ```
