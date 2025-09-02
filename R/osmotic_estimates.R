@@ -1,3 +1,24 @@
+#' Estimate symplastic water content
+#' 
+#' @param rwc Vector of relative water content values.
+#' @param sma_mod An object of class "sma_model" containing the slope and intercept of the linear relationship between relative water deficit and negative inverse water potential.
+#' @return A vector of symplastic relative water content values.
+#' 
+sym_rwc <- \(rwd, sma_mod) {
+  # apoplastic fraction
+  # af is the x intercept of the relationship between rwd and negative inverse water potential to put it into terms of relative water content ADD 100
+  af <- (sma_mod$intercept / sma_mod$slope) + 100
+  
+  # symplastic relative water content
+  srwd_num <- rwd/ 100 - af / 100
+  srwd_den <- 1 - af / 100
+  srwd <- srwd_num / srwd_den
+  
+  return(list(srwd = srwd, 
+              srwc = 1-srwd, 
+              af = af))
+}
+
 #' Osmotic potential at full turgor estimate
 #'
 #' @description Estimates the osmotic potential at full turgor from the linear relationship
@@ -97,6 +118,7 @@ NULL
 #' @export estOsmotic
 #' @seealso [estRWC()], [sma_model()]
 #' @importFrom utils head tail
+#' @importFrom dplyr mutate
 #' @rdname estOsmotic
 
 estOsmotic <- function(data, ...) {
@@ -160,8 +182,8 @@ estOsmotic.default <- function(
   }
 
   # create output
-  rwd_n <- tail(data$rwd, n = n_row)
-  psi_n <- tail(data$psi, n = n_row)
+  rwd_n <- tail(data[[varnames$wc]], n = n_row)
+  psi_n <- tail(data[[varnames$wp]], n = n_row)
   minus_inv_psi <- -1 / psi_n
 
   pio <- estpio(rwd_n, minus_inv_psi)
@@ -169,21 +191,22 @@ estOsmotic.default <- function(
   # calculate osmotic and pressure potential at full turgor
   osm_pot_fullturgor <- pio$pio
   max_psip <- osm_pot_fullturgor * -1
-
-  apoplastic_fraction <- 100 + (pio$sma_mod$intercept / pio$sma_mod$slope)
-  sym_rwc <- ((rwcEstData$rwc - apoplastic_fraction) /
-    (100 - apoplastic_fraction)) *
-    100
-  sym_rwd <- 100 - sym_rwc
+  
+  # calculate symplastic relative water content and apoplastic fraction
+  sym_af <- sym_rwc(data[[varnames$wc]], pio$sma_mod)
+  
+  apoplastic_fraction <- sym_af$af #|> rep(x = _, nrow(data))
+  sym_rwc <- sym_af$srwc * 100
+  sym_rwd <- sym_af$srwd * 100
 
   osmotic_potential <- osm_pot_fullturgor / (sym_rwc / 100)
 
   # calculate nonlinear pressure potential parameters
-  pressure_potential_lin <- rwcEstData$water.potential - osmotic_potential
+  pressure_potential_lin <- data[[wp.index]] - osmotic_potential
 
   rtlp_mod <- sma_model(
-    head(sym_rwc / 100, n = nrow(rwcEstData) - n_row),
-    head(pressure_potential_lin, n = nrow(rwcEstData) - n_row)
+    head(sym_rwc / 100, n = nrow(data) - n_row),
+    head(pressure_potential_lin, n = nrow(data) - n_row)
   )
 
   r_tlp_init <- -rtlp_mod$intercept / rtlp_mod$slope
@@ -194,13 +217,11 @@ estOsmotic.default <- function(
     r_tlp = r_tlp_init
   )
 
-  presure_potential <- fitted(psip_mod)
+  pressure_potential <- fitted(psip_mod) |> as.vector()
 
-  dataUpd <- do.call(
-    cbind,
-    list(
-      data,
-      invpsi = -1 / data$psi,
+  dataUpd <- data |> 
+    dplyr::mutate(
+      invpsi = -1 / data[[varnames$wp]],
       pio = osm_pot_fullturgor,
       psip_o = max_psip,
       osmpot = osmotic_potential,
@@ -209,11 +230,11 @@ estOsmotic.default <- function(
       symrwc = sym_rwc,
       symrwd = sym_rwd
     )
-  )
+  
   structure(
     list(
-      "psi" = data$psi,
-      "invpsi" = -1 / data$psi,
+      "psi" = data[[varnames$wp]],
+      "invpsi" = -1 / data[[varnames$wp]],
       "pio" = osm_pot_fullturgor,
       "psip_o" = max_psip,
       "osmpot" = osmotic_potential,
@@ -268,11 +289,12 @@ estOsmotic.rwcEst <- function(data, n_row = 4, silent = T, ...) {
   osm_pot_fullturgor <- pio$pio
   max_psip <- osm_pot_fullturgor * -1
 
-  apoplastic_fraction <- 100 + (pio$sma_mod$intercept / pio$sma_mod$slope)
-  sym_rwc <- ((rwcEstData$rwc - apoplastic_fraction) /
-    (100 - apoplastic_fraction)) *
-    100
-  sym_rwd <- 100 - sym_rwc
+  #calculate symplastic relative water content and apoplastic fraction
+  sym_af <- sym_rwc(data[[varnames$wc]], pio$sma_mod)
+  
+  apoplastic_fraction <- sym_af$af
+  sym_rwc <- sym_af$srwc * 100
+  sym_rwd <- sym_af$srwd * 100
 
   osmotic_potential <- osm_pot_fullturgor / (sym_rwc / 100)
 
@@ -292,11 +314,10 @@ estOsmotic.rwcEst <- function(data, n_row = 4, silent = T, ...) {
     r_tlp = r_tlp_init
   )
 
-  presure_potential <- fitted(psip_mod)
+  pressure_potential <- fitted(psip_mod)|> as.vector()
 
-  dataUpd <- do.call(
-    cbind,
-    list(
+  dataUpd <- rwcEstData |> 
+    dplyr::mutate(
       rwcEstData,
       invpsi = -1 / rwcEstData$water.potential,
       pio = osm_pot_fullturgor,
@@ -307,7 +328,6 @@ estOsmotic.rwcEst <- function(data, n_row = 4, silent = T, ...) {
       symrwc = sym_rwc,
       symrwd = sym_rwd
     )
-  )
 
   osm <- structure(
     list(
@@ -343,15 +363,15 @@ estOsmotic.rwcEst <- function(data, n_row = 4, silent = T, ...) {
 #' $$\Psi_p = -\pi_{sat} \left(\frac{RWC - RWC_{TLP}}{1 - RWC_{TLP}}\right)^b$$
 #' @returns Pressure potential estimator
 #'
-#' @importFrom minpack.lm nlsLM
+#' @importFrom minpack.lm nlsLM nls.lm.control
 #'
 #' @export
 
 calc_nonlin_psip <- function(data, pi_sat, r_tlp, psi_w = NULL, full = FALSE) {
   if (full == FALSE) {
-    fit <- nlsLM(
+    fit <- minpack.lm::nlsLM(
       # Model equation
-      pressure_potential_linear ~
+      psip_linear ~
         ifelse(r > r_tlp, -pi_sat * ((r - r_tlp) / (1 - r_tlp))^(b), 0),
       # Data frame
       data = data,
@@ -361,12 +381,12 @@ calc_nonlin_psip <- function(data, pi_sat, r_tlp, psi_w = NULL, full = FALSE) {
       # Upper bounds
       upper = c(b = 10),
 
-      control = nls.lm.control(maxiter = 100)
+      control = minpack.lm::nls.lm.control(maxiter = 100)
     )
   } else {
     tryCatch(
       {
-        fit <- nlsLM(
+        fit <- minpack.lm::nlsLM(
           psi_w ~
             (pi_sat / r) +
               ifelse(r > r_tlp, -pi_sat * ((r - r_tlp) / (1 - r_tlp))^(b), 0),
@@ -379,7 +399,7 @@ calc_nonlin_psip <- function(data, pi_sat, r_tlp, psi_w = NULL, full = FALSE) {
           # Upper bounds
           upper = c(b = 10),
           # Upper bounds
-          control = nls.lm.control(maxiter = 100)
+          control = minpack.lm::nls.lm.control(maxiter = 100)
         )
       },
       error = function(e) {

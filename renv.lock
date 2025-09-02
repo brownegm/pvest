@@ -341,6 +341,35 @@
       "Maintainer": "Jeroen Ooms <jeroenooms@gmail.com>",
       "Repository": "CRAN"
     },
+    "aes": {
+      "Package": "aes",
+      "Version": "1.2.0.9000",
+      "Source": "GitHub",
+      "Title": "Aesthetics For Axis Ticks and Colors",
+      "Authors@R": "person(\"Marvin\", \"Browne\",  ,\"brownegm@gmail.com\", role = c(\"aut\", \"cre\"))",
+      "Maintainer": "Marvin Browne <brownegm@gmail.com>",
+      "Description": "Aesthetics for creating even plot axes ticks and holds color palettes.",
+      "License": "GPL (>= 3)",
+      "Encoding": "UTF-8",
+      "Depends": [
+        "R (>= 3.5)"
+      ],
+      "Imports": [
+        "dplyr",
+        "ggplot2"
+      ],
+      "LazyData": "True",
+      "Roxygen": "list(markdown = TRUE)",
+      "RoxygenNote": "7.3.2",
+      "RemoteType": "github",
+      "RemoteHost": "api.github.com",
+      "RemoteRepo": "aes",
+      "RemoteUsername": "brownegm",
+      "RemoteRef": "HEAD",
+      "RemoteSha": "d3dc5b093bb84da1f236b1e9474cb079311e7d05",
+      "NeedsCompilation": "no",
+      "Author": "Marvin Browne [aut, cre]"
+    },
     "askpass": {
       "Package": "askpass",
       "Version": "1.2.1",

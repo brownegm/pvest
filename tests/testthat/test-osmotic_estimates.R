@@ -52,6 +52,10 @@ test_that("slope is negative and the sma_model output is correct class", {
                                n_row = 5
   )
   
+  testosm_rwcinput <- pvest::estOsmotic(test,
+                                        wc.index = "rwc", wp.index = 1,
+                                        n_row = 5
+  )
   # check that the function throws an error if the input is not correct
  expect_error(pvest::estOsmotic(test_df,
                                         wc.index = "rwc", wp.index = 1,
@@ -69,6 +73,33 @@ test_that("slope is negative and the sma_model output is correct class", {
   # check class attributes
   expect_s3_class(test, "pioEst")
   expect_s3_class(mod, "sma_model")
+
+})
+
+test_that("compare the dataframe methods to the rwcEst method", {
+  
+  quag1 <- pvest::quag |> 
+    dplyr::filter(leaf == 1) 
+  
+  rwc <- pvest::estRWC(
+    quag1, 
+    fw.index = "fresh.weight",
+    wp.index = "water.potential",
+    dm.index = "dry.weight",
+    n_row = 5, silent = F
+  )
+
+  rwcObjEst <- estOsmotic(rwc, n_row = 5, silent = F)
+  
+  forcompare <- attr(rwc, "df")
+  
+  rwcDfEst <- pvest::estOsmotic(forcompare,
+                    wc.index = "rwd",
+                    wp.index = "water.potential",
+                    n_row = 5, silent = F)
+  
+  expect_identical(rwcObjEst, rwcDfEst)
+  
 })
 
 test_that("check that the input lengths are the same", {
