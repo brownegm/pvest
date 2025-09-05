@@ -389,7 +389,8 @@ calc_nonlin_psip <- function(data, pi_sat, r_tlp, psi_w = NULL, full = FALSE) {
         fit <- minpack.lm::nlsLM(
           psi_w ~
             (pi_sat / r) +
-              ifelse(r > r_tlp, -pi_sat * ((r - r_tlp) / (1 - r_tlp))^(b), 0),
+              ifelse(r > r_tlp,
+                     -pi_sat * ((r - r_tlp) / (1 - r_tlp))^(b), 0),
           # Model equation
           data = data,
           # Data frame
