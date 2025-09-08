@@ -18,12 +18,17 @@ calc_nonlin_psip(data, pi_sat, r_tlp, psi_w = NULL, full = FALSE)
 \item{full}{Logical. If TRUE, fits the full model including water potential, otherwise fits only the pressure potential model}
 }
 \value{
-Pressure potential estimator
+Pressure potential estimates
 }
 \description{
 Estimate the pressure potential using a nonlinear model
 }
 \details{
 Here we fit a nonlinear model to estimate the pressure potential based on the osmotic potential at full turgor where the pressure potential decreases nonlinearly before turgor loss with a slope of b :
-$$\Psi_p = -\pi_{sat} \left(\frac{RWC - RWC_{TLP}}{1 - RWC_{TLP}}\right)^b$$
+Given that:
+\deqn{\Psi_{p,max} = \pi_{o} \cdot -1}
+
+then,
+
+\deqn{\Psi_p = \Psi_{p,max} \cdot (\frac{RWC_{sym} - RWC_{TLP}}{1 - RWC_{TLP}})^b}
 }

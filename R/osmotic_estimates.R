@@ -138,11 +138,11 @@ estOsmotic.default <- function(
   is_char <- all(c(is.character(wc.index), is.character(wp.index)))
   is_num <- all(c(is.numeric(wc.index), is.numeric(wp.index)))
 
-  if (!(is_char | is_num)) {
+ try(if (!(is_char | is_num)) {
     stop(
       "estOsmotic: Column indices must both be either character strings or numeric integers referencing the preferred column."
     )
-  }
+  })
 
   if (is_char) {
     varnames <- list(
@@ -360,8 +360,14 @@ estOsmotic.rwcEst <- function(data, n_row = 4, silent = T, ...) {
 #' @param psi_w A double. Leaf water potential (optional, used if full = TRUE)
 #' @param full Logical. If TRUE, fits the full model including water potential, otherwise fits only the pressure potential model
 #' @details Here we fit a nonlinear model to estimate the pressure potential based on the osmotic potential at full turgor where the pressure potential decreases nonlinearly before turgor loss with a slope of b :
-#' $$\Psi_p = -\pi_{sat} \left(\frac{RWC - RWC_{TLP}}{1 - RWC_{TLP}}\right)^b$$
-#' @returns Pressure potential estimator
+#' Given that: 
+#' \deqn{\Psi_{p,max} = \pi_{o} \cdot -1}
+#' 
+#' then, 
+#' 
+#' \deqn{\Psi_p = \Psi_{p,max} \cdot (\frac{RWC_{sym} - RWC_{TLP}}{1 - RWC_{TLP}})^b}
+#' 
+#' @returns Pressure potential estimates
 #'
 #' @importFrom minpack.lm nlsLM nls.lm.control
 #'

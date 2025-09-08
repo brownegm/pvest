@@ -1,4 +1,4 @@
-test_that("slope is negative and the sma_model output is correct class", {
+testthat::test_that("slope is negative and the sma_model output is correct class", {
   # example from CODI1
   psi <- c(
     -0.37, -0.883, -1.188,
@@ -52,7 +52,7 @@ test_that("slope is negative and the sma_model output is correct class", {
                                n_row = 5
   )
   
-  testosm_rwcinput <- pvest::estOsmotic(test,
+  testosm_rwcinput <- pvest::estOsmotic(testosm,
                                         wc.index = "rwc", wp.index = 1,
                                         n_row = 5
   )
@@ -76,7 +76,7 @@ test_that("slope is negative and the sma_model output is correct class", {
 
 })
 
-test_that("compare the dataframe methods to the rwcEst method", {
+testthat::test_that("compare the dataframe methods to the rwcEst method", {
   
   quag1 <- pvest::quag |> 
     dplyr::filter(leaf == 1) 
