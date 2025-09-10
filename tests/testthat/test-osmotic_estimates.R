@@ -14,7 +14,7 @@ testthat::test_that("slope is negative and the sma_model output is correct class
   )
   rwd <- 100 - rwc
   neg_inv_psi <- -1 / psi
-
+ 
   test_df <- data.frame(
     psi = psi,
     rwc = rwc,
@@ -52,10 +52,6 @@ testthat::test_that("slope is negative and the sma_model output is correct class
                                n_row = 5
   )
   
-  testosm_rwcinput <- pvest::estOsmotic(testosm,
-                                        wc.index = "rwc", wp.index = 1,
-                                        n_row = 5
-  )
   # check that the function throws an error if the input is not correct
  expect_error(pvest::estOsmotic(test_df,
                                         wc.index = "rwc", wp.index = 1,
@@ -94,7 +90,7 @@ testthat::test_that("compare the dataframe methods to the rwcEst method", {
   forcompare <- attr(rwc, "df")
   
   rwcDfEst <- pvest::estOsmotic(forcompare,
-                    wc.index = "rwd",
+                    wc.index = "rwc",
                     wp.index = "water.potential",
                     n_row = 5, silent = F)
   
@@ -110,23 +106,23 @@ test_that("check that the input lengths are the same", {
 })
 
 test_that("Check that the errors work", {
-  rwd <- seq(0.95, 0.6, length.out = 10)
+  rwc <- seq(0.95, 0.6, length.out = 10)
   psi <- seq(0.95, 0.6, length.out = 10)
 
-  test_df <- as.data.frame(list("rwd" = rwd, "psi" = psi))
+  test_df <- as.data.frame(list("rwc" = rwc, "psi" = psi))
 
   # rename the columns
 
   expect_error(pvest::estOsmotic(
     data = test_df,
-    wc.index = "rwd",
+    wc.index = "rwc",
     wp.index = "fake_col_name",
     silent = F
   ))
   
   expect_snapshot(pvest::estOsmotic(
     data = test_df,
-    wc.index = "rwd",
+    wc.index = "rwc",
     wp.index = "psi",
     silent = T
   )) 

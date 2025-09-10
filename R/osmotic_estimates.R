@@ -4,18 +4,18 @@
 #' @param sma_mod An object of class "sma_model" containing the slope and intercept of the linear relationship between relative water deficit and negative inverse water potential.
 #' @return A vector of symplastic relative water content values.
 #' 
-sym_rwc <- \(rwd, sma_mod) {
+sym_rwc <- \(rwc, sma_mod) {
   # apoplastic fraction
   # af is the x intercept of the relationship between rwd and negative inverse water potential to put it into terms of relative water content ADD 100
   af <- (sma_mod$intercept / sma_mod$slope) + 100
   
   # symplastic relative water content
-  srwd_num <- rwd/ 100 - af / 100
-  srwd_den <- 1 - af / 100
-  srwd <- srwd_num / srwd_den
+  srwc_num <- rwc/ 100 - af / 100
+  srwc_den <- 1 - af / 100
+  srwc <- srwc_num / srwc_den
   
-  return(list(srwd = srwd, 
-              srwc = 1-srwd, 
+  return(list(srwc = srwc, 
+              srwd = 1-srwc, 
               af = af))
 }
 
@@ -138,11 +138,11 @@ estOsmotic.default <- function(
   is_char <- all(c(is.character(wc.index), is.character(wp.index)))
   is_num <- all(c(is.numeric(wc.index), is.numeric(wp.index)))
 
- try(if (!(is_char | is_num)) {
+ if (!(is_char | is_num)) {
     stop(
       "estOsmotic: Column indices must both be either character strings or numeric integers referencing the preferred column."
     )
-  })
+  }
 
   if (is_char) {
     varnames <- list(
@@ -182,7 +182,7 @@ estOsmotic.default <- function(
   }
 
   # create output
-  rwd_n <- tail(data[[varnames$wc]], n = n_row)
+  rwd_n <- 100-tail(data[[varnames$wc]], n = n_row)
   psi_n <- tail(data[[varnames$wp]], n = n_row)
   minus_inv_psi <- -1 / psi_n
 
@@ -196,23 +196,23 @@ estOsmotic.default <- function(
   sym_af <- sym_rwc(data[[varnames$wc]], pio$sma_mod)
   
   apoplastic_fraction <- sym_af$af #|> rep(x = _, nrow(data))
-  sym_rwc <- sym_af$srwc * 100
-  sym_rwd <- sym_af$srwd * 100
+  sym_rwc <- sym_af$srwc #* 100
+  sym_rwd <- sym_af$srwd #* 100
 
-  osmotic_potential <- osm_pot_fullturgor / (sym_rwc / 100)
+  osmotic_potential <- osm_pot_fullturgor / sym_af$srwc
 
   # calculate nonlinear pressure potential parameters
   pressure_potential_lin <- data[[wp.index]] - osmotic_potential
 
   rtlp_mod <- sma_model(
-    head(sym_rwc / 100, n = nrow(data) - n_row),
+    head(sym_rwc, n = nrow(data) - n_row),
     head(pressure_potential_lin, n = nrow(data) - n_row)
   )
 
   r_tlp_init <- -rtlp_mod$intercept / rtlp_mod$slope
 
   psip_mod <- calc_nonlin_psip(
-    data = data.frame(r = sym_rwc / 100, psip_linear = pressure_potential_lin),
+    data = data.frame(r = sym_rwc, psip_linear = pressure_potential_lin),
     pi_sat = osm_pot_fullturgor,
     r_tlp = r_tlp_init
   )
@@ -270,7 +270,7 @@ estOsmotic.rwcEst <- function(data, n_row = 4, silent = T, ...) {
     cat(
       "Using the following columns for the estimation:\n",
       "{RWC/RWD}: ",
-      obj_names[c(3:4)],
+      obj_names[3],
       "\n",
       "{Water potential}: psi",
       "\n\n",
@@ -290,26 +290,26 @@ estOsmotic.rwcEst <- function(data, n_row = 4, silent = T, ...) {
   max_psip <- osm_pot_fullturgor * -1
 
   #calculate symplastic relative water content and apoplastic fraction
-  sym_af <- sym_rwc(data[[varnames$wc]], pio$sma_mod)
-  
-  apoplastic_fraction <- sym_af$af
-  sym_rwc <- sym_af$srwc * 100
-  sym_rwd <- sym_af$srwd * 100
+  sym_af <- sym_rwc(osm_obj$rwc, pio$sma_mod)
 
-  osmotic_potential <- osm_pot_fullturgor / (sym_rwc / 100)
+  apoplastic_fraction <- sym_af$af
+  sym_rwc <- sym_af$srwc
+  sym_rwd <- sym_af$srwd
+
+  osmotic_potential <- osm_pot_fullturgor / sym_af$srwc
 
   # calculate nonlinear pressure potential parameters
   pressure_potential_lin <- rwcEstData$water.potential - osmotic_potential
 
   rtlp_mod <- sma_model(
-    head(sym_rwc / 100, n = nrow(rwcEstData) - n_row),
+    head(sym_rwc, n = nrow(rwcEstData) - n_row),
     head(pressure_potential_lin, n = nrow(rwcEstData) - n_row)
   )
 
   r_tlp_init <- -rtlp_mod$intercept / rtlp_mod$slope
-
+  
   psip_mod <- calc_nonlin_psip(
-    data = data.frame(r = sym_rwc / 100, psip_linear = pressure_potential_lin),
+    data = data.frame(r = sym_rwc, psip_linear = pressure_potential_lin),
     pi_sat = osm_pot_fullturgor,
     r_tlp = r_tlp_init
   )

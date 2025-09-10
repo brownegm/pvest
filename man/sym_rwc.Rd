@@ -4,12 +4,12 @@
 \alias{sym_rwc}
 \title{Estimate symplastic water content}
 \usage{
-sym_rwc(rwd, sma_mod)
+sym_rwc(rwc, sma_mod)
 }
 \arguments{
-\item{sma_mod}{An object of class "sma_model" containing the slope and intercept of the linear relationship between relative water deficit and negative inverse water potential.}
-
 \item{rwc}{Vector of relative water content values.}
+
+\item{sma_mod}{An object of class "sma_model" containing the slope and intercept of the linear relationship between relative water deficit and negative inverse water potential.}
 }
 \value{
 A vector of symplastic relative water content values.
