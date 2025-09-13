@@ -242,6 +242,7 @@ estOsmotic.default <- function(
       "af" = apoplastic_fraction,
       "symrwc" = sym_rwc,
       "symrwd" = sym_rwd,
+      "rwctlp" = r_tlp_init, 
       "data" = dataUpd, # bring the data and model estimates along
       "est_rows" = n_row,
       "model" = pio$sma_mod
