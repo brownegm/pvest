@@ -1,95 +1,11 @@
-#' Estimate symplastic water content
-#' 
-#' @param rwc Vector of relative water content values.
-#' @param sma_mod An object of class "sma_model" containing the slope and intercept of the linear relationship between relative water deficit and negative inverse water potential.
-#' @return A vector of symplastic relative water content values.
-#' 
-sym_rwc <- \(rwc, sma_mod) {
-  # apoplastic fraction
-  # af is the x intercept of the relationship between rwd and negative inverse water potential to put it into terms of relative water content ADD 100
-  af <- (sma_mod$intercept / sma_mod$slope) + 100
-  
-  # symplastic relative water content
-  srwc_num <- rwc/ 100 - af / 100
-  srwc_den <- 1 - af / 100
-  srwc <- srwc_num / srwc_den
-  
-  return(list(srwc = srwc, 
-              srwd = 1-srwc, 
-              af = af))
-}
 
-#' Osmotic potential at full turgor estimate
-#'
-#' @description Estimates the osmotic potential at full turgor from the linear relationship
-#'     between relative water deficit and inverse leaf water potential.
-#'
-#' @param rwd Vector of relative water deficit values.
-#' @param psi Vector of negative inverse of water potential values.
-#'
-#' @return An object of class "pioEst" containing the slope, intercept and osmotic potential at full turgor.
-#'
-#' @export
-#'
-#' @seealso [sma_model()]
-#'
-
-estpio <- function(rwd, psi) {
-  stopifnot(length(rwd) == length(psi))
-
-  input_vals <- osminput(rwd, psi)
-
-  osm_mod <- sma_model(x = input_vals)
-
-  pio <- -1 / osm_mod$intercept
-
-  output <- structure(
-    list(
-      "sma_mod" = osm_mod,
-      "pio" = pio
-    ),
-    class = "pioEst"
-  )
-
-  return(output)
-}
-
-
-#' Constructor for osmotic inputs
-#'
-#' @param rwd Values of relative water content and deficit
-#' @param psi Values of water potential
-
-osminput <- function(rwd, psi) {
-  inputs <- structure(
-    list(rwd, psi),
-    .Names = c("rwd", "neg_inv_psi"),
-    class = "osm_input"
-  )
-
-  return(inputs)
-}
-
-#' Print method for the Osmotic estimates output
-#'
-#' @param x An object of the class "pioEst"
-#' @param ... Other parameters passed to cat
-#'
-#' @returns Printed SMA model output
-#' @export print.pioEst
-
-print.pioEst <- function(x, ...) {
-  cat("Pi estimates: \n")
-  cat("Osmotic potential at full turgor:", x$pi.o, "\n")
-  return(x$sma_mod)
-}
-NULL
+# estOsmotic generic and methods  -------------------------------------------
 
 #' Osmotic and pressure parameter estimation
 #' @description Estimate the osmotic potential at full turgor, pressure potential at full turgor for leaves
 #'     as well as the osmotic potential and pressure potential for each hydration state.
 #'
-#' @param data A data frame. A data frame containing the data set of the last 4 hydration states for a given leaf
+#' @param x A data frame. A data frame containing the data set of the last 4 hydration states for a given leaf
 #' @param wc.index A double. A data frame index which contains the water content (RWD) data passed to estpio()
 #' @param wp.index A double. A data frame index which contains the leaf water potential data
 #' @param n_row A double. Value which indicates the number of rows for estimating parameters. Default to 4 rows.
@@ -121,49 +37,23 @@ NULL
 #' @importFrom dplyr mutate
 #' @rdname estOsmotic
 
-estOsmotic <- function(data, ...) {
+estOsmotic <- function(x, ...) {
   UseMethod("estOsmotic")
 }
 
 #' @rdname estOsmotic
 #' @export
 estOsmotic.default <- function(
-  data,
+  x,
   wc.index,
   wp.index,
   n_row = 4,
   silent = T,
   ...
 ) {
-  is_char <- all(c(is.character(wc.index), is.character(wp.index)))
-  is_num <- all(c(is.numeric(wc.index), is.numeric(wp.index)))
-
- if (!(is_char | is_num)) {
-    stop(
-      "estOsmotic: Column indices must both be either character strings or numeric integers referencing the preferred column."
-    )
-  }
-
-  if (is_char) {
-    varnames <- list(
-      "wc" = wc.index,
-      "wp" = wp.index
-    )
-  } else if (is_num) {
-    varnames <- list(
-      "wc" = names(data)[wc.index],
-      "wp" = names(data)[wp.index]
-    )
-  }
-
-  check_var <- all(varnames[c("wc", "wp")] %in% names(data))
-
-  if (check_var == FALSE) {
-    stop(
-      "estOsmotic: The column names provided do not exist in the input data."
-    )
-  }
-
+ 
+  varnames <- get_varnames(data = data, wc.index = wc.index, wp.index = wp.index)
+  
   if (silent == FALSE) {
     cat("\nEstimating osmotic variables...\n\n")
 
@@ -253,94 +143,122 @@ estOsmotic.default <- function(
 }
 
 #' @rdname estOsmotic
-#' @param data An object of class "rwcEst"
+#' @param x An object of class "rwcEst"
 #' @param n_row Number of rows above turgor loss
 #' @param silent Silence printing of head(data) and columns used
 #' @export
-estOsmotic.rwcEst <- function(data, n_row = 4, silent = T, ...) {
-  osm_obj <- data
-
-  rwcEstData <- attr(osm_obj, "df")
-
+estOsmotic.rwcEst <- function(x, n_row = 4, silent = T, ...) {
+  
+  # validate input
+  if (!inherits(x, "rwcEst")) {
+    stop("`x` must be an object of class 'rwcEst'.")
+  }
+  
+  # Pull the attached data frame; fail clearly if missing
+  rwcEstData <- attr(x, "df")
+  if (is.null(rwcEstData) || !is.data.frame(rwcEstData)) {
+    stop("Attribute 'df' not found on `x` or is not a data.frame.")
+  }
+  
+  # Print the data and what columns are being used. 
   if (silent == FALSE) {
     cat("\nEstimating osmotic variables...\n\n")
-
+    
     print(head(rwcEstData))
-
-    obj_names <- names(osm_obj)
+    
+    nms <- names(x)
+    
     cat(
       "Using the following columns for the estimation:\n",
       "{RWC/RWD}: ",
-      obj_names[3],
+      nms[3],
       "\n",
       "{Water potential}: psi",
       "\n\n",
       sep = ""
     )
   }
+  
+  n <- nrow(rwcEstData)
+  stopifnot(n_row >= 1L, n_row < n)
+  
+  # ---- Tail slices used for pio ----------------------------------------
+  idx_tail <- (n - n_row + 1L):n
+  rwd_tail <- x$rwd[idx_tail]
+  psi_tail <- rwcEstData$water.potential[idx_tail]
+  
+  # validated input rwd values 
+  if (any(is.na(psi_tail))) stop("Tail water potentials contain NA.")
+  if (any(psi_tail == 0)) stop("Tail water potentials contain zeros (cannot invert).")
+  
+  minus_inv_psi <- -1 / psi_tail
+  
+  # pio estimate (osmotic potential at full turgor)
+  pio <- estpio(rwd_tail, minus_inv_psi)
+  pi_sat <- pio$pio                         # osmotic potential at full turgor (π₀)
+  psip_sat <- -pi_sat   
+  
+  # symplastic water content, osmotic, and pressure potential 
+  sym  <- sym_rwc(x$rwc, pio$sma_mod)
+  af   <- sym$af
+  srwc <- sym$srwc
+  srwd <- sym$srwd
+  
+  if (any(is.na(srwc) | srwc <= 0)) stop("Saturated RWC must be positive.")
+  
+  pi_vec  <- pi_sat / srwc # osmotic potential 
+  psi_vec <- rwcEstData$water.potential # water potential
+  psip_lin <- psi_vec - pi_vec # "linear" pressure potential 
 
-  # create output
-  rwd_n <- tail(osm_obj$rwd, n = n_row)
-  psi_n <- tail(rwcEstData$water.potential, n = n_row)
-  minus_inv_psi <- -1 / psi_n
-
-  pio <- estpio(rwd_n, minus_inv_psi)
-
-  # calculate osmotic and pressure potential at full turgor
-  osm_pot_fullturgor <- pio$pio
-  max_psip <- osm_pot_fullturgor * -1
-
-  #calculate symplastic relative water content and apoplastic fraction
-  sym_af <- sym_rwc(osm_obj$rwc, pio$sma_mod)
-
-  apoplastic_fraction <- sym_af$af
-  sym_rwc <- sym_af$srwc
-  sym_rwd <- sym_af$srwd
-
-  osmotic_potential <- osm_pot_fullturgor / sym_af$srwc
-
-  # calculate nonlinear pressure potential parameters
-  pressure_potential_lin <- rwcEstData$water.potential - osmotic_potential
-
-  rtlp_mod <- sma_model(
-    head(sym_rwc, n = nrow(rwcEstData) - n_row),
-    head(pressure_potential_lin, n = nrow(rwcEstData) - n_row)
-  )
-
-  r_tlp_init <- -rtlp_mod$intercept / rtlp_mod$slope
+  # fit sma to points above tlp to get initial guess at tlp
+  fit_len <- n - n_row
+  rtlp_fit <- sma_model(srwc[seq_len(fit_len)], psip_lin[seq_len(fit_len)])
+  r_tlp_init <- -rtlp_fit$intercept / rtlp_fit$slope
   
   psip_mod <- calc_nonlin_psip(
-    data = data.frame(r = sym_rwc, psip_linear = pressure_potential_lin),
-    pi_sat = osm_pot_fullturgor,
-    r_tlp = r_tlp_init
+    data   = data.frame(r = srwc, psip_linear = psip_lin),
+    pi_sat = pi_sat,
+    r_tlp  = r_tlp_init
   )
-
-  pressure_potential <- fitted(psip_mod)|> as.vector()
-
+  
+  #ensure convergence
+  stopifnot(psip_mod$convInfo$isConv==TRUE)
+  
+  psip <- as.vector(predict(psip_mod))
+  
+  srwc_tlp <- coef(psip_mod)[["r_tlp"]]
+  # rwc_tlp <- 
+  # sym_mod <- psip_sat/(srwc_tlp)
+  pi_tlp <- pi_sat/srwc_tlp
+  
   dataUpd <- rwcEstData |> 
     dplyr::mutate(
       rwcEstData,
-      invpsi = -1 / rwcEstData$water.potential,
-      pio = osm_pot_fullturgor,
-      psip_o = max_psip,
-      osmpot = osmotic_potential,
-      prespot = pressure_potential,
-      af = apoplastic_fraction,
-      symrwc = sym_rwc,
-      symrwd = sym_rwd
+      invpsi = -1 / psi_vec,
+      pio = pi_sat,
+      psip_o = psip_sat,
+      osmpot = pi_vec,
+      prespot = psip,
+      af = af,
+      symrwc = srwc,
+      symrwd = srwd,
+      srwc_tlp = srwc_tlp, 
+      pi_tlp = pi_tlp
     )
 
   osm <- structure(
     list(
-      "psi" = rwcEstData$water.potential,
-      "invpsi" = -1 / rwcEstData$water.potential,
-      "pio" = osm_pot_fullturgor,
-      "psip_o" = max_psip,
-      "osmpot" = osmotic_potential,
-      "prespot" = pressure_potential,
-      "af" = apoplastic_fraction,
-      "symrwc" = sym_rwc,
-      "symrwd" = sym_rwd,
+      "psi" = psi_vec,
+      "invpsi" = -1 / psi_vec,
+      "pio" = pi_sat,
+      "psip_o" = psip_sat,
+      "osmpot" = pi_vec,
+      "prespot" = psip,
+      "af" = af,
+      "symrwc" = srwc,
+      "symrwd" = srwd,
+      "srwc_tlp" = srwc_tlp,
+      "pi_tlp" = pi_tlp,
       "data" = dataUpd, # bring the data and model estimates along
       "est_rows" = n_row,
       "model" = pio$sma_mod
@@ -350,6 +268,114 @@ estOsmotic.rwcEst <- function(data, n_row = 4, silent = T, ...) {
   )
 
   return(osm)
+}
+
+# estOsmotic Helpers -----------------------------------------------------------------
+#' Get varnames
+#'
+#' @param data Input data frame
+#' @param wc.index Selected water content index
+#' @param wp.index Selected water potential index 
+#'
+#' @returns Variable names
+get_varnames <- function(data, wc.index, wp.index) {
+
+  nms <- names(data)
+  
+  if (is.character(wc.index) && is.character(wp.index)) {
+    # verify columns exist
+    miss <- setdiff(c(wc.index, wp.index), nms)
+    if (length(miss)) stop("Unknown column(s): ", paste(miss, collapse = ", "))
+    return(list(wc = wc.index, wp = wp.index))
+  }
+  
+  if (is.numeric(wc.index) && is.numeric(wp.index)) {
+    # numeric must be integerish and in bounds
+    if (any(is.na(c(wc.index, wp.index)))) stop("Indices cannot be NA.")
+    if (!all(wc.index == as.integer(wc.index)) ||
+        !all(wp.index == as.integer(wp.index))) {
+      stop("Numeric indices must be integers.")
+    }
+    if (any(wc.index < 1 | wc.index > length(nms)) ||
+        any(wp.index < 1 | wp.index > length(nms))) {
+      stop("Numeric indices out of bounds for `data`.")
+    }
+    return(list(wc = nms[wc.index], wp = nms[wp.index]))
+  }
+  
+  stop("Both indices must be character (names) or both numeric (positions).")
+}
+
+#' Estimate symplastic water content
+#' 
+#' @param rwc Vector of relative water content values.
+#' @param sma_mod An object of class "sma_model" containing the slope and intercept of the linear relationship between relative water deficit and negative inverse water potential.
+#' @return A vector of symplastic relative water content values.
+#' 
+calc_symrwc <- \(rwc, sma_mod) {
+  # apoplastic fraction
+  # af is the x intercept of the relationship between rwd and negative inverse water potential to put it into terms of relative water content ADD 100
+  af <- (sma_mod$intercept / sma_mod$slope) + 100
+  
+  # symplastic relative water content
+  srwc_num <- rwc/ 100 - af / 100
+  srwc_den <- 1 - af / 100
+  srwc <- srwc_num / srwc_den
+  
+  return(list(srwc = srwc, 
+              srwd = 1-srwc, 
+              af = af))
+}
+
+#' Osmotic potential at full turgor estimate
+#'
+#' @description Estimates the osmotic potential at full turgor from the linear relationship
+#'     between relative water deficit and inverse leaf water potential.
+#'
+#' @param rwd Vector of relative water deficit values.
+#' @param psi Vector of negative inverse of water potential values.
+#'
+#' @return An object of class "pioEst" containing the slope, intercept and osmotic potential at full turgor.
+#'
+#' @export
+#'
+#' @seealso [sma_model()]
+#'
+
+estpio <- function(rwd, psi) {
+  stopifnot(length(rwd) == length(psi))
+  
+  input_vals <- new_osminput(rwd, psi)
+  
+  osm_mod <- sma_model(x = input_vals)
+  
+  pio <- -1 / osm_mod$intercept
+  
+  output <- structure(
+    list(
+      "sma_mod" = osm_mod,
+      "pio" = pio
+    ),
+    class = "pioEst"
+  )
+  
+  return(output)
+}
+
+
+#' Constructor for osmotic inputs
+#'
+#' @param rwd Values of relative water content and deficit
+#' @param psi Values of water potential
+
+new_osminput <- function(rwd, psi) {
+  inputs <- structure(
+    list(rwd, psi),
+    .Names = c("rwd", "neg_inv_psi"),
+    class = "osm_input"
+  )
+  
+  return(inputs)
 }
 
 #' Nonlinear pressure potential estimate
@@ -375,6 +401,11 @@ estOsmotic.rwcEst <- function(data, n_row = 4, silent = T, ...) {
 #' @export
 
 calc_nonlin_psip <- function(data, pi_sat, r_tlp, psi_w = NULL, full = FALSE) {
+  
+  start <- list(b = 1, r_tlp = r_tlp)
+  low <- c(b = 1, r_tlp = 0.00)
+  upper <- c(b = 4, r_tlp = 0.99)
+  
   if (full == FALSE) {
     fit <- minpack.lm::nlsLM(
       # Model equation
@@ -382,11 +413,11 @@ calc_nonlin_psip <- function(data, pi_sat, r_tlp, psi_w = NULL, full = FALSE) {
         ifelse(r > r_tlp, -pi_sat * ((r - r_tlp) / (1 - r_tlp))^(b), 0),
       # Data frame
       data = data,
-      start = list(b = 2),
+      start = start,
       # Lower bounds
-      lower = c(b = 0),
+      lower = low,
       # Upper bounds
-      upper = c(b = 10),
+      upper = upper,
 
       control = minpack.lm::nls.lm.control(maxiter = 100)
     )
@@ -401,11 +432,11 @@ calc_nonlin_psip <- function(data, pi_sat, r_tlp, psi_w = NULL, full = FALSE) {
           # Model equation
           data = data,
           # Data frame
-          start = list(b = 2),
+          start = start,
           # Lower bounds
-          lower = c(b = 0),
+          lower = low,
           # Upper bounds
-          upper = c(b = 10),
+          upper = upper,
           # Upper bounds
           control = minpack.lm::nls.lm.control(maxiter = 100)
         )
@@ -419,6 +450,24 @@ calc_nonlin_psip <- function(data, pi_sat, r_tlp, psi_w = NULL, full = FALSE) {
   return(fit)
 }
 
+
+# Print methods -----------------------------------------------------------
+
+#' Print method for the Osmotic estimates output
+#'
+#' @param x An object of the class "pioEst"
+#' @param ... Other parameters passed to cat
+#'
+#' @returns Printed SMA model output
+#' @export print.pioEst
+
+print.pioEst <- function(x, ...) {
+  cat("Pi estimates: \n")
+  cat("Osmotic potential at full turgor:", x$pi.o, "\n")
+  return(x$sma_mod)
+}
+NULL
+
 #' Print method of osmEst class objects
 #' @export
 print.osmEst <- function(x, ...) {
@@ -429,4 +478,51 @@ print.osmEst <- function(x, ...) {
   cat("Apoplastic fraction:", round(x$af, 2), "%", "\n")
   cat("Number of hydration states used:", x$est_rows, "\n")
   cat("-----------------------------------------------\n")
+}
+
+
+# Plotting ----------------------------------------------------------------
+
+#' Plot method of class osmEst
+#'
+#' @param object Object of class osmEst
+#' @param xlab x label
+#' @param ylab y label
+#' @param main Title main
+#' @param lwd line width
+#' @param lty line type
+#' @param ... unused
+#'
+#' @returns Hofler diagram of osmotic elements
+#' @export
+#'
+autoplot.osmEst <- function(object, xlab = "100-RWC", ylab = expression(Psi), 
+                        main = "Hofler Diagram", lwd = 1.5, lty = 1, 
+                        ...) {
+  
+  if (!inherits(object, "osmEst")) {
+    stop("The object must be of class 'osmEst'.")
+  }
+  # legend names 
+  legendNames <- c(
+                  expression(Psi["s"]),
+                   expression(Psi["p"]),
+                   expression(Psi["leaf"]))
+
+  pData <- object$data |> 
+    tidyr::pivot_longer(c(water.potential, osmpot:prespot), 
+                        names_to = "variable", 
+                        values_to = "mpa" )
+  
+  tlp <- data.frame(r_tlp = object$srwc_tlp, pi_tlp = object$pi_tlp)
+  
+  pv <- ggplot2::ggplot(pData, aes(x = rwd, y = mpa, color = variable)) +
+    geom_line(lwd = lwd, lty = lty) +
+    geom_point(data = tlp, aes(x =100-r_tlp, y = pi_tlp), color = "brown", shape = 8)+
+    theme_classic() +
+    labs(x = xlab, y = ylab, color = "Variable", title = main) +
+    scale_color_discrete(labels = legendNames) +
+    aes::theme_base(panel_border_color = "grey50") 
+  
+  return(pv)
 }
