@@ -1,15 +1,24 @@
 # tools/pkg_outline.R
-build_pkg_outline <- function(pkg = basename(getwd()),
+build_pkg_outline <- function(pkg = NULL,
                               keep_source = TRUE,
                               include_nonexported = TRUE) {
+  # auto-detect package name if not provided
+  if (is.null(pkg)) {
+    desc_file <- file.path(rprojroot::find_package_root_file(), "DESCRIPTION")
+    if (!file.exists(desc_file)) {
+      stop("No DESCRIPTION file found. Run from inside a package project.")
+    }
+    pkg <- read.dcf(desc_file, fields = "Package")[1, 1]
+  }
+  
   pkgs <- c("devtools","codetools","igraph","tibble","dplyr","purrr",
             "tidyr","stringr","visNetwork","htmltools","rlang")
+  
   to_install <- setdiff(pkgs, rownames(installed.packages()))
   if (length(to_install)) install.packages(to_install, quiet = TRUE)
   lapply(pkgs, require, character.only = TRUE)
   
-  devtools::load_all(export_all = TRUE, helpers = FALSE, quiet = TRUE,
-                     keep_source = keep_source)
+  devtools::load_all(export_all = TRUE, helpers = FALSE, quiet = TRUE)
   
   ns   <- asNamespace(pkg)
   objs <- ls(ns, all.names = TRUE)
@@ -24,11 +33,15 @@ build_pkg_outline <- function(pkg = basename(getwd()),
   
   # --- S3 awareness -----------------------------------------------------
   s3tab <- tryCatch(getNamespaceInfo(ns, "S3methods"), error = function(e) NULL)
+ 
   s3_df <- if (!is.null(s3tab)) {
-    as.data.frame(s3tab, stringsAsFactors = FALSE) |>
-      tibble::as_tibble(.name_repair = "minimal") |>
-      rlang::set_names(c("generic","class","method"))
-  } else tibble::tibble(generic = character(), class = character(), method = character())
+    # coerce to tibble, keep only the first 3 cols (generic, class, method)
+    tib <- as.data.frame(s3tab, stringsAsFactors = FALSE)
+    tibble::as_tibble(tib[, 1:3, drop = FALSE],
+                      .name_repair = ~ c("generic","class","method"))
+  } else {
+    tibble::tibble(generic = character(), class = character(), method = character())
+  }
   
   s3_df <- s3_df |>
     dplyr::mutate(
@@ -140,7 +153,8 @@ build_pkg_outline <- function(pkg = basename(getwd()),
   btwn <- igraph::betweenness(g, directed = TRUE, normalized = TRUE)
   node_df$betweenness <- as.numeric(btwn[match(node_df$name, names(btwn))])
   
-  comps <- igraph::components(igraph::as.undirected(g, mode = "collapse"))
+  comps <- igraph::components(igraph::as_undirected(g, mode = "collapse"))
+  
   node_df$cluster_id <- comps$membership[match(node_df$name, names(comps$membership))]
   
   outline_by_file <- node_df %>%
