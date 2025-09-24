@@ -44,7 +44,7 @@ testthat::test_that("slope is negative and the sma_model output is correct class
 
   testosm <- pvest::estOsmotic(test_df,
     wc.index = wc.index, wp.index = wp.index,
-    n_row = 5
+    n_row = 4
   )
   
   testosm_numinput <- pvest::estOsmotic(test_df,
@@ -85,14 +85,14 @@ testthat::test_that("compare the dataframe methods to the rwcEst method", {
     n_row = 5, silent = F
   )
 
-  rwcObjEst <- estOsmotic(rwc, n_row = 5, silent = F)
+  rwcObjEst <- estOsmotic(rwc, n_row = 5, silent = T)
   
   forcompare <- attr(rwc, "df")
   
   rwcDfEst <- pvest::estOsmotic(forcompare,
-                    wc.index = "rwc",
+                    wc.index = "rwd",
                     wp.index = "water.potential",
-                    n_row = 5, silent = F)
+                    n_row = 5, silent = T)
   
   expect_identical(rwcObjEst, rwcDfEst)
   

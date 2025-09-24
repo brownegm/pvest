@@ -30,10 +30,11 @@ autoplot.pv <- function(object, xlab = "100-RWC", ylab = expression(Psi),
                    expression(Psi["s"]),
                    expression(Psi["leaf"]))
   
-  pData <- object |> 
-    tidyr::pivot_longer(c(water.potential, psis:psip_nonlin), 
+  pData <- data.frame(object) |> 
+    tidyr::pivot_longer(c(psi, psis:psip_nonlin), 
                         names_to = "variable", 
                         values_to = "mpa" )
+  
   
   pv <- ggplot2::ggplot(pData, aes(x = rwd, y = mpa, color = variable)) +
     geom_line(lwd = lwd, lty = lty) +
