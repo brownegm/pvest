@@ -428,8 +428,7 @@ calc_nonlin_psip <- function(data, pi_sat, r_tlp, psi_w = NULL, full = FALSE) {
   if (full == FALSE) {
     fit <- minpack.lm::nlsLM(
       # Model equation
-      psip_linear ~
-        ifelse(r > r_tlp, -pi_sat * ((r - r_tlp) / (1 - r_tlp))^(b), 0),
+      psip_linear ~ -pi_sat * pmax((r - r_tlp) / (1 - r_tlp))^(b), 0),
       # Data frame
       data = data,
       start = start,
@@ -445,9 +444,7 @@ calc_nonlin_psip <- function(data, pi_sat, r_tlp, psi_w = NULL, full = FALSE) {
       {
         fit <- minpack.lm::nlsLM(
           psi_w ~
-            (pi_sat / r) +
-              ifelse(r > r_tlp,
-                     -pi_sat * ((r - r_tlp) / (1 - r_tlp))^(b), 0),
+            (pi_sat / r) + -pi_sat * pmax((r - r_tlp) / (1 - r_tlp))^(b), 0),
           # Model equation
           data = data,
           # Data frame
