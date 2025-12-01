@@ -107,8 +107,8 @@ estOsmotic.default <- function(
   psip_lin <- psi_vec - pi_vec # "linear" pressure potential
 
   # fit sma to points above tlp to get initial guess at tlp
-  fit_len <- n - n_row
-  rtlp_fit <- sma_model(srwc[seq_len(fit_len)], psip_lin[seq_len(fit_len)])
+  fit_len <- seq_len(n - n_row) #(n_row + 1))
+  rtlp_fit <- sma_model(srwc[fit_len], psip_lin[fit_len])
   r_tlp_init <- -rtlp_fit$intercept / rtlp_fit$slope
 
   psip_mod <- calc_nonlin_psip(
@@ -433,13 +433,13 @@ new_osminput <- function(rwd, psi) {
 
 calc_nonlin_psip <- function(data, pi_sat, r_tlp, psi_w = NULL, full = FALSE) {
   start <- list(b = 1, r_tlp = r_tlp)
-  low <- c(b = 1, r_tlp = 0.00)
-  upper <- c(b = 4, r_tlp = 0.99)
+  low <- c(b = 0, r_tlp = start$r_tlp - 0.1)
+  upper <- c(b = 2, r_tlp = start$r_tlp + 0.1)
 
   if (full == FALSE) {
     fit <- minpack.lm::nlsLM(
       # Model equation
-      psip_linear ~ -pi_sat * pmax(((r - r_tlp) / (1 - r_tlp))^(b), 0),
+      psip_linear ~ -pi_sat * pmax((r - r_tlp) / (1 - r_tlp), 0)^b,
       # Data frame
       data = data,
       start = start,
@@ -448,14 +448,16 @@ calc_nonlin_psip <- function(data, pi_sat, r_tlp, psi_w = NULL, full = FALSE) {
       # Upper bounds
       upper = upper,
 
-      control = minpack.lm::nls.lm.control(maxiter = 100)
+      control = minpack.lm::nls.lm.control(
+        maxiter = 1000
+      )
     )
   } else {
     tryCatch(
       {
         fit <- minpack.lm::nlsLM(
           psi_w ~
-            (pi_sat / r) + -pi_sat * pmax(((r - r_tlp) / (1 - r_tlp))^(b), 0),
+            (pi_sat / r) + -pi_sat * pmax((r - r_tlp) / (1 - r_tlp), 0)^b,
           # Model equation
           data = data,
           # Data frame
@@ -465,7 +467,7 @@ calc_nonlin_psip <- function(data, pi_sat, r_tlp, psi_w = NULL, full = FALSE) {
           # Upper bounds
           upper = upper,
           # Upper bounds
-          control = minpack.lm::nls.lm.control(maxiter = 100)
+          control = minpack.lm::nls.lm.control(maxiter = 1000)
         )
       },
       error = function(e) {
