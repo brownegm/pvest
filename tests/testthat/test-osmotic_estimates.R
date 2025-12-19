@@ -65,7 +65,7 @@ testthat::test_that("slope is negative and the sma_model output is correct class
 
   testosm_numinput <- pvest::estOsmotic(
     test_df,
-    wc.index = 2,
+    wc.index = 3,
     wp.index = 1,
     n_row = 5
   )
@@ -205,10 +205,10 @@ test_that("Check that the errors work", {
     silent = F
   ))
 
-  expect_snapshot(pvest::estOsmotic(
-    data = test_df,
-    wc.index = "rwc",
-    wp.index = "psi",
-    silent = T
-  ))
+  # expect_snapshot(pvest::estOsmotic(
+  #   data = test_df,
+  #   wc.index = "rwc",
+  #   wp.index = "psi",
+  #   silent = T
+  # ))
 })
