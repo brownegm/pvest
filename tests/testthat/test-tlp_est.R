@@ -36,8 +36,11 @@ testthat::test_that("test tlp values same across versions", {
   
   ## default
   default_obj <- estTLP(
-    data = data, wp.index = wp.index, wc.index = wc.index,
-    n_row_below = n_row_below, n_row_above = n_row_above
+    data = data,
+    wp.index = wp.index,
+    wc.index = wc.index,
+    n_row_below = n_row_below,
+    n_row_above = n_row_above
   )
   expect_equal(round(default_obj$pi_tlp,6), tlp)
   expect_equal(round(default_obj$rwc_tlp,6), rwctlp)
