@@ -109,7 +109,12 @@ estTLP <- function(data, ...) {
 #' @export
 #' @rdname estTLP
 estTLP.data.frame <- function(data, wc.index, wp.index, n_row_above, n_row_below, ...) {
-  osm_obj <- estOsmotic(data = data, wc.index, wp.index, n_row = n_row_below)
+  osm_obj <- estOsmotic(
+    data,
+    wc.index = wc.index,
+    wp.index = wp.index,
+    n_row = n_row_below
+  )
 
   # collect indices for above and below turgor loss point
   above_idx <- c(1:n_row_above)
