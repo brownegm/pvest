@@ -1,16 +1,15 @@
 # Tasks for getting it done
 
+-   [x] Run through
 
-- [ ] Run through
+-   [ ] Figure out how many observations cause problems
 
-- [ ] Figure out how many observations cause problems
+-   [ ] tlp object does not produce the expected modulus of elasticity
 
-- [ ] tlp object does not produce the expected modulus of elasticity 
+-   [ ] Make the current print statements into summary methods
 
-- [ ] Make the current print statements into summary methods
+-   [ ] consider if the input relative water content should be rwc and rwd
 
-- [ ] consider if the input relative water content should be rwc and rwd
+-   [ ] check the apoplastic fraction
 
-- [ ] check the apoplastic fraction
-
-- [ ] maybe the data input in estOsmotic, should should be x? 
+-   [ ] maybe the data input in estOsmotic, should should be x?
