@@ -116,6 +116,12 @@ estOsmotic.default <- function(
     pi_sat = pi_sat,
     r_tlp = r_tlp_init
   )
+  if (is.null(psip_mod)) {
+    warning(
+      "Non-linear pressure potential model failed to fit; ",
+      "try adjusting n_row or inspect water potential values."
+    )
+  }
 
   #ensure convergence
   stopifnot(psip_mod$convInfo$isConv == TRUE)
@@ -235,7 +241,7 @@ estOsmotic.rwcEst <- function(x, n_row = 4, silent = T, ...) {
   pi_vec <- pi_sat / srwc # osmotic potential
   psi_vec <- rwcEstData$water.potential # water potential
   psip_lin <- psi_vec - pi_vec # "linear" pressure potential
-
+  #print(n_row)
   # fit sma to points above tlp to get initial guess at tlp
   fit_len <- n - n_row
   rtlp_fit <- sma_model(srwc[seq_len(fit_len)], psip_lin[seq_len(fit_len)])
@@ -246,6 +252,12 @@ estOsmotic.rwcEst <- function(x, n_row = 4, silent = T, ...) {
     pi_sat = pi_sat,
     r_tlp = r_tlp_init
   )
+  if (is.null(psip_mod)) {
+    warning(
+      "Non-linear pressure potential model failed to fit; ",
+      "try adjusting n_row or inspect water potential values."
+    )
+  }
 
   #ensure convergence
   stopifnot(psip_mod$convInfo$isConv == TRUE)
@@ -437,20 +449,23 @@ calc_nonlin_psip <- function(data, pi_sat, r_tlp, psi_w = NULL, full = FALSE) {
   upper <- c(b = 2, r_tlp = start$r_tlp + 0.1)
 
   if (full == FALSE) {
-    fit <- minpack.lm::nlsLM(
-      # Model equation
-      psip_linear ~ -pi_sat * pmax((r - r_tlp) / (1 - r_tlp), 0)^b,
-      # Data frame
-      data = data,
-      start = start,
-      # Lower bounds
-      lower = low,
-      # Upper bounds
-      upper = upper,
-
-      control = minpack.lm::nls.lm.control(
-        maxiter = 1000
-      )
+    fit <- tryCatch(
+      minpack.lm::nlsLM(
+        # Model equation
+        psip_linear ~ -pi_sat * pmax((r - r_tlp) / (1 - r_tlp), 0)^b,
+        # Data frame
+        data = data,
+        start = start,
+        # Lower bounds
+        lower = low,
+        # Upper bounds
+        upper = upper,
+        control = minpack.lm::nls.lm.control(maxiter = 1000)
+      ),
+      error = function(e) {
+        message("Non-linear psip model fitting failed: ", e$message)
+        return(NULL)
+      }
     )
   } else {
     tryCatch(
