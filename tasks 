@@ -1,15 +1,11 @@
 # Tasks for getting it done
 
--   [x] Run through
-
 -   [ ] Figure out how many observations cause problems
-
--   [ ] tlp object does not produce the expected modulus of elasticity
-
--   [x] Make the current print statements into summary methods
 
 -   [ ] consider if the input relative water content should be rwc and rwd
 
--   [ ] check the apoplastic fraction
-
 -   [ ] maybe the data input in estOsmotic, should should be x?
+
+-   [ ] combine the data sets
+
+-   [ ] Test the correspondence between the manual and pvest pv curve estimates
