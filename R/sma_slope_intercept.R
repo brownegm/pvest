@@ -59,48 +59,48 @@ sma_model.default <- function(x, y) {
   if (length(x) != length(y)) {
     stop("x and y must have the same length.")
   }
-  
+
   # establish model object
   m <- vector(mode = "list", length = 6)
   names(m) <- c("slope", "intercept", "data", "call", "fitted", "residuals")
-  
+
   m$call <- match.call()
-  
+
   m$data <- data.frame(x = x, y = y)
-  names(m$data) <-  as.character(m$call)[-1] # set names of the data df columns
-  
+  names(m$data) <- as.character(m$call)[-1] # set names of the data df columns
+
   # Calculate the covariance and variances
   cor_xy <- stats::cor(x, y)
   sd_x <- stats::sd(x)
   sd_y <- stats::sd(y)
-  
+
   # Calculate the SMA slope()
   m$slope <- sign(cor_xy) * (sd_y / sd_x)
-  
+
   # Calculate the intercept
   m$intercept <- mean(y) - m$slope * mean(x)
-  
+
   # Calculate the fitted values and residuals
   m$fitted <- m$slope * x + m$intercept
   m$residuals <- y - m$fitted
-  
+
   #r <- cor_xy / (sd_x * sd_y)
   # Estimate summary statistic attributes for the model
   n <- length(m$residuals)
-  
+
   # Residual standard error (Root Mean Square Error - RMSE)
   rmse <- sqrt(mean(m$residuals^2))
-  
+
   # R squared calculation
   ss_total <- sum((y - mean(y))^2)
   ss_residual <- sum(m$residuals^2)
   r_squared <- 1 - (ss_residual / ss_total)
-  
+
   # Estimate Corrected AICc
-  k <- 2  # Number of parameters (only ever slope & intercept)
+  k <- 2 # Number of parameters (only ever slope & intercept)
   aic <- n * log(ss_residual / n) + 2 * k
   aicc <- aic + (2 * k * (k + 1)) / (n - k - 1)
-  
+
   # Create the model object
   model <- structure(
     m,
@@ -109,7 +109,7 @@ sma_model.default <- function(x, y) {
     rmse = rmse,
     aicc = aicc
   )
-  
+
   return(model)
 }
 
@@ -121,27 +121,26 @@ sma_model.osm_input <- function(x, y = NULL) {
       "sma_model:Missing values found in input data. Ensure that there are no missing values."
     )
   }
-  
+
   model <- pvest::sma_model(y = x$neg_inv_psi, x = x$rwd)
-  
+
   invisible(model)
-  
 }
 
 #' @inheritParams sma_model
 #' @export
 sma_model2 <- function(dfs, wp, lw, method = "default", pmetric = NULL) {
-
   above <- dfs$above
   below <- dfs$below
 
-fit_above <- pvest::sma_model(y = above[[wp]], x = above[[lw]])
-fit_below <- pvest::sma_model(y = below[[wp]], x = below[[lw]])
-fit_all <- structure(list(above = fit_above, 
-                          below = fit_below),
-                     method = method,
-                     pmetric = pmetric,
-                     class = "sma_model2")
+  fit_above <- pvest::sma_model(y = above[[wp]], x = above[[lw]])
+  fit_below <- pvest::sma_model(y = below[[wp]], x = below[[lw]])
+  fit_all <- structure(
+    list(above = fit_above, below = fit_below),
+    method = method,
+    pmetric = pmetric,
+    class = "sma_model2"
+  )
 
   invisible(fit_all)
 }
@@ -161,18 +160,18 @@ calc_param_tlp <- function(x) {
       "calc_param_tlp:Missing values found in input data. Ensure that there are no missing values."
     )
   }
-  
+
   bulk_psip_rwd <- pvest::sma_model(y = x$psip, x = x$rwd)
   sym_psip_rwd <- pvest::sma_model(y = x$psip, x = x$symrwd)
-  
+
   # above tlp
-  bulk_rwc_psi_above <- pvest::sma_model( x$psi_above, x$rwc_above)
-  sym_rwc_psi_above <- pvest::sma_model( x$psi_above, x$symrwc_above)
-  
+  bulk_rwc_psi_above <- pvest::sma_model(x$psi_above, x$rwc_above)
+  sym_rwc_psi_above <- pvest::sma_model(x$psi_above, x$symrwc_above)
+
   # below tlp
   bulk_rwc_psi_below <- pvest::sma_model(x$psi_below, x$rwc_below)
-  sym_rwc_psi_below <- pvest::sma_model( x$psi_below, x$symrwc_below)
-  
+  sym_rwc_psi_below <- pvest::sma_model(x$psi_below, x$symrwc_below)
+
   # extract relevant model parameters for rwc and cap
   params <- structure(
     list(
@@ -195,7 +194,7 @@ calc_param_tlp <- function(x) {
     bulk_captlp = bulk_rwc_psi_below,
     sym_captlp = sym_rwc_psi_below
   )
-  
+
   invisible(params)
 }
 
@@ -209,7 +208,7 @@ calc_param_tlp <- function(x) {
 
 print.sma_model <- function(x, ...) {
   withr::local_options(list(digits = 4))
-  
+
   cat("Standard Major Axis (SMA) model\n")
   cat("-------------------------------")
   cat("\nCall:\n")
@@ -224,13 +223,13 @@ print.sma_model <- function(x, ...) {
 }
 
 
-#' Print method for SMA model with two segments 
+#' Print method for SMA model with two segments
 #' @export
 #' @param x An object of class `sma_model2`
 #' @param ... Additional arguments (not used)
 #' @return Prints the model summary
 
-print.sma_model2 <- function(x, ...) {
+summary.sma_model2 <- function(x, ...) {
   cat("SMA Model with two segments\n")
   cat("Above TLP:\n")
   print(x$above)
@@ -247,9 +246,9 @@ print.sma_model2 <- function(x, ...) {
 
 plot.sma_model <- function(x, ...) {
   mod_data <- x$data
-  
+
   plot(x = mod_data[, 1], y = mod_data[, 2], ...)
-  
+
   abline(
     a = x$intercept,
     b = x$slope,
