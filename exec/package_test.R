@@ -105,8 +105,7 @@ pv_params <- estPV(
   leaf,
   fresh.weight,
   water.potential,
-  dry.weight,
-  method = "r2"
+  dry.weight
 )
 
 pv_params_df <- do.call(rbind, pv_params)
