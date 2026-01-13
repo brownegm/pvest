@@ -257,11 +257,11 @@ estTLP.osmEst <- function(data, n_row_above = 4, ...) {
 
 
 #' @title Print method for tlpEst objects
-#' @param x Object of class tlpEst
+#' @param object Object of class tlpEst
 #' @param ... Additional parameters passed to method
 #' @rdname estTLP
 #' @export
-print.tlpEst <- function(x, ...) {
+summmary.tlpEst <- function(object, ...) {
   # get units
   units <- attr(x, "units")
 

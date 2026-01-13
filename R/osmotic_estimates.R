@@ -513,8 +513,9 @@ print.pioEst <- function(x, ...) {
 NULL
 
 #' Print method of osmEst class objects
+#' @param object Object of class osmEst
 #' @export
-print.osmEst <- function(x, ...) {
+summary.osmEst <- function(object, ...) {
   cat("Osmotic and pressure potential estimates: \n")
   cat("-----------------------------------------------\n")
   cat("Osmotic potential at full turgor:", round(x$pio, 2), "MPa", "\n")

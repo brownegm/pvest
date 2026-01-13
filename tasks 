@@ -6,7 +6,7 @@
 
 -   [ ] tlp object does not produce the expected modulus of elasticity
 
--   [ ] Make the current print statements into summary methods
+-   [x] Make the current print statements into summary methods
 
 -   [ ] consider if the input relative water content should be rwc and rwd
 

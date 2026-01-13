@@ -233,13 +233,12 @@ by_grp_sbgrp <- function(x, grp, sbgrp = NULL) {
   invisible(obj)
 }
 
-#' @param x Object of classg _estPV_
+#' @param object Object of class _estPV_
 #' @param ... Additional parameters passed to method
 #' @rdname estPV
-#' @export
-#'
-print.estPV <- function(x, ...) {
-  estPV_obj <- x
+#' @export 
+summary.estPV <- function(object, ...) {
+  estPV_obj <- object
   units <- attr(estPV_obj, "units")[17:28]
 
   for (i in seq_along(estPV_obj)) {
