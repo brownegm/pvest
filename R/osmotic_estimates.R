@@ -141,9 +141,9 @@ estOsmotic.default <- function(
       osmpot = pi_vec,
       prespot = psip,
       af = af,
-      symrwc = srwc,
-      symrwd = srwd,
-      srwc_tlp = srwc_tlp,
+      symrwc = srwc * 100,
+      symrwd = srwd * 100,
+      srwc_tlp = srwc_tlp * 100,
       pi_tlp = pi_tlp
     )
 
@@ -278,9 +278,9 @@ estOsmotic.rwcEst <- function(x, n_row = 4, silent = T, ...) {
       osmpot = pi_vec,
       prespot = psip,
       af = af,
-      symrwc = srwc,
-      symrwd = srwd,
-      srwc_tlp = srwc_tlp,
+      symrwc = srwc * 100,
+      symrwd = srwd * 100,
+      srwc_tlp = srwc_tlp * 100,
       pi_tlp = pi_tlp
     )
 

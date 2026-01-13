@@ -11,14 +11,28 @@
 #' @param symrwc_below Symplastic relative water content _below_ turgor loss
 #'
 #' @return Bulk and symplastic slopes and intercepts.
-psip_rwd_params <- function(psi_above, psip, rwd, symrwd,
-                            rwc_above, symrwc_above,
-                            psi_below, rwc_below, symrwc_below) {
+psip_rwd_params <- function(
+  psi_above,
+  psip,
+  rwd,
+  symrwd,
+  rwc_above,
+  symrwc_above,
+  psi_below,
+  rwc_below,
+  symrwc_below
+) {
   # create an input class for the data
   tlp_input <- tlpinput(
-    psi_above, psip, rwd, symrwd,
-    rwc_above, symrwc_above,
-    psi_below, rwc_below, symrwc_below
+    psi_above,
+    psip,
+    rwd,
+    symrwd,
+    rwc_above,
+    symrwc_above,
+    psi_below,
+    rwc_below,
+    symrwc_below
   )
   # construct bulk and symplastic models
   tlp_model <- calc_param_tlp(tlp_input)
@@ -36,23 +50,40 @@ psip_rwd_params <- function(psi_above, psip, rwd, symrwd,
 #' @param psi_below Water potential values below turgor loss
 #' @param rwc_below Relative water content below turgor loss
 #' @param symrwc_below Symplastic relative water content below turgor loss
-#' 
-tlpinput <- function(psi_above, psip,
-                     rwd, symrwd,
-                     rwc_above, symrwc_above,
-                     psi_below, rwc_below, symrwc_below) {
+#'
+tlpinput <- function(
+  psi_above,
+  psip,
+  rwd,
+  symrwd,
+  rwc_above,
+  symrwc_above,
+  psi_below,
+  rwc_below,
+  symrwc_below
+) {
   return(structure(
     list(
-      psi_above, psip,
-      rwd, symrwd, # for modulus
-      rwc_above, symrwc_above,
-      psi_below, rwc_below, symrwc_below
+      psi_above,
+      psip,
+      rwd,
+      symrwd, # for modulus
+      rwc_above,
+      symrwc_above,
+      psi_below,
+      rwc_below,
+      symrwc_below
     ), # for capacitance
     .Names = c(
       "psi_above",
-      "psip", "rwd", "symrwd",
-      "rwc_above", "symrwc_above",
-      "psi_below", "rwc_below", "symrwc_below"
+      "psip",
+      "rwd",
+      "symrwd",
+      "rwc_above",
+      "symrwc_above",
+      "psi_below",
+      "rwc_below",
+      "symrwc_below"
     ),
     class = c("tlpEst", "list")
   ))
@@ -60,14 +91,13 @@ tlpinput <- function(psi_above, psip,
 
 #' @param data An input dataset
 #' @param ... Additional arguments passed to methods
-#' 
+#'
 #' @export
 #' @rdname estTLP
 
 estTLP <- function(data, ...) {
   UseMethod("estTLP")
 }
-
 
 
 #' @title Estimate pressure volume curve parameters at turgor loss
@@ -100,7 +130,7 @@ estTLP <- function(data, ...) {
 #' \item{cap_sym_ft}{Symplastic capacitance at full turgor}
 #' \item{cap_bulk_tlp}{Bulk capacitance at turgor loss}
 #' \item{cap_sym_tlp}{Symplastic capacitance at turgor loss}
-#' 
+#'
 #' @param data A data frame
 #' @param wc.index Index of relative water content values
 #' @param wp.index Index of water potential values.
@@ -108,7 +138,14 @@ estTLP <- function(data, ...) {
 #' @param n_row_below Number of rows below turgor loss point guess for estimating SMA line parameters.
 #' @export
 #' @rdname estTLP
-estTLP.data.frame <- function(data, wc.index, wp.index, n_row_above, n_row_below, ...) {
+estTLP.data.frame <- function(
+  data,
+  wc.index,
+  wp.index,
+  n_row_above,
+  n_row_below,
+  ...
+) {
   osm_obj <- estOsmotic(
     data,
     wc.index = wc.index,
@@ -142,9 +179,9 @@ estTLP.data.frame <- function(data, wc.index, wp.index, n_row_above, n_row_below
   # calculate PV parameters at turgor loss point
   rwd_tlp <- -((param_list$intercept) / (param_list$slope))
   rwc_tlp <- 100 - rwd_tlp
-  sym_rwd_tlp <- -((param_list$intercept_sym) / (param_list$slope_sym))
-  sym_rwc_tlp <- 100 - sym_rwd_tlp
-  pi_tlp <- -1 / (osm_slope * rwd_tlp + osm_intercept)
+  #sym_rwd_tlp <- -((param_list$intercept_sym) / (param_list$slope_sym))
+  #sym_rwc_tlp <- 100 - sym_rwd_tlp
+  #pi_tlp <- -1 / (osm_slope * rwd_tlp + osm_intercept)
   modulus <- osm_obj$psip_o / (rwd_tlp / 100)
   sym_modulus <- osm_obj$psip_o / (sym_rwd_tlp / 100)
 
@@ -156,25 +193,43 @@ estTLP.data.frame <- function(data, wc.index, wp.index, n_row_above, n_row_below
 
   outtlp <- structure(
     list(
-      pi_tlp, rwc_tlp, rwd_tlp,
-      sym_rwc_tlp, sym_rwd_tlp,
-      modulus, sym_modulus,
-      cap_bulk_ft, cap_sym_ft,
-      cap_bulk_tlp, cap_sym_tlp
+      pi_tlp,
+      rwc_tlp,
+      rwd_tlp,
+      sym_rwc_tlp,
+      sym_rwd_tlp,
+      modulus,
+      sym_modulus,
+      cap_bulk_ft,
+      cap_sym_ft,
+      cap_bulk_tlp,
+      cap_sym_tlp
     ),
     .Names = c(
-      "pi_tlp", "rwc_tlp", "rwd_tlp",
-      "sym_rwc_tlp", "sym_rwd_tlp",
-      "modulus", "sym_modulus",
-      "cap_bulk_ft", "cap_sym_ft",
-      "cap_bulk_tlp", "cap_sym_tlp"
+      "pi_tlp",
+      "rwc_tlp",
+      "rwd_tlp",
+      "sym_rwc_tlp",
+      "sym_rwd_tlp",
+      "modulus",
+      "sym_modulus",
+      "cap_bulk_ft",
+      "cap_sym_ft",
+      "cap_bulk_tlp",
+      "cap_sym_tlp"
     ),
     units = c(
-      "MPa", "%", "%",
-      "%", "%",
-      "MPa", "MPa",
-      "MPa^-1", "MPa^-1",
-      "MPa^-1", "MPa^-1"
+      "MPa",
+      "%",
+      "%",
+      "%",
+      "%",
+      "MPa",
+      "MPa",
+      "MPa^-1",
+      "MPa^-1",
+      "MPa^-1",
+      "MPa^-1"
     ),
     class = c("tlpEst", "list")
   )
@@ -215,9 +270,9 @@ estTLP.osmEst <- function(data, n_row_above = 4, ...) {
   # calculate PV parameters at turgor loss point
   rwd_tlp <- -((param_list$intercept) / (param_list$slope))
   rwc_tlp <- 100 - rwd_tlp
-  sym_rwd_tlp <- -((param_list$intercept_sym) / (param_list$slope_sym))
-  sym_rwc_tlp <- 100 - sym_rwd_tlp
-  pi_tlp <- -1 / (osm_slope * rwd_tlp + osm_intercept)
+  #sym_rwd_tlp <- -((param_list$intercept_sym) / (param_list$slope_sym))
+  #sym_rwc_tlp <- 100 - sym_rwd_tlp
+  #pi_tlp <- -1 / (osm_slope * rwd_tlp + osm_intercept)
   modulus <- osm_obj$psip_o / (rwd_tlp / 100)
   sym_modulus <- osm_obj$psip_o / (sym_rwd_tlp / 100)
 
@@ -229,25 +284,43 @@ estTLP.osmEst <- function(data, n_row_above = 4, ...) {
 
   outtlp <- structure(
     list(
-      pi_tlp, rwc_tlp, rwd_tlp,
-      sym_rwc_tlp, sym_rwd_tlp,
-      modulus, sym_modulus,
-      cap_bulk_ft, cap_sym_ft,
-      cap_bulk_tlp, cap_sym_tlp
+      pi_tlp,
+      rwc_tlp,
+      rwd_tlp,
+      sym_rwc_tlp,
+      sym_rwd_tlp,
+      modulus,
+      sym_modulus,
+      cap_bulk_ft,
+      cap_sym_ft,
+      cap_bulk_tlp,
+      cap_sym_tlp
     ),
     .Names = c(
-      "pi_tlp", "rwc_tlp", "rwd_tlp",
-      "sym_rwc_tlp", "sym_rwd_tlp",
-      "modulus", "sym_modulus",
-      "cap_bulk_ft", "cap_sym_ft",
-      "cap_bulk_tlp", "cap_sym_tlp"
+      "pi_tlp",
+      "rwc_tlp",
+      "rwd_tlp",
+      "sym_rwc_tlp",
+      "sym_rwd_tlp",
+      "modulus",
+      "sym_modulus",
+      "cap_bulk_ft",
+      "cap_sym_ft",
+      "cap_bulk_tlp",
+      "cap_sym_tlp"
     ),
     units = c(
-      "MPa", "%", "%",
-      "%", "%",
-      "MPa", "MPa",
-      "MPa^-1", "MPa^-1",
-      "MPa^-1", "MPa^-1"
+      "MPa",
+      "%",
+      "%",
+      "%",
+      "%",
+      "MPa",
+      "MPa",
+      "MPa^-1",
+      "MPa^-1",
+      "MPa^-1",
+      "MPa^-1"
     ),
     class = c("tlpEst", "list")
   )
@@ -275,8 +348,18 @@ summmary.tlpEst <- function(object, ...) {
   cat("Bulk modulus at TLP:  ", x$modulus |> round(3), units[6], "\n")
   cat("Symplastic modulus at TLP:  ", x$sym_modulus |> round(3), units[7], "\n")
   cat("Bulk capacitance at FT:  ", x$cap_bulk_ft |> round(3), units[8], "\n")
-  cat("Symplastic capacitance at FT: ", x$cap_sym_ft |> round(3), units[9], "\n")
+  cat(
+    "Symplastic capacitance at FT: ",
+    x$cap_sym_ft |> round(3),
+    units[9],
+    "\n"
+  )
   cat("Bulk Capacitance at TLP:  ", x$cap_bulk_tlp |> round(3), units[10], "\n")
-  cat("Symplastic capacitance at TLP:  ", x$cap_sym_tlp |> round(3), units[11], "\n")
+  cat(
+    "Symplastic capacitance at TLP:  ",
+    x$cap_sym_tlp |> round(3),
+    units[11],
+    "\n"
+  )
   cat("----------------------------------------------------\n")
 }

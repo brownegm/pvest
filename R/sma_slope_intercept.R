@@ -200,13 +200,13 @@ calc_param_tlp <- function(x) {
 
 #' Print method for the SMA model output
 
-#' @param x Object of class "sma_model"
+#' @param object Object of class "sma_model"
 #' @param ... Other parameters passed to print method
 #' @importFrom withr local_options
 #' @return Printed SMA model output
 #' @export print.sma_model
 
-print.sma_model <- function(x, ...) {
+summary.sma_model <- function(object, ...) {
   withr::local_options(list(digits = 4))
 
   cat("Standard Major Axis (SMA) model\n")
@@ -225,11 +225,11 @@ print.sma_model <- function(x, ...) {
 
 #' Print method for SMA model with two segments
 #' @export
-#' @param x An object of class `sma_model2`
+#' @param object An object of class `sma_model2`
 #' @param ... Additional arguments (not used)
 #' @return Prints the model summary
 
-summary.sma_model2 <- function(x, ...) {
+summary.sma_model2 <- function(object, ...) {
   cat("SMA Model with two segments\n")
   cat("Above TLP:\n")
   print(x$above)
