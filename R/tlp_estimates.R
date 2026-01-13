@@ -183,7 +183,7 @@ estTLP.data.frame <- function(
   #sym_rwc_tlp <- 100 - sym_rwd_tlp
   #pi_tlp <- -1 / (osm_slope * rwd_tlp + osm_intercept)
   modulus <- osm_obj$psip_o / (rwd_tlp / 100)
-  sym_modulus <- osm_obj$psip_o / (sym_rwd_tlp / 100)
+  sym_modulus <- osm_obj$psip_o / (osm_obj$srwd_tlp / 100)
 
   # estimate capacitance
   cap_bulk_ft <- param_list$slope_cap_ft
@@ -193,11 +193,11 @@ estTLP.data.frame <- function(
 
   outtlp <- structure(
     list(
-      pi_tlp,
+      #pi_tlp,
       rwc_tlp,
       rwd_tlp,
-      sym_rwc_tlp,
-      sym_rwd_tlp,
+      #sym_rwc_tlp,
+      #sym_rwd_tlp,
       modulus,
       sym_modulus,
       cap_bulk_ft,
@@ -206,11 +206,11 @@ estTLP.data.frame <- function(
       cap_sym_tlp
     ),
     .Names = c(
-      "pi_tlp",
+      #"pi_tlp",
       "rwc_tlp",
       "rwd_tlp",
-      "sym_rwc_tlp",
-      "sym_rwd_tlp",
+      #"sym_rwc_tlp",
+      #"sym_rwd_tlp",
       "modulus",
       "sym_modulus",
       "cap_bulk_ft",
@@ -274,7 +274,7 @@ estTLP.osmEst <- function(data, n_row_above = 4, ...) {
   #sym_rwc_tlp <- 100 - sym_rwd_tlp
   #pi_tlp <- -1 / (osm_slope * rwd_tlp + osm_intercept)
   modulus <- osm_obj$psip_o / (rwd_tlp / 100)
-  sym_modulus <- osm_obj$psip_o / (sym_rwd_tlp / 100)
+  sym_modulus <- osm_obj$psip_o / (osm_obj$srwc_tlp / 100)
 
   # estimate capacitance
   cap_bulk_ft <- param_list$slope_cap_ft
@@ -284,11 +284,11 @@ estTLP.osmEst <- function(data, n_row_above = 4, ...) {
 
   outtlp <- structure(
     list(
-      pi_tlp,
+      #pi_tlp,
       rwc_tlp,
       rwd_tlp,
-      sym_rwc_tlp,
-      sym_rwd_tlp,
+      #sym_rwc_tlp,
+      #sym_rwd_tlp,
       modulus,
       sym_modulus,
       cap_bulk_ft,
@@ -297,11 +297,11 @@ estTLP.osmEst <- function(data, n_row_above = 4, ...) {
       cap_sym_tlp
     ),
     .Names = c(
-      "pi_tlp",
+      #"pi_tlp",
       "rwc_tlp",
       "rwd_tlp",
-      "sym_rwc_tlp",
-      "sym_rwd_tlp",
+      #"sym_rwc_tlp",
+      #"sym_rwd_tlp",
       "modulus",
       "sym_modulus",
       "cap_bulk_ft",

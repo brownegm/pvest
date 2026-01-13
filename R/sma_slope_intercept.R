@@ -204,7 +204,7 @@ calc_param_tlp <- function(x) {
 #' @param ... Other parameters passed to print method
 #' @importFrom withr local_options
 #' @return Printed SMA model output
-#' @export print.sma_model
+#' @export summary.sma_model
 
 summary.sma_model <- function(object, ...) {
   withr::local_options(list(digits = 4))

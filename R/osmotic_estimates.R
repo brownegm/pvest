@@ -296,6 +296,7 @@ estOsmotic.rwcEst <- function(x, n_row = 4, silent = T, ...) {
       "symrwc" = srwc,
       "symrwd" = srwd,
       "srwc_tlp" = srwc_tlp,
+      "srwd_tlp" = 100 - srwc_tlp,
       "pi_tlp" = pi_tlp,
       "data" = dataUpd, # bring the data and model estimates along
       "est_rows" = n_row,
