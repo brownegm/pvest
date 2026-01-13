@@ -88,7 +88,7 @@ unique.ids <- pvsps %>%
 pv_dat_fil <- pv_dat %>%
   filter(paste0(toupper(species), leaf) %in% unique.ids)
 
-test <- pv_dat_fil %>% filter(species == "heca")
+test <- pv_dat_fil %>% filter(species == "alma")
 
 testPV <- estPV(
   test,
@@ -96,8 +96,7 @@ testPV <- estPV(
   leaf,
   fresh.weight,
   water.potential,
-  dry.weight,
-  method = "r2"
+  dry.weight
 )
 
 pv_params <- estPV(
