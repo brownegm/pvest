@@ -4,7 +4,7 @@
 \alias{estTLP}
 \alias{estTLP.data.frame}
 \alias{estTLP.osmEst}
-\alias{print.tlpEst}
+\alias{summmary.tlpEst}
 \title{Estimate pressure volume curve parameters at turgor loss}
 \usage{
 estTLP(data, ...)
@@ -13,7 +13,7 @@ estTLP(data, ...)
 
 \method{estTLP}{osmEst}(data, n_row_above = 4, ...)
 
-\method{print}{tlpEst}(x, ...)
+summmary.tlpEst(object, ...)
 }
 \arguments{
 \item{data}{A data frame}
@@ -28,7 +28,7 @@ estTLP(data, ...)
 
 \item{n_row_below}{Number of rows below turgor loss point guess for estimating SMA line parameters.}
 
-\item{x}{Object of class tlpEst}
+\item{object}{Object of class tlpEst}
 }
 \value{
 Returns an object of class \emph{tlpEst} with the following components:

@@ -3,14 +3,14 @@
 \name{estPV}
 \alias{estPV}
 \alias{estPV.default}
-\alias{print.estPV}
+\alias{summary.estPV}
 \title{Estimate all pressure volume curve parameters for all leaves}
 \usage{
 estPV(data, group, subgrp = NULL, fw, wp, dm, method = NULL)
 
 \method{estPV}{default}(data, group, subgrp = NULL, fw, wp, dm, method = NULL)
 
-\method{print}{estPV}(x, ...)
+\method{summary}{estPV}(object, ...)
 }
 \arguments{
 \item{data}{A data frame. Input data frame with the raw values}
@@ -27,7 +27,7 @@ estPV(data, group, subgrp = NULL, fw, wp, dm, method = NULL)
 
 \item{method}{Specifies which method to pick number of rows below TLP. Options include "r2", "rmse", "aicc". See \code{?optim_thres()} for more information. If NULL, defaults to 4 rows.}
 
-\item{x}{Object of classg \emph{estPV}}
+\item{object}{Object of class \emph{estPV}}
 
 \item{...}{Additional parameters passed to method}
 }
