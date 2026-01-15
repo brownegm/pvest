@@ -8,9 +8,9 @@
 \usage{
 estOsmotic(x, ...)
 
-\method{estOsmotic}{default}(x, wc.index, wp.index, n_row = 4, silent = T, ...)
+\method{estOsmotic}{default}(x, wc.index, wp.index, n_row = 5, silent = T, ...)
 
-\method{estOsmotic}{rwcEst}(x, n_row = 4, silent = T, ...)
+\method{estOsmotic}{rwcEst}(x, n_row = 5, silent = T, ...)
 }
 \arguments{
 \item{x}{An object of class "rwcEst"}

@@ -46,7 +46,7 @@ estOsmotic.default <- function(
   x,
   wc.index,
   wp.index,
-  n_row = 4,
+  n_row = 5,
   silent = T,
   ...
 ) {
@@ -174,7 +174,7 @@ estOsmotic.default <- function(
 #' @param n_row Number of rows above turgor loss
 #' @param silent Silence printing of head(data) and columns used
 #' @export
-estOsmotic.rwcEst <- function(x, n_row = 4, silent = T, ...) {
+estOsmotic.rwcEst <- function(x, n_row = 5, silent = T, ...) {
   # validate input
   if (!inherits(x, "rwcEst")) {
     stop("`x` must be an object of class 'rwcEst'.")
@@ -252,6 +252,7 @@ estOsmotic.rwcEst <- function(x, n_row = 4, silent = T, ...) {
     pi_sat = pi_sat,
     r_tlp = r_tlp_init
   )
+
   if (is.null(psip_mod)) {
     warning(
       "Non-linear pressure potential model failed to fit; ",

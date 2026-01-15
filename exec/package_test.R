@@ -88,7 +88,7 @@ unique.ids <- pvsps %>%
 pv_dat_fil <- pv_dat %>%
   filter(paste0(toupper(species), leaf) %in% unique.ids)
 
-test <- pv_dat_fil %>% filter(species == "alma")
+test <- pv_dat_fil |>  filter(species %in% c("alma", "alrh", "arba", "aruv", "baga","baga_mb","beoc", "casa", "cebe",  "ceoc", "codi", "cece",  "clis", "clla", "clli", "enca","enfa", "enfa_gj", "frdi", "hear", "heca","hesp", "laca" ))
 
 testPV <- estPV(
   test,
@@ -99,16 +99,16 @@ testPV <- estPV(
   dry.weight
 )
 
-pv_params <- estPV(
-  pv_dat_fil,
-  species,
-  leaf,
-  fresh.weight,
-  water.potential,
-  dry.weight
-)
-
-pv_params_df <- do.call(rbind, pv_params)
+# pv_params <- estPV(
+#   pv_dat_fil |> filter(!species == "acne"),
+#   species,
+#   leaf,
+#   fresh.weight,
+#   water.potential,
+#   dry.weight
+# )
+list_rbind(testPV) -> pv_params
+pv_params_df <- do.call(rbind, testPV)
 
 pv_params_leaf <- pv_params_df %>%
   select(ids:leaf, swm, swc, pio, af, pi_tlp:cap_sym_tlp) %>%
@@ -138,7 +138,7 @@ com_long <- full_join(
 
 com <- full_join(
   itvpv,
-  pv_params_leaf,
+  pv_params,
   by = join_by(unique_id == ids),
   suffix = c("", "_est")
 )
@@ -174,13 +174,13 @@ plot_comp <- function(data, x, y) {
 
 
 pcpv1 <- plot_comp(com, "swc_est", "swc") +
-  labs(title = "Saturated Water Content")
+  labs(title = "Sat. Water Content")
 
 pcpv2 <- plot_comp(com, "pio", "pi_o") +
-  labs(title = "Pi[o]")
+  labs(title = expression(pi[o]))
 
 pcpv3 <- plot_comp(com, "pi_tlp", "psi_tlp") +
-  labs(title = "Turgor Loss Point")
+  labs(title = expression(pi[tlp]))
 
 pcpv4 <- plot_comp(com, "af_est", "af") +
   labs(title = "Apoplastic Fraction")
@@ -211,16 +211,18 @@ pcpvall <- patchwork::wrap_plots(
   pcpv7,
   pcpv8,
   pcpv9,
-  ncol = 3
+  ncol = 3, 
+  axis_titles = "collect"
 )
 
 ggsave(
-  here("inst/extdata", "pv_params_comparison.png"),
+  here("inst/extdata", "pv_params_comparison_nonlin.png"),
   pcpvall,
   width = 14,
   height = 10,
   dpi = 500
 )
+
 # compute pv parameters
 pv_params <- estParams(
   pv_dat_fil,
