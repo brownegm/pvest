@@ -1,228 +1,3 @@
-## Test the package functionality with data from ITV-PV
-
-# Create space ------------------------------------------------------------
-
-library(tidyverse)
-library(here)
-library(pvest)
-
-# Functions ---------------------------------------------------------------
-#
-find_outlier <- function(x, y, index) {
-  temp <- merge(x, y)
-
-  var <- names(temp)[index]
-
-  temp_output <- temp %>%
-    filter({{ index }} <= lwr | {{ index }} >= upr)
-
-  return(temp_output)
-}
-#
-# # for simplicity in later prediction interval estimation this function creates a new df with just the variable
-# # to be worked on
-f <- function(data, var) {
-  new_preds <- data %>% # create df with just the variable of interest
-    select(any_of(var)) %>%
-    transmute(
-      var = seq(
-        min(data[, var], na.rm = T),
-        max(data[, var], na.rm = T),
-        length.out = nrow(data)
-      )
-    )
-
-  names(new_preds)[1] <- {
-    {
-      var
-    }
-  } # rename that column to match
-
-  return(new_preds)
-}
-
-rmse <- function(actual, predicted) {
-  return(sqrt(mean(se(actual, predicted))))
-}
-
-# Load data ---------------------------------------------------------------
-
-## individual mass and pv data
-pv_dat <- readxl::read_xlsx(here(
-  "inst",
-  "extdata",
-  "pvldcurvedata_10042022.xlsx"
-)) %>%
-  select(
-    !c(fresh.weight.saturated, water.potential.bar, bag.weight, sp.leaf)
-  ) %>%
-  as.data.frame()
-
-pvsps <- pv_dat %>% transmute(sp_indiv = paste0(toupper(species), leaf))
-
-## paper data summarized
-itvpv <- readr::read_csv(here("inst/extdata/pvdat.csv"))
-
-itvpv <- itvpv %>%
-  filter(!grepl(c("PLRA|ENFA|BAGA|QUAG|RAIN|CEBE"), spcode)) # filter these out for the moment they add complexity
-
-itvpv[itvpv$spcode == "CLLA", "individual"] <- as.character(c(1:6))
-itvpv[itvpv$spcode == "CLLA", "spcind"] <- paste0("CLLA", c(1:6))
-
-# match IDs of est output
-itvpv <- itvpv %>%
-  mutate(
-    unique_id = paste(tolower(spcode), individual, sep = "_"),
-    .before = swc
-  )
-
-# only the unique ids (SPECIES{1:X}) for the data
-unique.ids <- pvsps %>%
-  dplyr::filter(pvsps$sp_indiv %in% itvpv$spcind) %>%
-  pull(1) %>%
-  unique()
-
-# Compute parameter estimates ---------------------------------------------
-
-# filter the unique ids that aren't in the summarized df
-pv_dat_fil <- pv_dat %>%
-  filter(paste0(toupper(species), leaf) %in% unique.ids)
-
-test <- pv_dat_fil |>  filter(species %in% c("alma", "alrh", "arba", "aruv", "baga","baga_mb","beoc", "casa", "cebe",  "ceoc", "codi", "cece",  "clis", "clla", "clli", "enca","enfa", "enfa_gj", "frdi", "hear", "heca","hesp", "laca" ))
-
-testPV <- estPV(
-  test,
-  species,
-  leaf,
-  fresh.weight,
-  water.potential,
-  dry.weight
-)
-
-# pv_params <- estPV(
-#   pv_dat_fil |> filter(!species == "acne"),
-#   species,
-#   leaf,
-#   fresh.weight,
-#   water.potential,
-#   dry.weight
-# )
-list_rbind(testPV) -> pv_params
-pv_params_df <- do.call(rbind, testPV)
-
-pv_params_leaf <- pv_params_df %>%
-  select(ids:leaf, swm, swc, pio, af, pi_tlp:cap_sym_tlp) %>%
-  group_by(species, leaf) %>%
-  unique()
-
-pvleaf_long <- pv_params_leaf %>%
-  pivot_longer(
-    cols = c(swm:cap_sym_tlp),
-    names_to = "params_pvest",
-    values_to = "value"
-  )
-
-itvpv_long <- itvpv |>
-  pivot_longer(
-    cols = c(swc:cap_tlp_sym),
-    names_to = "params_itvpv",
-    values_to = "value"
-  )
-
-com_long <- full_join(
-  itvpv_long,
-  pvleaf_long,
-  by = join_by(unique_id == ids),
-  suffix = c("_itvpv", "_pvest")
-)
-
-com <- full_join(
-  itvpv,
-  pv_params,
-  by = join_by(unique_id == ids),
-  suffix = c("", "_est")
-)
-
-plot_comp <- function(data, x, y) {
-  p <- ggplot(data, aes_string(x = x, y = y)) +
-    geom_point(
-      pch = 21,
-      size = 5,
-      col = "black",
-      fill = "#4f8359",
-      alpha = 0.6
-    ) +
-    geom_abline(slope = 1, intercept = 0, lwd = 1.2) +
-    geom_smooth(
-      method = "lm",
-      col = "#4f8359",
-      lwd = 1.2,
-      linetype = "dashed",
-      se = T
-    ) +
-    labs(x = "Estimate", y = "Original") +
-    theme_classic(base_size = 24) +
-    ggpmisc::stat_poly_eq(
-      aes(label = paste(..eq.label.., ..rr.label.., sep = "~~")),
-      formula = y ~ x,
-      parse = TRUE,
-      size = 5
-    )
-
-  return(p)
-}
-
-
-pcpv1 <- plot_comp(com, "swc_est", "swc") +
-  labs(title = "Sat. Water Content")
-
-pcpv2 <- plot_comp(com, "pio", "pi_o") +
-  labs(title = expression(pi[o]))
-
-pcpv3 <- plot_comp(com, "pi_tlp", "psi_tlp") +
-  labs(title = expression(pi[tlp]))
-
-pcpv4 <- plot_comp(com, "af_est", "af") +
-  labs(title = "Apoplastic Fraction")
-
-pcpv5 <- plot_comp(com, "rwc_tlp_est", "rwc_tlp") +
-  labs(title = "RWC at turgor loss")
-
-pcpv6 <- plot_comp(com, "modulus_est", "modulus") +
-  labs(title = "Modulus")
-
-pcpv7 <- plot_comp(com, "cap_bulk_ft", "cap_ft") +
-  labs(title = "Capacitance at FT")
-
-pcpv8 <- plot_comp(com, "cap_bulk_tlp", "cap_tlp") +
-  labs(title = "Capacitance at TLP")
-
-pcpv9 <- plot_comp(com, "cap_sym_tlp", "cap_tlp_sym") +
-  labs(title = "Capacitance at TLP (sym)")
-
-# Combine plots
-pcpvall <- patchwork::wrap_plots(
-  pcpv1,
-  pcpv2,
-  pcpv3,
-  pcpv4,
-  pcpv5,
-  pcpv6,
-  pcpv7,
-  pcpv8,
-  pcpv9,
-  ncol = 3, 
-  axis_titles = "collect"
-)
-
-ggsave(
-  here("inst/extdata", "pv_params_comparison_nonlin.png"),
-  pcpvall,
-  width = 14,
-  height = 10,
-  dpi = 500
-)
-
 # compute pv parameters
 pv_params <- estParams(
   pv_dat_fil,
@@ -366,6 +141,33 @@ com_all_method <- right_join(
   suffix = c("", "_fourpts")
 ) %>%
   right_join(., pv_params_byleaf_)
+
+
+pv_params_leaf <- pv_params_df %>%
+  select(ids:leaf, swm, swc, pio, af, pi_tlp:cap_sym_tlp) %>%
+  group_by(species, leaf) %>%
+  unique()
+
+pvleaf_long <- pv_params_leaf %>%
+  pivot_longer(
+    cols = c(swm:cap_sym_tlp),
+    names_to = "params_pvest",
+    values_to = "value"
+  )
+
+itvpv_long <- itvpv |>
+  pivot_longer(
+    cols = c(swc:cap_tlp_sym),
+    names_to = "params_itvpv",
+    values_to = "value"
+  )
+
+com_long <- full_join(
+  itvpv_long,
+  pvleaf_long,
+  by = join_by(unique_id == ids),
+  suffix = c("_itvpv", "_pvest")
+)
 # Estimate OLS and pred intervals (BY LEAF) ----------------------------------
 
 # variables pred and manual
