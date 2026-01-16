@@ -10,4 +10,6 @@
 
     -   [ ] Then figure out how many of those have a certain amount of points above and below the estimated TLP
 
-    
+- [ ] plot the pressure potential vs RWC plot in plotPV 
+
+- [ ] units for inv psi plot in plotPV
