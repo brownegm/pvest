@@ -6,6 +6,8 @@
 
 -   [ ] maybe the data input in estOsmotic, should should be x?
 
--   [ ] combine the data sets
+-   [ ] For each variable count how many values are greater than X (RMSE?)
 
--   [ ] Test the correspondence between the manual and pvest pv curve estimates
+    -   [ ] Then figure out how many of those have a certain amount of points above and below the estimated TLP
+
+    

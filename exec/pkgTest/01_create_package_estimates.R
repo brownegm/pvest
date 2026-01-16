@@ -68,5 +68,6 @@ combined_manual_auto_estimates <- full_join(
 
 save(
   combined_manual_auto_estimates,
+  testPV,
   file = here("exec/pkgTest", "combined_pv_estimates.rda")
 )

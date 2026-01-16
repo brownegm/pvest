@@ -1,8 +1,10 @@
 # Plot dataframe with the combined manual and package estimates
 
 library(ggplot2)
+library(pvest)
 
-# Function to create comparisons of data
+# 1. Function to create comparisons of data ------------------------------
+
 plot_comp <- function(data, x, y) {
   p <- ggplot(data, aes_string(x = x, y = y)) +
     geom_point(
@@ -32,12 +34,12 @@ plot_comp <- function(data, x, y) {
   return(p)
 }
 
+# 2. Produce plots for each pressure volume curve parameter ----------------
+
 # load combined data and package estimates
 load(here("exec/pkgTest", "combined_pv_estimates.rda"))
 
-# Produce plots for each pressure volume curve parameter
-
-save = FALSE
+save = FALSE # should the plots be save as png
 
 com <- combined_manual_auto_estimates # for simplicity
 
@@ -92,3 +94,11 @@ if (save == FALSE) {
     dpi = 500
   )
 }
+
+# 3. Create plots of PV curve data ---------------------------------------
+
+pdf(file = here("exec/pkgTest", "hofler_diagrams.pdf"))
+
+pvest::plotPV(testPV)
+
+dev.off()
