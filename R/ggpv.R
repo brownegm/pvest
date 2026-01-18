@@ -11,8 +11,6 @@
 #' 
 #' @export
 
-## Create ggproto object
-
 plotPV <- function(obj, ...) {
   pvbp <- lapply(seq_along(obj), \(x) attributes(obj[[x]])$breakpoint)
 
@@ -69,8 +67,27 @@ plotPV <- function(obj, ...) {
         x = "Relative Water Deficit (%)",
         title = "Turgor Loss Point"
       )
+    
+    result_summary <- tibble(
+      x = 20, 
+      y = 1,
+      text = paste("RWCtlp = ", unique(obj[[i]]$srwc_tlp) |> round(2), "%")
+    )
+    
+    psiprwc <- ggplot() +
+      ggplot2::geom_point(data = obj[[i]], aes(x = symrwd, y = prespot), size = 4)+
+      ggplot2::geom_text(data = result_summary, 
+                         aes(x, y, label = text), inherit.aes = FALSE)+
+      ggplot2::geom_vline(xintercept = 100-unique(obj[[i]]$srwc_tlp, linewidth = 2),
+                          color = "forestgreen") +
+      ggplot2::theme_classic(base_size = 18) +
+      ggplot2::labs(
+        y = expression(paste(Psi["p"], "(MPa)")),
+        x = "Symplastic Relative Water Deficit (%)",
+        title = "Inflection Detection"
+      )
 
-    pvplot <- psiwater / invpsi_rwc
+    pvplot <- psiwater / invpsi_rwc / psiprwc
 
     pvp_list[[i]] <- pvplot
   }

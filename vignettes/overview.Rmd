@@ -50,7 +50,7 @@ The estimation of parameters relies on the standard major axis (SMA) regression 
 # Estimated parameters {#tbl-params}
 
 | Symbol | Formula | Units | Definition |
-|-----------------|-----------------|-----------------|-----------------------|
+|-----------------|-----------------|-----------------|---------------------|
 | SWC | $SMA_{intercept}$ | $g*g-1$ | Saturated water content |
 | RWD | $100-RWC$ | \% | Relative water deficit |
 | RWC | $\frac{Water~Mass}{SWC}$ | \% | Relative water content |
@@ -83,14 +83,17 @@ names(pvest::quag)
 ```
 
 ```{r test-pv-estimate}
-default_df <- pvest::quag |>
+pv_observations <- pvest::quag |>
   pvest::estPV(species,
         subgrp = leaf, 
         fw = fresh.weight, 
         water.potential,
-        dry.weight) |> 
+        dry.weight) 
+
+pv_obs_df <- pv_observations |> 
   purrr::list_rbind()
 
+pv_obs_df
 ```
 
 Note that there is a print method for the output object. The output will produce a summary of your data for each group and subgroup. To see the values of each curve as a data.frame, you can select from indices of the output which is structurally a list of data frames.
@@ -110,4 +113,10 @@ sp_default_summary_tab <- default_df|>
   gt::tab_options(table.width = px(200))
 
 sp_default_summary_tab
+```
+
+## Plotting PV curves
+
+```{r}
+pvest::plotPV(pv_observations[4])
 ```
