@@ -1,0 +1,102 @@
+---
+title: "endtoend_test_retrieval"
+author: "mgb"
+date: "`r Sys.Date()`"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Testing
+
+To ensure that the retrieval function is solving for the correct values, we need to test that we get the same values of VOD and soil moisture that correspond with known predicted brightness temperatures.
+
+To do this, we first take a known/chosen VOD and soil moisture value and estimate a dielectric using the mironov dielectric model.
+
+```{r}
+source("est_mg_vec.R")
+# create sim values of vod and soil moisture 
+# test values 
+vod = 0.80
+soil_m = 0.20
+
+# estimate epsilon for the above soil_m 
+
+##EPSILON##
+# first, create vectors to hold the epsilon values calculated from mironov
+eps_real = 0*soil_m; eps_im = 0*soil_m
+
+# for each index of epsilon determine the real and imaginary component of 
+# epsilon
+for (i in 1:length(eps_real)){
+  
+  eps_i = mironov(1.4e9, soil_m, 0.13)
+  eps_real[i] = eps_i[1]
+  eps_im[i] = eps_i[2]
+  
+}
+
+# epsilon is a complex number with real and imaginary components
+eps = complex(real = eps_real, imaginary = eps_im)
+
+eps
+```
+
+Then, calculate reflectivities for each polarization using the dielectric.
+
+```{r}
+# theta is converted to radians then cos(theta) and sin2 theta are calculated
+theta = 40*pi/180
+mycostheta = cos(theta)
+mysin2theta = sin(theta)^2
+
+# calculate fresnel h and v polarization reflectivity
+fH = abs((mycostheta - sqrt(eps - mysin2theta)) / (mycostheta + sqrt(eps - mysin2theta)))^2
+fV = abs((eps*mycostheta - sqrt(eps - mysin2theta)) / (eps*mycostheta + sqrt(eps - mysin2theta)))^2
+
+fH
+fV
+```
+
+Then, take gamma (calculated using the test VOD value), roughness correction, omega, and surface temperature and input into the tau-omega model to estimate the H- and V-pol brightness temperatures.
+
+```{r}
+# get simulated brightness temps for h and v 
+gamma = exp(-1*vod / mycostheta) # calculate gamma
+omega = 0.05 # omega from tau-omega
+roughness = 0.13 # estimate of surface roughness
+rhfac =  exp(-roughness*mycostheta^2) 
+
+pred_T_H = tau_omega(r = fH,
+                     rhfac = rhfac,
+                     gamma = gamma,
+                     T = 26+274.15,
+                     omega = omega)
+
+# predicted v pol brightness temperature
+pred_T_V = tau_omega(r = fV,
+                     rhfac = rhfac,
+                     gamma = gamma,
+                     T = 26+274.15,
+                     omega = omega)
+
+print(c(pred_T_H, pred_T_V))
+
+```
+
+Once we have a reference brightness temperature for each polarization from a known soil moisture and VOD value, we want to make sure that the retrieval function estimates the same soil moisture and VOD from the predicted brightness temperatures and same other inputs.
+
+```{r}
+
+output <- get_sm_vod(smc = seq(0.01, 0.3, by=0.001), #test range soil moisture
+                     vod = seq(0, 2, by=0.001), # test range VOD
+                     TbH = pred_T_H, TbV = pred_T_V, # expected brightness temps from above
+                     T=26+274.15) # physical temperature I used above
+
+output
+
+```
+
+We expect that soil moisture and VOD should be `r soil_m` and `r vod`, respectively. After running the known brightness temperatures, we get `r output$soil_moisture` and `r output$vod`.

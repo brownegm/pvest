@@ -22,8 +22,8 @@ test_that("Check that the output makes sense", {
   expect_equal(length(rwc_estimate$rwd), nrow(data))
   expect_equal(rwc_estimate$swc, 3.4986)
   expect_equal(rwc_estimate$swm, 3.4986)
-  
-  expect_equal(round(rwc_estimate$rwc[1],4), 98.0392)
+
+  expect_equal(round(rwc_estimate$rwc[1], 4), 98.0392)
   expect_equal(rwc_estimate$rwd[1], rwc_estimate$rwc[10])
 
   # check that the rwc values are increasing
@@ -55,8 +55,11 @@ test_that("Check that the errors work", {
   ))
 
   data_wrong_dm <- data
-  data_wrong_dm[c(3:5), 3] <- c(0.1,0.2,0.3) #create nonsense dry mass values
-  
-  expect_error(estsatwater(data_wrong_dm[, 1], data_wrong_dm[, 2], data_wrong_dm[, 3]))
-  
+  data_wrong_dm[c(3:5), 3] <- c(0.1, 0.2, 0.3) #create nonsense dry mass values
+
+  expect_error(estsatwater(
+    data_wrong_dm[, 1],
+    data_wrong_dm[, 2],
+    data_wrong_dm[, 3]
+  ))
 })

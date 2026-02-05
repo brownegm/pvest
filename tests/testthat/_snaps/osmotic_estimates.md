@@ -14,13 +14,13 @@
 # Check that the errors work
 
     Code
-      pvest::estOsmotic(data = test_df, wc.index = "rwd", wp.index = "psi", silent = T)
+      pvest::estOsmotic(data = test_df, wc.index = "rwc", wp.index = "psi", silent = T)
     Output
       Osmotic and pressure potential estimates: 
       -----------------------------------------------
-      Osmotic potential at full turgor: 0.33 MPa 
-      Pressure potential at full turgor: -0.33 MPa 
-      Apoplastic fraction: 98.69 % 
+      Osmotic potential at full turgor: 0 MPa 
+      Pressure potential at full turgor: 0 MPa 
+      Apoplastic fraction: 1.31 % 
       Number of hydration states used: 4 
       -----------------------------------------------
 

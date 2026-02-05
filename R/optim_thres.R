@@ -137,21 +137,6 @@ apply_optim <- function(data, input_cols, method=NULL) {
 
 
 
-#' Print method for SMA model with two segments 
-#' @export
-#' @param x An object of class `sma_model2`
-#' @param ... Additional arguments (not used)
-#' @return Prints the model summary
-
-print.sma_model2 <- function(x, ...) {
-  cat("SMA Model with two segments\n")
-  cat("Above TLP:\n")
-  print(x$above)
-  cat("\nBelow TLP:\n")
-  print(x$below)
-  cat("\nMethod used:", x$method, "\n")
-  cat("Performance metric:", x$pmetric, "\n")
-}
 
 # maybe do this later
 # #   } else if (method == "pio") {

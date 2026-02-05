@@ -6,14 +6,14 @@
 \alias{estOsmotic.rwcEst}
 \title{Osmotic and pressure parameter estimation}
 \usage{
-estOsmotic(data, ...)
+estOsmotic(x, ...)
 
-\method{estOsmotic}{default}(data, wc.index, wp.index, n_row = 4, silent = T, ...)
+\method{estOsmotic}{default}(x, wc.index, wp.index, n_row = 5, silent = T, ...)
 
-\method{estOsmotic}{rwcEst}(data, n_row = 4, silent = T, ...)
+\method{estOsmotic}{rwcEst}(x, n_row = 5, silent = T, ...)
 }
 \arguments{
-\item{data}{An object of class "rwcEst"}
+\item{x}{An object of class "rwcEst"}
 
 \item{...}{Additional parameters passed to method (unused)}
 
