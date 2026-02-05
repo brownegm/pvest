@@ -7,7 +7,6 @@
 #' 
 #' @importFrom ggplot2 ggplot ggproto Stat geom_point geom_line aes
 #' @importFrom patchwork plot_layout
-# @importFrom purrr map
 #' 
 #' @export
 

@@ -542,7 +542,7 @@ summary.osmEst <- function(object, ...) {
 #'
 #' @returns Hofler diagram of osmotic elements
 #' @export
-#'
+#' @importFrom ggplot2 ggplot theme_classic
 autoplot.osmEst <- function(
   object,
   xlab = "100-RWC",
@@ -571,13 +571,13 @@ autoplot.osmEst <- function(
 
   #tlp <- data.frame(r_tlp = object$srwc_tlp, pi_tlp = object$pi_tlp)
 
-  pv <- ggplot2::ggplot(pData, aes(x = rwd, y = mpa, color = variable)) +
-    geom_line(lwd = lwd, lty = lty) +
+  pv <- ggplot2::ggplot(pData, ggplot2::aes(x = rwd, y = mpa, color = variable)) +
+    ggplot2::geom_line(lwd = lwd, lty = lty) +
     #geom_point(data = tlp, aes(x =100-r_tlp, y = pi_tlp), color = "brown", shape = 8)+
-    theme_classic() +
-    labs(x = xlab, y = ylab, color = "Variable", title = main) +
-    scale_color_discrete(labels = legendNames) +
-    aes::theme_base(panel_border_color = "grey50")
+    ggplot2::theme_classic() +
+    ggplot2::labs(x = xlab, y = ylab, color = "Variable", title = main) +
+    ggplot2::scale_color_discrete(labels = legendNames) +
+    ggplot2::theme_classic()
 
   return(pv)
 }
