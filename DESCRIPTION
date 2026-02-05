@@ -18,10 +18,11 @@ Imports:
     tidyr, 
     withr
 Depends: 
-    R (>= 2.10)
+    R (>= 4.2)
 Suggests: 
     knitr,
     rmarkdown,
-    testthat (>= 3.0.0)
+    testthat (>= 3.0.0), 
+    ggplot2
 VignetteBuilder: knitr
 Config/testthat/edition: 3
