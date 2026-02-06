@@ -2,7 +2,7 @@
 % Please edit documentation in R/sma_slope_intercept.R
 \name{summary.sma_model}
 \alias{summary.sma_model}
-\title{Print method for the SMA model output}
+\title{Summary method for the SMA model output}
 \usage{
 \method{summary}{sma_model}(object, ...)
 }
@@ -15,5 +15,5 @@
 Printed SMA model output
 }
 \description{
-Print method for the SMA model output
+Summary method for the SMA model output
 }

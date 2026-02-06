@@ -127,7 +127,14 @@ sma_model.osm_input <- function(x, y = NULL) {
   invisible(model)
 }
 
-#' @inheritParams sma_model
+#' Two Standard Major Axis Fits 
+#' @param dfs List of dataframe for above and below turgor loss 
+#' @param wp String indicating water potential index
+#' @param lw String indicating leaf water content measurement
+#' @param method Method of determining where to split data
+#' @param pmetric Significance metric usually pvalues
+#' @rdname sma_model2
+#' @details See `?sma_model` for more information on how the SMA models are fit.
 #' @export
 sma_model2 <- function(dfs, wp, lw, method = "default", pmetric = NULL) {
   above <- dfs$above
@@ -198,7 +205,7 @@ calc_param_tlp <- function(x) {
   invisible(params)
 }
 
-#' Print method for the SMA model output
+#' Summary method for the SMA model output
 
 #' @param object Object of class "sma_model"
 #' @param ... Other parameters passed to print method
@@ -212,18 +219,18 @@ summary.sma_model <- function(object, ...) {
   cat("Standard Major Axis (SMA) model\n")
   cat("-------------------------------")
   cat("\nCall:\n")
-  print(x$call)
+  print(object$call)
   cat("\nCoefficients:\n")
-  cat("Slope:     ", x$slope, "\n")
-  cat("Intercept: ", x$intercept, "\n")
+  cat("Slope:     ", object$slope, "\n")
+  cat("Intercept: ", object$intercept, "\n")
   cat("\nModel Fit Metrics:\n")
-  cat("Residual Standard Error (RMSE):", attr(x, "rmse"), "\n")
-  cat("R-squared:                     ", attr(x, "r_squared"), "\n")
-  cat("AICc:                          ", attr(x, "aicc"), "\n")
+  cat("Residual Standard Error (RMSE):", attr(object, "rmse"), "\n")
+  cat("R-squared:                     ", attr(object, "r_squared"), "\n")
+  cat("AICc:                          ", attr(object, "aicc"), "\n")
 }
 
 
-#' Print method for SMA model with two segments
+#' Summary method for SMA model with two segments
 #' @export
 #' @param object An object of class `sma_model2`
 #' @param ... Additional arguments (not used)
@@ -232,12 +239,13 @@ summary.sma_model <- function(object, ...) {
 summary.sma_model2 <- function(object, ...) {
   cat("SMA Model with two segments\n")
   cat("Above TLP:\n")
-  print(x$above)
+  print(object$above)
   cat("\nBelow TLP:\n")
-  print(x$below)
-  cat("\nMethod used:", x$method, "\n")
-  cat("Performance metric:", x$pmetric, "\n")
+  print(object$below)
+  cat("\nMethod used:",object$method, "\n")
+  cat("Performance metric:",object$pmetric, "\n")
 }
+
 #' Plot method for the SMA model output
 #'@param ... Other parameters passed to print and plot methods
 #'@rdname sma_model

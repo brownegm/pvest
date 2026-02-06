@@ -1,19 +1,18 @@
 #' Stat function for plotting pv curve on data
 
 #' @param obj object of class estPV
-#' @param ... additional arguments not used
 #' 
 #' @return A list of patchwork plots (length = number of species) of water potential and water content relationships
 #' 
-#' @importFrom ggplot2 ggplot ggproto Stat geom_point geom_line aes
+#' @importFrom ggplot2 ggplot geom_point geom_line aes geom_abline expand_limits theme_classic labs geom_vline geom_text
 #' @importFrom patchwork plot_layout
 #' 
 #' @export
 
-plotPV <- function(obj, ...) {
+plotPV <- function(obj) {
   pvbp <- lapply(seq_along(obj), \(x) attributes(obj[[x]])$breakpoint)
 
-  splitpv <- pvest:::split_all_dfs(obj, pvbp)
+  splitpv <- pvest::split_all_dfs(obj, pvbp)
   # Fit models using your function
   fits <- lapply(
     splitpv,
@@ -29,7 +28,7 @@ plotPV <- function(obj, ...) {
     psiwater <- ggplot() +
       ggplot2::geom_point(
         data = obj[[i]],
-        aes(x = fresh.weight, y = water.potential),
+        aes(x = .data[["fresh.weight"]], y = .data[["water.potential"]]),
         size = 4
       ) +
       ggplot2::geom_abline(
@@ -53,7 +52,7 @@ plotPV <- function(obj, ...) {
       )
 
     invpsi_rwc <- ggplot() +
-      ggplot2::geom_point(data = obj[[i]], aes(x = rwd, y = invpsi), size = 4) +
+      ggplot2::geom_point(data = obj[[i]], aes(x = .data[["rwd"]], y = .data[["invpsi"]]), size = 4) +
       ggplot2::geom_abline(
         slope = fits_tlp[[i]]$below$slope,
         intercept = fits_tlp[[i]]$below$intercept,
@@ -74,9 +73,9 @@ plotPV <- function(obj, ...) {
     )
     
     psiprwc <- ggplot() +
-      ggplot2::geom_point(data = obj[[i]], aes(x = symrwd, y = prespot), size = 4)+
+      ggplot2::geom_point(data = obj[[i]], aes(x = .data[["symrwd"]], y = .data[["prespot"]]), size = 4)+
       ggplot2::geom_text(data = result_summary, 
-                         aes(x, y, label = text), inherit.aes = FALSE)+
+                         aes(.data[['x']],.data[['y']], label = .data[['text']]), inherit.aes = FALSE)+
       ggplot2::geom_vline(xintercept = 100-unique(obj[[i]]$srwc_tlp, linewidth = 2),
                           color = "forestgreen") +
       ggplot2::theme_classic(base_size = 18) +
@@ -90,27 +89,27 @@ plotPV <- function(obj, ...) {
 
     pvp_list[[i]] <- pvplot
   }
-  #return(pvplot)
+  
   return(pvp_list)
 }
 
 
-#' Draw line segments on plots
-#' 
-#' @param fit A fit object from a object of class PVest
-#' @param x_range Range of independent variable
-#' @param color Line color
-#' @param ... Additional parameters passed to geom_segment
-#' 
-#' @return Segments for the segmented regression 
-#' @export 
-
-drawSegments <- function(fit, x_range, color = "black", ...) {
-  data.frame(
-    x = x_range[1],
-    xend = x_range[2],
-    y = fit$slope * x_range[1] + fit$intercept,
-    yend = fit$slope * x_range[2] + fit$intercept
-  ) %>%
-    ggplot2::geom_segment(aes(x = x, y = y, xend = xend, yend = yend), color = color, ...)
-}
+# #' Draw line segments on plots
+# #' 
+# #' @param fit A fit object from a object of class PVest
+# #' @param x_range Range of independent variable
+# #' @param color Line color
+# #' @param ... Additional parameters passed to geom_segment
+# #' 
+# #' @return Segments for the segmented regression 
+# #' @export 
+# 
+# drawSegments <- function(fit, x_range, color = "black", ...) {
+#   data.frame(
+#     x = x_range[1],
+#     xend = x_range[2],
+#     y = fit$slope * x_range[1] + fit$intercept,
+#     yend = fit$slope * x_range[2] + fit$intercept
+#   ) %>%
+#     ggplot2::geom_segment(aes(x = x, y = y, xend = xend, yend = yend), color = color, ...)
+# }

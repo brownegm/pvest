@@ -22,6 +22,7 @@ split_df <- function(df, split_vector) {
 #' @param df_list A list of data frames to be split.
 #' @param split_vectors A list of vectors indicating the number of rows to take from the head and tail of each data frame.
 #' @return A list of lists, where each inner list contains the split data frames.
+#' @export
 split_all_dfs<- function(df_list, split_vectors) {
   mapply(split_df, df_list, split_vectors, SIMPLIFY = FALSE)
 }

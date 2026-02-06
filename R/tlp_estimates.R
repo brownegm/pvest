@@ -334,30 +334,30 @@ estTLP.osmEst <- function(data, n_row_above = 4, ...) {
 #' @param ... Additional parameters passed to method
 #' @rdname estTLP
 #' @export
-summmary.tlpEst <- function(object, ...) {
+summary.tlpEst <- function(object, ...) {
   # get units
-  units <- attr(x, "units")
+  units <- attr(object, "units")
 
   cat("Estimated PV parameters at turgor loss point (TLP):\n")
   cat("----------------------------------------------------\n")
-  cat("Osmotic potential at TLP:  ", x$pi_tlp |> round(3), units[1], "\n")
-  cat("Bulk RWC at TLP:  ", x$rwc_tlp |> round(3), units[2], "\n")
-  cat("Bulk RWD at TLP:  ", x$rwd_tlp |> round(3), units[3], "\n")
-  cat("Symplastic RWC at TLP:  ", x$sym_rwc_tlp |> round(3), units[4], "\n")
-  cat("Symplastic RWD at TLP:  ", x$sym_rwd_tlp |> round(3), units[5], "\n")
-  cat("Bulk modulus at TLP:  ", x$modulus |> round(3), units[6], "\n")
-  cat("Symplastic modulus at TLP:  ", x$sym_modulus |> round(3), units[7], "\n")
-  cat("Bulk capacitance at FT:  ", x$cap_bulk_ft |> round(3), units[8], "\n")
+  cat("Osmotic potential at TLP:  ", object$pi_tlp |> round(3), units[1], "\n")
+  cat("Bulk RWC at TLP:  ", object$rwc_tlp |> round(3), units[2], "\n")
+  cat("Bulk RWD at TLP:  ", object$rwd_tlp |> round(3), units[3], "\n")
+  cat("Symplastic RWC at TLP:  ", object$sym_rwc_tlp |> round(3), units[4], "\n")
+  cat("Symplastic RWD at TLP:  ", object$sym_rwd_tlp |> round(3), units[5], "\n")
+  cat("Bulk modulus at TLP:  ", object$modulus |> round(3), units[6], "\n")
+  cat("Symplastic modulus at TLP:  ", object$sym_modulus |> round(3), units[7], "\n")
+  cat("Bulk capacitance at FT:  ", object$cap_bulk_ft |> round(3), units[8], "\n")
   cat(
     "Symplastic capacitance at FT: ",
-    x$cap_sym_ft |> round(3),
+    object$cap_sym_ft |> round(3),
     units[9],
     "\n"
   )
-  cat("Bulk Capacitance at TLP:  ", x$cap_bulk_tlp |> round(3), units[10], "\n")
+  cat("Bulk Capacitance at TLP:  ", object$cap_bulk_tlp |> round(3), units[10], "\n")
   cat(
     "Symplastic capacitance at TLP:  ",
-    x$cap_sym_tlp |> round(3),
+    object$cap_sym_tlp |> round(3),
     units[11],
     "\n"
   )

@@ -4,7 +4,7 @@
 \alias{estTLP}
 \alias{estTLP.data.frame}
 \alias{estTLP.osmEst}
-\alias{summmary.tlpEst}
+\alias{summary.tlpEst}
 \title{Estimate pressure volume curve parameters at turgor loss}
 \usage{
 estTLP(data, ...)
@@ -13,7 +13,7 @@ estTLP(data, ...)
 
 \method{estTLP}{osmEst}(data, n_row_above = 4, ...)
 
-summmary.tlpEst(object, ...)
+\method{summary}{tlpEst}(object, ...)
 }
 \arguments{
 \item{data}{A data frame}

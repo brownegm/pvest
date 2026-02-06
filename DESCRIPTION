@@ -16,13 +16,18 @@ Imports:
     cli, 
     utils, 
     tidyr, 
-    withr
+    withr, 
+    ggplot2, 
+    minpack.lm, 
+    patchwork
 Depends: 
     R (>= 4.2)
 Suggests: 
     knitr,
     rmarkdown,
     testthat (>= 3.0.0), 
-    ggplot2
+    here,
+    gt, 
+    purrr
 VignetteBuilder: knitr
 Config/testthat/edition: 3

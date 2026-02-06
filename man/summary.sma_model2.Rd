@@ -2,7 +2,7 @@
 % Please edit documentation in R/sma_slope_intercept.R
 \name{summary.sma_model2}
 \alias{summary.sma_model2}
-\title{Print method for SMA model with two segments}
+\title{Summary method for SMA model with two segments}
 \usage{
 \method{summary}{sma_model2}(object, ...)
 }
@@ -15,5 +15,5 @@
 Prints the model summary
 }
 \description{
-Print method for SMA model with two segments
+Summary method for SMA model with two segments
 }

@@ -2,13 +2,15 @@
 % Please edit documentation in R/osmotic_estimates.R
 \name{summary.osmEst}
 \alias{summary.osmEst}
-\title{Print method of osmEst class objects}
+\title{Summary method of osmEst class objects}
 \usage{
 \method{summary}{osmEst}(object, ...)
 }
 \arguments{
 \item{object}{Object of class osmEst}
+
+\item{...}{Other parameters passed to summary()}
 }
 \description{
-Print method of osmEst class objects
+Summary method of osmEst class objects
 }
