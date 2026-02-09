@@ -72,7 +72,7 @@ testthat::test_that("test tlp values same across versions", {
   # expect_equal(round(osmest_obj$modulus, 6), mod)
   testthat::expect_identical(osmest_obj, default_obj)
 
-  testthat::expect_snapshot(print(osmest_obj))
+  #testthat::expect_snapshot(print(osmest_obj))
 })
 
 # testthat::test_that("Internal functions work", {

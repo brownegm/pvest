@@ -274,7 +274,7 @@ estTLP.osmEst <- function(data, n_row_above = 4, ...) {
   #sym_rwc_tlp <- 100 - sym_rwd_tlp
   #pi_tlp <- -1 / (osm_slope * rwd_tlp + osm_intercept)
   modulus <- osm_obj$psip_o / (rwd_tlp / 100)
-  sym_modulus <- osm_obj$psip_o / (osm_obj$srwc_tlp / 100)
+  sym_modulus <- osm_obj$psip_o / (osm_obj$srwd_tlp / 100)
 
   # estimate capacitance
   cap_bulk_ft <- param_list$slope_cap_ft
