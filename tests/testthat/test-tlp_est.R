@@ -54,7 +54,7 @@ testthat::test_that("test tlp values same across versions", {
     wp.index = wp.index,
     wc.index = wc.index,
     n_row_below = n_row_below,
-    n_row_above = n_row_above
+    n_row_above = n_row_above,
   )
 
   # with the non linear updates these do not match the manual estimates
@@ -70,9 +70,9 @@ testthat::test_that("test tlp values same across versions", {
   # expect_equal(round(osmest_obj$pi_tlp, 6), tlp)
   # expect_equal(round(osmest_obj$rwc_tlp, 6), rwctlp)
   # expect_equal(round(osmest_obj$modulus, 6), mod)
-  expect_identical(osmest_obj, default_obj)
+  testthat::expect_identical(osmest_obj, default_obj)
 
-  expect_snapshot(print(osmest_obj))
+  testthat::expect_snapshot(print(osmest_obj))
 })
 
 # testthat::test_that("Internal functions work", {

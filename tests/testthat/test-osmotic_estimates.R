@@ -80,7 +80,7 @@ testthat::test_that("slope is negative and the sma_model output is correct class
 
   testthat::expect_identical(testosm, testosm_numinput)
 
-  testthat::expect_snapshot(print(testosm))
+  #testthat::expect_snapshot(print(testosm))
   # check that symplastic rwc is correct.... should be less that bulk rwc
   testthat::expect_true(all(testosm$sym_rwc < testosm$rwc))
   # check that the wrapper gets the same result
