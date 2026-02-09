@@ -50,8 +50,8 @@ testthat::test_that("slope is negative and the sma_model output is correct class
   mod <- test$sma_mod
 
   # check expected results
-  expect_equal(mod$intercept, 0.718842151)
-  expect_equal(mod$slope, -0.018776484)
+  testthat::expect_equal(mod$intercept, 0.718842151)
+  testthat::expect_equal(mod$slope, -0.018776484)
 
   # run full osmotic estimation
   wc.index <- "rwd"
@@ -71,27 +71,27 @@ testthat::test_that("slope is negative and the sma_model output is correct class
   )
 
   # check that the function throws an error if the input is not correct
-  expect_error(pvest::estOsmotic(
+  testthat::expect_error(pvest::estOsmotic(
     test_df,
     wc.index = "rwc",
     wp.index = 1,
     n_row = 5
   ))
 
-  expect_identical(testosm, testosm_numinput)
+  testthat::expect_identical(testosm, testosm_numinput)
 
-  expect_snapshot(print(testosm))
+  testthat::expect_snapshot(print(testosm))
   # check that symplastic rwc is correct.... should be less that bulk rwc
-  expect_true(all(testosm$sym_rwc < testosm$rwc))
+  testthat::expect_true(all(testosm$sym_rwc < testosm$rwc))
   # check that the wrapper gets the same result
-  expect_equal(testosm$pio, test$pio)
-  expect_equal(length(testosm$osmpot), nrow(test_df)) # check that the length is the same as input
+  testthat::expect_equal(testosm$pio, test$pio)
+  testthat::expect_equal(length(testosm$osmpot), nrow(test_df)) # check that the length is the same as input
   # check class attributes
-  expect_s3_class(test, "pioEst")
-  expect_s3_class(mod, "sma_model")
+  testthat::expect_s3_class(test, "pioEst")
+  testthat::expect_s3_class(mod, "sma_model")
 })
 
-test_that("nonlinear pressure potential fits with srwc below TLP", {
+testthat::test_that("nonlinear pressure potential fits with srwc below TLP", {
   psi <- c(
     -0.37,
     -0.883,
@@ -150,9 +150,9 @@ test_that("nonlinear pressure potential fits with srwc below TLP", {
     r_tlp = r_tlp_init
   )
 
-  expect_s3_class(psip_mod, "nls")
-  expect_true(psip_mod$convInfo$isConv)
-  expect_length(predict(psip_mod), nrow(test_df))
+  testthat::expect_s3_class(psip_mod, "nls")
+  testthat::expect_true(psip_mod$convInfo$isConv)
+  testthat::expect_length(predict(psip_mod), nrow(test_df))
 })
 
 testthat::test_that("compare the dataframe methods to the rwcEst method", {
@@ -180,17 +180,17 @@ testthat::test_that("compare the dataframe methods to the rwcEst method", {
     silent = T
   )
 
-  expect_identical(rwcObjEst, rwcDfEst)
+  testthat::expect_identical(rwcObjEst, rwcDfEst)
 })
 
-test_that("check that the input lengths are the same", {
+testthat::test_that("check that the input lengths are the same", {
   rwc <- seq(0.95, 0.6, length.out = 10)
   psi <- seq(0.95, 0.6, length.out = 4)
 
-  expect_error(pvest::estpio(rwc, psi))
+  testthat::expect_error(pvest::estpio(rwc, psi))
 })
 
-test_that("Check that the errors work", {
+testthat::test_that("Check that the errors work", {
   rwc <- seq(0.95, 0.6, length.out = 10)
   psi <- seq(0.95, 0.6, length.out = 10)
 
@@ -198,7 +198,7 @@ test_that("Check that the errors work", {
 
   # rename the columns
 
-  expect_error(pvest::estOsmotic(
+  testthat::expect_error(pvest::estOsmotic(
     data = test_df,
     wc.index = "rwc",
     wp.index = "fake_col_name",
