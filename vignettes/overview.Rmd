@@ -102,7 +102,7 @@ Note that there is a print method for the output object. The output will produce
 #| eval: false
 #| include: false
 
-sp_default_summary_tab <- default_df|>
+sp_default_summary_tab <- pv_obs_df|>
   dplyr::select(!c(ids:rwd,prespot,osmpot))|>
   dplyr::summarise(across(where(is.numeric),\(x) mean(x, na.rm = TRUE))) |>
   gt::gt()|>

@@ -29,7 +29,7 @@ itvpv <- itvpv |>
   mutate(spcind = tolower(spcind), spcode = tolower(spcode))
 
 # create vector for filtering of matching species observations
-unique.ids <- pv_dat_for_testing |>
+unique.ids <- pv_data_for_testing |>
   mutate(spcind = paste0(species, leaf)) |>
   dplyr::filter(spcind %in% itvpv$spcind) |>
   pull(spcind) |>

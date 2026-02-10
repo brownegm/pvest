@@ -41,7 +41,7 @@ load(here("exec/pkgTest", "combined_pv_estimates.rda"))
 
 save = FALSE # should the plots be save as png
 
-com <- combined_manual_auto_estimates # for simplicity
+com <- combined_manual_auto_estimates # for simplicity in naming
 
 pcpv1 <- plot_comp(com, "swc_est", "swc") +
   labs(title = "Sat. Water Content")
@@ -85,7 +85,7 @@ pcpvall <- patchwork::wrap_plots(
   axis_titles = "collect"
 )
 
-if (save == FALSE) {
+if (save == TRUE) {
   ggsave(
     here("inst/extdata", "pv_params_comparison_nonlin.png"),
     pcpvall,
@@ -97,7 +97,7 @@ if (save == FALSE) {
 
 # 3. Create plots of PV curve data ---------------------------------------
 
-pdf(file = here("exec/pkgTest", "hofler_diagrams.pdf"))
+pdf(file = here("exec/pkgTest", "hofler_diagrams.pdf"), width = 10, height = 12)
 
 pvest::plotPV(testPV)
 

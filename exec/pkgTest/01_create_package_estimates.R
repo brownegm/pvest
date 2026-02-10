@@ -57,12 +57,13 @@ testPV <- estPV(
 )
 
 # combine outputs into dataframe
-pv_params <- purrr::list_rbind(testPV)
+pv_params <- purrr::list_rbind(testPV) |> 
+  mutate(idsx = paste0(species, leaf))
 
 combined_manual_auto_estimates <- full_join(
   itvpv,
   pv_params,
-  by = join_by(spcind == ids),
+  by = join_by(spcind == idsx),
   suffix = c("", "_est")
 )
 
