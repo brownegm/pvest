@@ -225,7 +225,7 @@ testthat::test_that("calc_nonlin_psip returns NULL and warns on bad data", {
   testthat::expect_null(result)
 })
 
-testthat::test_that("calc_nonlin_psip with full=TRUE returns NULL on error (Bug A fix)", {
+testthat::test_that("calc_nonlin_psip with full=TRUE returns NULL on error", {
   bad_data <- data.frame(r = rep(0.5, 5), psip_linear = rep(0, 5), psi_w = rep(0, 5))
 
   testthat::expect_warning(
@@ -251,7 +251,8 @@ testthat::test_that("calc_nonlin_psip warning includes diagnostic details", {
   testthat::expect_match(msg, "observations", fixed = TRUE)
 })
 
-testthat::test_that("estOsmotic.default aborts clearly on NULL model (Bug B fix)", {
+testthat::test_that("estOsmotic.default aborts clearly on NULL model ", {
+  # temporarily mod function to make it behave differently within test (function returns NULL)
   local_mocked_bindings(calc_nonlin_psip = function(...) NULL)
 
   psi <- c(
@@ -271,8 +272,8 @@ testthat::test_that("estOsmotic.default aborts clearly on NULL model (Bug B fix)
   )
 })
 
-testthat::test_that("estOsmotic.rwcEst aborts clearly on NULL model (Bug C fix)", {
-  local_mocked_bindings(calc_nonlin_psip = function(...) NULL)
+testthat::test_that("estOsmotic.rwcEst aborts clearly on NULL model", {
+  local_mocked_bindings(calc_nonlin_psip = function(...) NULL) # function returns NULL
 
   quag1 <- pvest::quag |> dplyr::filter(leaf == 1)
   rwc_obj <- pvest::estRWC(
