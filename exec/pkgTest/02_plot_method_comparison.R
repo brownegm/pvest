@@ -39,7 +39,7 @@ plot_comp <- function(data, x, y) {
 # load combined data and package estimates
 load(here("exec/pkgTest", "combined_pv_estimates.rda"))
 
-save = FALSE # should the plots be save as png
+save = TRUE # should the plots be save as png
 
 com <- combined_manual_auto_estimates # for simplicity in naming
 
