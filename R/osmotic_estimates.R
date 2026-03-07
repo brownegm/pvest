@@ -216,7 +216,7 @@ estOsmotic.rwcEst <- function(x, n_row = 5, silent = T, ...) {
   stopifnot(n_row >= 1L, n_row < n)
 
   # ---- Tail slices used for pio ----------------------------------------
-  idx_tail <- (n - n_row + 1L):n
+  idx_tail <- (n - n_row + 1L):n # all values above and including tlp
   rwd_tail <- x$rwd[idx_tail]
   psi_tail <- rwcEstData$water.potential[idx_tail]
 
@@ -232,7 +232,7 @@ estOsmotic.rwcEst <- function(x, n_row = 5, silent = T, ...) {
 
   # pio estimate (osmotic potential at full turgor)
   pio <- estpio(rwd_tail, minus_inv_psi)
-  pi_sat <- pio$pio # osmotic potential at full turgor (π₀)
+  pi_sat <- pio$pio # osmotic potential at full turgor 
   psip_sat <- -pi_sat
 
   # symplastic water content, osmotic, and pressure potential
@@ -254,6 +254,7 @@ estOsmotic.rwcEst <- function(x, n_row = 5, silent = T, ...) {
   rtlp_fit <- sma_model(srwc[seq_len(fit_len)], psip_lin[seq_len(fit_len)])
   r_tlp_init <- -rtlp_fit$intercept / rtlp_fit$slope
 
+  # fit nonlinear model
   psip_mod <- calc_nonlin_psip(
     data = data.frame(r = srwc, psip_linear = psip_lin),
     pi_sat = pi_sat,
@@ -380,7 +381,7 @@ calc_symrwc <- \(rwc, sma_mod) {
   srwc_den <- 1 - af / 100
   srwc <- srwc_num / srwc_den
 
-  return(list(srwc = srwc, srwd = 1 - srwc, af = af))
+  return(list(srwc = srwc, srwd = 100 - srwc, af = af))
 }
 
 #' Osmotic potential at full turgor estimate

@@ -91,11 +91,13 @@ estPV.default <- function(
   n_groups <- length(raw_data_list_by_sp)
   est <- vector(mode = "list", length = n_groups)
 
+  # for each id perform the fitting of the pv curve
   for (id in seq_along(raw_data_list_by_sp)) {
     leaf_id <- raw_data_list_by_sp[[id]][["ids"]] |> unique()
     cli::cli_alert_info("Processing group {id}/{n_groups}: {leaf_id}")
 
-    est[id] <- list(tryCatch(
+    est[id] <- list(
+      tryCatch(
       {
         if (!is.null(method)) {
           opt <- apply_optim(
@@ -105,6 +107,7 @@ estPV.default <- function(
           )
 
           rows_above_below <- opt[[1]]
+          
         } else {
           above_count <- nrow(raw_data_list_by_sp[[id]]) - 3
           rows_above_below <- c(above_count, 4)
@@ -128,6 +131,7 @@ estPV.default <- function(
           data = rwc,
           n_row_above = rows_above_below[1]
         )
+        
         result <- do.call(
           cbind,
           list(
@@ -135,6 +139,7 @@ estPV.default <- function(
             tlp
           )
         )
+        
         attr(result, "breakpoint") <- rows_above_below
         result
       },
