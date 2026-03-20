@@ -165,7 +165,7 @@ estOsmotic.default <- function(
       "symrwc" = srwc * 100,
       "symrwd" = srwd * 100,
       "srwc_tlp" = srwc_tlp * 100,
-      "srwd_tlp" = 100 - srwc_tlp,
+      "srwd_tlp" = 100 * (1 - srwc_tlp),
       "pi_tlp" = pi_tlp,
       "data" = dataUpd, # bring the data and model estimates along
       "est_rows" = n_row,
@@ -308,7 +308,7 @@ estOsmotic.rwcEst <- function(x, n_row = 5, silent = T, ...) {
       "symrwc" = srwc * 100,
       "symrwd" = srwd * 100,
       "srwc_tlp" = srwc_tlp * 100,
-      "srwd_tlp" = 100 - srwc_tlp,
+      "srwd_tlp" = 100 * (1 - srwc_tlp),
       "pi_tlp" = pi_tlp,
       "data" = dataUpd, # bring the data and model estimates along
       "est_rows" = n_row,
