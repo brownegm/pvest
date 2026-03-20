@@ -172,16 +172,12 @@ estTLP.data.frame <- function(
     rwc_below = osm_obj$data$rwc[below_idx]
   )
 
-  # collect model parameters for below from osm object
-  osm_slope <- osm_obj$model$slope
-  osm_intercept <- osm_obj$model$intercept
-
   # calculate PV parameters at turgor loss point
   rwd_tlp <- -((param_list$intercept) / (param_list$slope))
   rwc_tlp <- 100 - rwd_tlp
-  #sym_rwd_tlp <- -((param_list$intercept_sym) / (param_list$slope_sym))
-  #sym_rwc_tlp <- 100 - sym_rwd_tlp
-  #pi_tlp <- -1 / (osm_slope * rwd_tlp + osm_intercept)
+  pi_tlp <- osm_obj$pi_tlp
+  sym_rwc_tlp <- osm_obj$srwc_tlp
+  sym_rwd_tlp <- osm_obj$srwd_tlp
   modulus <- osm_obj$psip_o / (rwd_tlp / 100)
   sym_modulus <- osm_obj$psip_o / (osm_obj$srwd_tlp / 100)
 
@@ -193,11 +189,11 @@ estTLP.data.frame <- function(
 
   outtlp <- structure(
     list(
-      #pi_tlp,
+      pi_tlp,
       rwc_tlp,
       rwd_tlp,
-      #sym_rwc_tlp,
-      #sym_rwd_tlp,
+      sym_rwc_tlp,
+      sym_rwd_tlp,
       modulus,
       sym_modulus,
       cap_bulk_ft,
@@ -206,11 +202,11 @@ estTLP.data.frame <- function(
       cap_sym_tlp
     ),
     .Names = c(
-      #"pi_tlp",
+      "pi_tlp",
       "rwc_tlp",
       "rwd_tlp",
-      #"sym_rwc_tlp",
-      #"sym_rwd_tlp",
+      "sym_rwc_tlp",
+      "sym_rwd_tlp",
       "modulus",
       "sym_modulus",
       "cap_bulk_ft",
@@ -263,16 +259,12 @@ estTLP.osmEst <- function(data, n_row_above = 4, ...) {
     rwc_below = osm_obj$data$rwc[below_idx]
   )
 
-  # collect model parameters for below from osm object
-  osm_slope <- osm_obj$model$slope
-  osm_intercept <- osm_obj$model$intercept
-
   # calculate PV parameters at turgor loss point
   rwd_tlp <- -((param_list$intercept) / (param_list$slope))
   rwc_tlp <- 100 - rwd_tlp
-  #sym_rwd_tlp <- -((param_list$intercept_sym) / (param_list$slope_sym))
-  #sym_rwc_tlp <- 100 - sym_rwd_tlp
-  #pi_tlp <- -1 / (osm_slope * rwd_tlp + osm_intercept)
+  pi_tlp <- osm_obj$pi_tlp
+  sym_rwc_tlp <- osm_obj$srwc_tlp
+  sym_rwd_tlp <- osm_obj$srwd_tlp
   modulus <- osm_obj$psip_o / (rwd_tlp / 100)
   sym_modulus <- osm_obj$psip_o / (osm_obj$srwd_tlp / 100)
 
@@ -284,11 +276,11 @@ estTLP.osmEst <- function(data, n_row_above = 4, ...) {
 
   outtlp <- structure(
     list(
-      #pi_tlp,
+      pi_tlp,
       rwc_tlp,
       rwd_tlp,
-      #sym_rwc_tlp,
-      #sym_rwd_tlp,
+      sym_rwc_tlp,
+      sym_rwd_tlp,
       modulus,
       sym_modulus,
       cap_bulk_ft,
@@ -297,11 +289,11 @@ estTLP.osmEst <- function(data, n_row_above = 4, ...) {
       cap_sym_tlp
     ),
     .Names = c(
-      #"pi_tlp",
+      "pi_tlp",
       "rwc_tlp",
       "rwd_tlp",
-      #"sym_rwc_tlp",
-      #"sym_rwd_tlp",
+      "sym_rwc_tlp",
+      "sym_rwd_tlp",
       "modulus",
       "sym_modulus",
       "cap_bulk_ft",
