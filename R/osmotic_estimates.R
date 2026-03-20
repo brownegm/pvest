@@ -284,7 +284,6 @@ estOsmotic.rwcEst <- function(x, n_row = 5, silent = T, ...) {
 
   dataUpd <- rwcEstData |>
     dplyr::mutate(
-      rwcEstData,
       invpsi = -1 / psi_vec,
       pio = pi_sat,
       psip_o = psip_sat,
