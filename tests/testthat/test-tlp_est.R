@@ -59,7 +59,7 @@ testthat::test_that("test tlp values same across versions", {
 
   # expected values updated after nonlinear model refactor (pi_tlp now from nonlinear model)
   testthat::expect_equal(round(default_obj$pi_tlp, 6), -2.883896)
-  testthat::expect_equal(round(default_obj$rwc_tlp, 6), 82.55729)
+  testthat::expect_equal(round(default_obj$rwc_tlp, 6), 82.557287)
   testthat::expect_equal(round(default_obj$modulus, 6), 7.975399)
 
   ## osmEst dispatch — should return identical result
@@ -67,7 +67,7 @@ testthat::test_that("test tlp values same across versions", {
   osmest_obj <- estTLP(osm_obj, n_row_above = n_row_above)
 
   testthat::expect_equal(round(osmest_obj$pi_tlp, 6), -2.883896)
-  testthat::expect_equal(round(osmest_obj$rwc_tlp, 6), 82.55729)
+  testthat::expect_equal(round(osmest_obj$rwc_tlp, 6), 82.557287)
   testthat::expect_equal(round(osmest_obj$modulus, 6), 7.975399)
   testthat::expect_identical(osmest_obj, default_obj)
 })
