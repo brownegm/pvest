@@ -92,11 +92,16 @@ estRWC <- function(data,
       "wp" = names(data)[wp.index],
       "dm" = names(data)[dm.index]
     )
-  } else{
+  } else {
     list("fw" = fw.index,
          "wp" = wp.index,
          "dm" = dm.index
          )
+  }
+
+  missing_cols <- setdiff(unlist(varnames), names(data))
+  if (length(missing_cols) > 0) {
+    cli::cli_abort("Column(s) not found in {.arg data}: {.val {missing_cols}}")
   }
 
   if (silent == FALSE) {
