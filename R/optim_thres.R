@@ -37,8 +37,8 @@ optim_thres <- function(data, fw, wp, dm, method = "rmse") {
     # Fit models using your function
     fit_above <- sma_model(x = data_above[[wp]], y = data_above$lw)
     fit_below <- sma_model(x = data_below[[wp]], y = data_below$lw)
-    fit_all <- structure(list(above = fit_above[["m"]], 
-                         below = fit_below[["m"]]),
+    fit_all <- structure(list(above = fit_above,
+                         below = fit_below),
                          method = method,
                          pmetric = NULL,
                          class = "sma_model2")
@@ -73,8 +73,8 @@ optim_thres <- function(data, fw, wp, dm, method = "rmse") {
   lowest <- objvals[[lowest_vec_idx]]
   
   # Get final point counts
-  above_lowest <- lowest[1]
-  below_lowest <- lowest[2]
+  above_lowest <- attr(lowest, "below_above")[1]
+  below_lowest <- attr(lowest, "below_above")[2]
   
   # Get final model
   mod <-  attr(lowest, "model")
