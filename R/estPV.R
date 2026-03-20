@@ -132,11 +132,12 @@ estPV.default <- function(
           n_row_above = rows_above_below[1]
         )
         
+        tlp_unique <- tlp[!names(tlp) %in% names(rwc$data)]
         result <- do.call(
           cbind,
           list(
             rwc$data,
-            tlp
+            tlp_unique
           )
         )
         
@@ -266,7 +267,7 @@ by_grp_sbgrp <- function(x, grp, sbgrp = NULL) {
 #' @export 
 summary.estPV <- function(object, ...) {
   estPV_obj <- object
-  units <- attr(estPV_obj, "units")[17:28]
+  units <- c("MPa", "%", "%", "%", "%", "MPa", "MPa", "MPa^-1", "MPa^-1", "MPa^-1", "MPa^-1")
 
   for (i in seq_along(estPV_obj)) {
     est <- estPV_obj[[i]]
