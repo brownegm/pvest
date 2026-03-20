@@ -32,16 +32,20 @@ plotPV <- function(obj) {
         size = 4
       ) +
       ggplot2::geom_abline(
+        mapping = aes(color = "Above TLP"),
         slope = fits[[i]]$above$slope,
         intercept = fits[[i]]$above$intercept,
-        color = "forestgreen",
         linewidth = 1.5
       ) +
       ggplot2::geom_abline(
+        mapping = aes(color = "Below TLP"),
         slope = fits[[i]]$below$slope,
         intercept = fits[[i]]$below$intercept,
-        color = "black",
         linewidth = 1.5
+      ) +
+      ggplot2::scale_color_manual(
+        name = "",
+        values = c("Above TLP" = "forestgreen", "Below TLP" = "black")
       ) +
       ggplot2::expand_limits(y = -0.1) +
       ggplot2::theme_classic(base_size = 18) +
@@ -54,10 +58,20 @@ plotPV <- function(obj) {
     invpsi_rwc <- ggplot() +
       ggplot2::geom_point(data = obj[[i]], aes(x = .data[["rwd"]], y = .data[["invpsi"]]), size = 4) +
       ggplot2::geom_abline(
+        mapping = aes(color = "Above TLP"),
+        slope = fits_tlp[[i]]$above$slope,
+        intercept = fits_tlp[[i]]$above$intercept,
+        linewidth = 1.5
+      ) +
+      ggplot2::geom_abline(
+        mapping = aes(color = "Below TLP"),
         slope = fits_tlp[[i]]$below$slope,
         intercept = fits_tlp[[i]]$below$intercept,
-        color = "black",
         linewidth = 1.5
+      ) +
+      ggplot2::scale_color_manual(
+        name = "",
+        values = c("Above TLP" = "forestgreen", "Below TLP" = "black")
       ) +
       ggplot2::theme_classic(base_size = 18) +
       ggplot2::labs(
@@ -65,18 +79,17 @@ plotPV <- function(obj) {
         x = "Relative Water Deficit (%)",
         title = "Turgor Loss Point"
       )
-    
-    result_summary <- tibble(
-      x = 20, 
-      y = 1,
-      text = paste("RWCtlp = ", unique(obj[[i]]$srwc_tlp) |> round(2), "%")
-    )
-    
+
     psiprwc <- ggplot() +
-      ggplot2::geom_point(data = obj[[i]], aes(x = .data[["symrwd"]], y = .data[["prespot"]]), size = 4)+
-      ggplot2::geom_text(data = result_summary, 
-                         aes(.data[['x']],.data[['y']], label = .data[['text']]), inherit.aes = FALSE)+
-      ggplot2::geom_vline(xintercept = 100-unique(obj[[i]]$srwc_tlp, linewidth = 2),
+      ggplot2::geom_point(data = obj[[i]], aes(x = .data[["symrwd"]], y = .data[["prespot"]]), size = 4) +
+      ggplot2::annotate(
+        "text",
+        x = min(obj[[i]]$symrwd, na.rm = TRUE),
+        y = max(obj[[i]]$prespot, na.rm = TRUE),
+        label = paste("RWCtlp =", unique(obj[[i]]$srwc_tlp) |> round(2), "%"),
+        hjust = 0, vjust = 1, size = 5
+      ) +
+      ggplot2::geom_vline(xintercept = 100 - unique(obj[[i]]$srwc_tlp), linewidth = 2,
                           color = "forestgreen") +
       ggplot2::theme_classic(base_size = 18) +
       ggplot2::labs(
