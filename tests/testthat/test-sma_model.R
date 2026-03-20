@@ -23,7 +23,7 @@ test_that("Check input values for NAs", {
 
   expect_error(
     calc_param_tlp(x = tinput),
-    "calc_param_tlp:Missing values found in input data. Ensure that there are no missing values."
+    "Missing values found in input data. Ensure that there are no missing values."
   )
 
   #expect_snapshot(print(sma_model(x,z)))
