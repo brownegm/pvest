@@ -536,13 +536,28 @@ calc_nonlin_psip <- function(data, pi_sat, r_tlp, psi_w = NULL, full = FALSE) {
 #' @param x An object of the class "pioEst"
 #' @param ... Other parameters passed to cat
 #'
-#' @returns Printed SMA model output
+#' @returns The object, invisibly
 #' @export print.pioEst
 
 print.pioEst <- function(x, ...) {
   cat("Pi estimates: \n")
   cat("Osmotic potential at full turgor:", x$pio, "\n")
-  return(x$sma_mod)
+  invisible(x)
+}
+
+#' Summary method for pioEst class objects
+#'
+#' @param object An object of class "pioEst"
+#' @param ... Other parameters passed to summary()
+#'
+#' @returns The underlying SMA model object
+#' @export
+
+summary.pioEst <- function(object, ...) {
+  cat("Pi estimates (SMA model): \n")
+  cat("-----------------------------------------------\n")
+  cat("Osmotic potential at full turgor:", round(object$pio, 4), "\n")
+  summary(object$sma_mod, ...)
 }
 NULL
 
