@@ -380,7 +380,7 @@ calc_symrwc <- \(rwc, sma_mod) {
   srwc_den <- 1 - af / 100
   srwc <- srwc_num / srwc_den
 
-  return(list(srwc = srwc, srwd = 100 - srwc, af = af))
+  return(list(srwc = srwc, srwd = 1 - srwc, af = af))
 }
 
 #' Osmotic potential at full turgor estimate
