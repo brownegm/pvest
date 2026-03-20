@@ -115,9 +115,9 @@ estPV.default <- function(
 
         rwc <- pvest::estRWC(
           raw_data_list_by_sp[[id]],
-          fw.index = as_name(fw),
-          wp.index = as_name(wp),
-          dm.index = as_name(dm),
+          fw.index = rlang::as_name(fw),
+          wp.index = rlang::as_name(wp),
+          dm.index = rlang::as_name(dm),
           n_row = rows_above_below[1],
           silent = T
         ) |>
