@@ -152,85 +152,7 @@ estTLP.data.frame <- function(
     wp.index = wp.index,
     n_row = n_row_below
   )
-
-  # collect indices for above and below turgor loss point
-  above_idx <- c(1:n_row_above)
-  below_idx <- c(osm_obj$est_rows:nrow(osm_obj$data))
-
-  # determine sma parameters
-  param_list <- psip_rwd_params(
-    # above
-    psi_above = osm_obj$psi[above_idx],
-    symrwc_above = osm_obj$symrwc[above_idx],
-    rwc_above = osm_obj$data$rwc[above_idx],
-    psip = osm_obj$prespot[above_idx],
-    rwd = osm_obj$data$rwd[above_idx],
-    symrwd = osm_obj$symrwd[above_idx],
-    # below
-    psi_below = osm_obj$psi[below_idx],
-    symrwc_below = osm_obj$symrwc[below_idx],
-    rwc_below = osm_obj$data$rwc[below_idx]
-  )
-
-  # calculate PV parameters at turgor loss point
-  rwd_tlp <- -((param_list$intercept) / (param_list$slope))
-  rwc_tlp <- 100 - rwd_tlp
-  pi_tlp <- osm_obj$pi_tlp
-  sym_rwc_tlp <- osm_obj$srwc_tlp
-  sym_rwd_tlp <- osm_obj$srwd_tlp
-  modulus <- osm_obj$psip_o / (rwd_tlp / 100)
-  sym_modulus <- osm_obj$psip_o / (osm_obj$srwd_tlp / 100)
-
-  # estimate capacitance
-  cap_bulk_ft <- param_list$slope_cap_ft
-  cap_sym_ft <- param_list$slope_cap_sym_ft
-  cap_bulk_tlp <- param_list$slope_cap_tlp
-  cap_sym_tlp <- param_list$slope_cap_sym_tlp
-
-  outtlp <- structure(
-    list(
-      pi_tlp,
-      rwc_tlp,
-      rwd_tlp,
-      sym_rwc_tlp,
-      sym_rwd_tlp,
-      modulus,
-      sym_modulus,
-      cap_bulk_ft,
-      cap_sym_ft,
-      cap_bulk_tlp,
-      cap_sym_tlp
-    ),
-    .Names = c(
-      "pi_tlp",
-      "rwc_tlp",
-      "rwd_tlp",
-      "sym_rwc_tlp",
-      "sym_rwd_tlp",
-      "modulus",
-      "sym_modulus",
-      "cap_bulk_ft",
-      "cap_sym_ft",
-      "cap_bulk_tlp",
-      "cap_sym_tlp"
-    ),
-    units = c(
-      "MPa",
-      "%",
-      "%",
-      "%",
-      "%",
-      "MPa",
-      "MPa",
-      "MPa^-1",
-      "MPa^-1",
-      "MPa^-1",
-      "MPa^-1"
-    ),
-    class = c("tlpEst", "list")
-  )
-
-  return(outtlp)
+  calc_tlp_from_osm(osm_obj, n_row_above)
 }
 
 NULL
@@ -239,7 +161,12 @@ NULL
 #' @export
 #' @rdname estTLP
 estTLP.osmEst <- function(data, n_row_above = 4, ...) {
-  osm_obj <- data
+  calc_tlp_from_osm(data, n_row_above)
+}
+
+
+# Shared helper: compute tlpEst output from an osmEst object
+calc_tlp_from_osm <- function(osm_obj, n_row_above) {
   # collect indices for above and below turgor loss point
   above_idx <- c(1:n_row_above)
   below_idx <- c(osm_obj$est_rows:nrow(osm_obj$data))
@@ -274,7 +201,7 @@ estTLP.osmEst <- function(data, n_row_above = 4, ...) {
   cap_bulk_tlp <- param_list$slope_cap_tlp
   cap_sym_tlp <- param_list$slope_cap_sym_tlp
 
-  outtlp <- structure(
+  structure(
     list(
       pi_tlp,
       rwc_tlp,
@@ -316,8 +243,6 @@ estTLP.osmEst <- function(data, n_row_above = 4, ...) {
     ),
     class = c("tlpEst", "list")
   )
-
-  return(outtlp)
 }
 
 
