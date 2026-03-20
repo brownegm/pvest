@@ -541,7 +541,7 @@ calc_nonlin_psip <- function(data, pi_sat, r_tlp, psi_w = NULL, full = FALSE) {
 
 print.pioEst <- function(x, ...) {
   cat("Pi estimates: \n")
-  cat("Osmotic potential at full turgor:", x$pi.o, "\n")
+  cat("Osmotic potential at full turgor:", x$pio, "\n")
   return(x$sma_mod)
 }
 NULL
