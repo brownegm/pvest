@@ -81,10 +81,10 @@ estOsmotic.default <- function(
 
   # validated input rwd values
   if (any(is.na(psi_tail))) {
-    stop("Tail water potentials contain NA.")
+    cli::cli_abort("Tail water potentials contain NA.")
   }
   if (any(psi_tail == 0)) {
-    stop("Tail water potentials contain zeros (cannot invert).")
+    cli::cli_abort("Tail water potentials contain zeros (cannot invert).")
   }
 
   minus_inv_psi <- -1 / psi_tail
@@ -101,7 +101,7 @@ estOsmotic.default <- function(
   srwd <- sym$srwd
 
   if (any(is.na(srwc) | srwc <= 0)) {
-    stop("Saturated RWC must be positive.")
+    cli::cli_abort("Saturated RWC must be positive.")
   }
 
   pi_vec <- pi_sat / srwc # osmotic potential
@@ -184,13 +184,13 @@ estOsmotic.default <- function(
 estOsmotic.rwcEst <- function(x, n_row = 5, silent = T, ...) {
   # validate input
   if (!inherits(x, "rwcEst")) {
-    stop("`x` must be an object of class 'rwcEst'.")
+    cli::cli_abort("{.arg x} must be an object of class {.cls rwcEst}.")
   }
 
   # Pull the attached data frame; fail clearly if missing
   rwcEstData <- attr(x, "df")
   if (is.null(rwcEstData) || !is.data.frame(rwcEstData)) {
-    stop("Attribute 'df' not found on `x` or is not a data.frame.")
+    cli::cli_abort("Attribute {.val df} not found on {.arg x} or is not a data frame.")
   }
 
   # Print the data and what columns are being used.
@@ -222,10 +222,10 @@ estOsmotic.rwcEst <- function(x, n_row = 5, silent = T, ...) {
 
   # validated input rwd values
   if (any(is.na(psi_tail))) {
-    stop("Tail water potentials contain NA.")
+    cli::cli_abort("Tail water potentials contain NA.")
   }
   if (any(psi_tail == 0)) {
-    stop("Tail water potentials contain zeros (cannot invert).")
+    cli::cli_abort("Tail water potentials contain zeros (cannot invert).")
   }
 
   minus_inv_psi <- -1 / psi_tail
@@ -242,7 +242,7 @@ estOsmotic.rwcEst <- function(x, n_row = 5, silent = T, ...) {
   srwd <- sym$srwd
 
   if (any(is.na(srwc) | srwc <= 0)) {
-    stop("Saturated RWC must be positive.")
+    cli::cli_abort("Saturated RWC must be positive.")
   }
 
   pi_vec <- pi_sat / srwc # osmotic potential
@@ -336,7 +336,7 @@ get_varnames <- function(data, wc.index, wp.index) {
     # verify columns exist
     miss <- setdiff(c(wc.index, wp.index), nms)
     if (length(miss)) {
-      stop("Unknown column(s): ", paste(miss, collapse = ", "))
+      cli::cli_abort("Column(s) not found in {.arg data}: {.val {miss}}")
     }
     return(list(wc = wc.index, wp = wp.index))
   }
@@ -344,24 +344,24 @@ get_varnames <- function(data, wc.index, wp.index) {
   if (is.numeric(wc.index) && is.numeric(wp.index)) {
     # numeric must be integerish and in bounds
     if (any(is.na(c(wc.index, wp.index)))) {
-      stop("Indices cannot be NA.")
+      cli::cli_abort("Indices cannot be {.val NA}.")
     }
     if (
       !all(wc.index == as.integer(wc.index)) ||
         !all(wp.index == as.integer(wp.index))
     ) {
-      stop("Numeric indices must be integers.")
+      cli::cli_abort("Numeric indices must be integers.")
     }
     if (
       any(wc.index < 1 | wc.index > length(nms)) ||
         any(wp.index < 1 | wp.index > length(nms))
     ) {
-      stop("Numeric indices out of bounds for `data`.")
+      cli::cli_abort("Numeric indices out of bounds for {.arg data}.")
     }
     return(list(wc = nms[wc.index], wp = nms[wp.index]))
   }
 
-  stop("Both indices must be character (names) or both numeric (positions).")
+  cli::cli_abort("Both indices must be character (names) or both numeric (positions).")
 }
 
 #' Estimate symplastic water content

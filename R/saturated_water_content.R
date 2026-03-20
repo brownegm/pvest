@@ -32,7 +32,7 @@ estsatwater <- function(fresh_mass, psi, dry_mass) {
   if (length(dry_mass) > 1) {
     unique_dry_mass <- unique(dry_mass)
     cat("{Unique dry mass values are}:", unique_dry_mass)
-    stop("Dry mass should be a single value for a given individual.")
+    cli::cli_abort("Dry mass should be a single value for a given individual.")
   } else{
     dry_mass <- unique(dry_mass)[1]
   }
@@ -80,9 +80,7 @@ estRWC <- function(data,
   nvals <- nrow(data)
   
   if (nvals < n_row) {
-    stop(
-      "estRWC:The number of rows to estimate parameters from is greater than the number of rows in the data."
-    )
+    cli::cli_abort("The {.arg n_row} value ({n_row}) exceeds the number of rows in {.arg data} ({nvals}).")
   }
   
   inputtype <- all(is.numeric(c(fw.index, wp.index, dm.index)))

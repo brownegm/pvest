@@ -49,15 +49,13 @@ sma_model <- function(x, y) {
 sma_model.default <- function(x, y) {
   # Check input data
   if (any(is.na(x)) | any(is.na(y))) {
-    stop(
-      "sma_model:Missing values found in input data. Ensure that there are no missing values."
-    )
+    cli::cli_abort("Missing values found in input data. Ensure that there are no missing values.")
   }
   if (!is.numeric(x) || !is.numeric(y)) {
-    stop("Both x and y must be numeric vectors.")
+    cli::cli_abort("Both {.arg x} and {.arg y} must be numeric vectors.")
   }
   if (length(x) != length(y)) {
-    stop("x and y must have the same length.")
+    cli::cli_abort("{.arg x} and {.arg y} must have the same length.")
   }
 
   # establish model object
@@ -117,9 +115,7 @@ sma_model.default <- function(x, y) {
 #' @export
 sma_model.osm_input <- function(x, y = NULL) {
   if (any(is.na(x[[1]])) | any(is.na(x[[2]]))) {
-    stop(
-      "sma_model:Missing values found in input data. Ensure that there are no missing values."
-    )
+    cli::cli_abort("Missing values found in input data. Ensure that there are no missing values.")
   }
 
   model <- pvest::sma_model(y = x$neg_inv_psi, x = x$rwd)
@@ -163,9 +159,7 @@ sma_model2 <- function(dfs, wp, lw, method = "default", pmetric = NULL) {
 
 calc_param_tlp <- function(x) {
   if (any(is.na(unlist(x, recursive = TRUE)))) {
-    stop(
-      "calc_param_tlp:Missing values found in input data. Ensure that there are no missing values."
-    )
+    cli::cli_abort("Missing values found in input data. Ensure that there are no missing values.")
   }
 
   bulk_psip_rwd <- pvest::sma_model(y = x$psip, x = x$rwd)
