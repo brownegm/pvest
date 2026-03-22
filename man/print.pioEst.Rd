@@ -12,7 +12,7 @@
 \item{...}{Other parameters passed to cat}
 }
 \value{
-Printed SMA model output
+The object, invisibly
 }
 \description{
 Print method for the Osmotic estimates output
