@@ -21,20 +21,37 @@ pak("brownegm/pvest")
 
 ## Usage
 
-The package contains functions for estimating individual parameters as well as all parameters. There are vignettes for usage (see `browseVignettes("pvest")`). 
+The package contains functions for estimating individual parameters as well as all parameters. There are vignettes for usage (see `browseVignettes("pvest")`).
 
 ```{r}
 
-library(pvest) # load package 
+library(pvest) # load package
 
-estParams()# this function estimates all pressure volume curve parameters for you in one step. 
+estPV()  # estimates all pressure volume curve parameters in one step
 
 ```
 
-## TBD 
-- Check coverage
-- FIGURE OUT HOW/WHERE TO IMPLEMENT THE N_PTS ASPECT
-- Decide at what stage you want the water data to enter the function....
-  - If I want to include dry mass in the calculation the values in the test data need to be the raw leaf water data 
-  
-  
+## Model Logic
+
+**pvest** automates PV curve parameter estimation using standard major axis (SMA) regression, removing operator subjectivity in locating the turgor loss point (TLP).
+
+### Key Assumptions
+
+1. Before turgor loss, $\Psi_L$ and water content exhibit a **negative and linear** relationship.
+2. The osmotic potential at full turgor ($\pi_o$) equals the negative of the pressure potential at full turgor ($-\Psi_{p,o}$).
+3. By default, the last 4 combined measurements are assumed to fall below turgor loss; all others are above.
+
+### Estimation Workflow
+
+1. **Saturated water content (SWC)** — y-intercept of the SMA line fit to points *above* TLP in $\Psi_L$ vs. fresh mass space.
+
+2. **Osmotic potential at full turgor ($\pi_o$)** — y-intercept of the SMA line fit to points *below* TLP in $-1/\Psi_L$ vs. relative water deficit (RWD) space. Osmotic potential at each hydration state is then:
+$$\Psi_s = \frac{\pi_o}{RWC_{sym}}$$
+
+3. **Turgor loss point** — SMA of pressure potential ($\Psi_p = \Psi_L - \Psi_s$) vs. symplastic RWD for points *above* TLP; the x-intercept gives $RWD_{tlp}$, and $RWC_{tlp} = 100 - RWD_{tlp}$.
+
+4. **Water potential at TLP ($\pi_{tlp}$)** — solved by substituting $RWD_{tlp}$ into the SMA parameters from step 2.
+
+5. **Derived parameters** — modulus of elasticity, capacitance, and apoplastic fraction follow from the above estimates.
+
+The TLP threshold can also be optimized automatically by minimizing RMSE or AICc, or maximizing $R^2$ across SMA fits on both sides (see `?optim_thres()`).
