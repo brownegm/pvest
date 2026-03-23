@@ -25,6 +25,17 @@ plotPV <- function(obj) {
   pvp_list <- vector(mode = "list", length = length(fits))
 
   for (i in seq_along(fits)) {
+    lines_fw <- data.frame(
+      label     = c("Above TLP", "Below TLP"),
+      slope     = c(fits[[i]]$above$slope,     fits[[i]]$below$slope),
+      intercept = c(fits[[i]]$above$intercept, fits[[i]]$below$intercept)
+    )
+    lines_tlp <- data.frame(
+      label     = c("Above TLP", "Below TLP"),
+      slope     = c(fits_tlp[[i]]$above$slope,     fits_tlp[[i]]$below$slope),
+      intercept = c(fits_tlp[[i]]$above$intercept, fits_tlp[[i]]$below$intercept)
+    )
+
     psiwater <- ggplot() +
       ggplot2::geom_point(
         data = obj[[i]],
@@ -32,15 +43,8 @@ plotPV <- function(obj) {
         size = 4
       ) +
       ggplot2::geom_abline(
-        mapping = aes(color = "Above TLP"),
-        slope = fits[[i]]$above$slope,
-        intercept = fits[[i]]$above$intercept,
-        linewidth = 1.5
-      ) +
-      ggplot2::geom_abline(
-        mapping = aes(color = "Below TLP"),
-        slope = fits[[i]]$below$slope,
-        intercept = fits[[i]]$below$intercept,
+        data = lines_fw,
+        aes(slope = slope, intercept = intercept, color = label),
         linewidth = 1.5
       ) +
       ggplot2::scale_color_manual(
@@ -62,15 +66,8 @@ plotPV <- function(obj) {
         size = 4
       ) +
       ggplot2::geom_abline(
-        mapping = aes(color = "Above TLP"),
-        slope = fits_tlp[[i]]$above$slope,
-        intercept = fits_tlp[[i]]$above$intercept,
-        linewidth = 1.5
-      ) +
-      ggplot2::geom_abline(
-        mapping = aes(color = "Below TLP"),
-        slope = fits_tlp[[i]]$below$slope,
-        intercept = fits_tlp[[i]]$below$intercept,
+        data = lines_tlp,
+        aes(slope = slope, intercept = intercept, color = label),
         linewidth = 1.5
       ) +
       ggplot2::scale_color_manual(
