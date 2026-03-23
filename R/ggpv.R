@@ -1,12 +1,12 @@
 #' Stat function for plotting pv curve on data
 
 #' @param obj object of class estPV
-#' 
+#'
 #' @return A list of patchwork plots (length = number of species) of water potential and water content relationships
-#' 
-#' @importFrom ggplot2 ggplot geom_point geom_line aes geom_abline expand_limits theme_classic labs geom_vline geom_text
+#'
+#' @importFrom ggplot2 ggplot geom_point geom_line aes geom_abline expand_limits theme_classic labs geom_vline geom_text annotate scale_color_manual
 #' @importFrom patchwork plot_layout
-#' 
+#'
 #' @export
 
 plotPV <- function(obj) {
@@ -56,7 +56,11 @@ plotPV <- function(obj) {
       )
 
     invpsi_rwc <- ggplot() +
-      ggplot2::geom_point(data = obj[[i]], aes(x = .data[["rwd"]], y = .data[["invpsi"]]), size = 4) +
+      ggplot2::geom_point(
+        data = obj[[i]],
+        aes(x = .data[["rwd"]], y = .data[["invpsi"]]),
+        size = 4
+      ) +
       ggplot2::geom_abline(
         mapping = aes(color = "Above TLP"),
         slope = fits_tlp[[i]]$above$slope,
@@ -73,6 +77,15 @@ plotPV <- function(obj) {
         name = "",
         values = c("Above TLP" = "forestgreen", "Below TLP" = "black")
       ) +
+      ggplot2::annotate(
+        "text",
+        x = max(obj[[i]]$rwd, na.rm = TRUE) - 10,
+        y = max(obj[[i]]$invpsi, na.rm = TRUE),
+        label = bquote(pi[TLP] == .(round(unique(obj[[i]]$pi_tlp), 2)) ~ MPa),
+        hjust = 0,
+        vjust = 1,
+        size = 5
+      ) +
       ggplot2::theme_classic(base_size = 18) +
       ggplot2::labs(
         y = expression(frac(-1, paste(Psi["leaf"])), "(MPa)"),
@@ -81,16 +94,25 @@ plotPV <- function(obj) {
       )
 
     psiprwc <- ggplot() +
-      ggplot2::geom_point(data = obj[[i]], aes(x = .data[["symrwd"]], y = .data[["prespot"]]), size = 4) +
+      ggplot2::geom_point(
+        data = obj[[i]],
+        aes(x = .data[["symrwd"]], y = .data[["prespot"]]),
+        size = 4
+      ) +
       ggplot2::annotate(
         "text",
         x = min(obj[[i]]$symrwd, na.rm = TRUE),
         y = max(obj[[i]]$prespot, na.rm = TRUE),
         label = paste("RWCtlp =", unique(obj[[i]]$srwc_tlp) |> round(2), "%"),
-        hjust = 0, vjust = 1, size = 5
+        hjust = 0,
+        vjust = 1,
+        size = 5
       ) +
-      ggplot2::geom_vline(xintercept = 100 - unique(obj[[i]]$srwc_tlp), linewidth = 2,
-                          color = "forestgreen") +
+      ggplot2::geom_vline(
+        xintercept = 100 - unique(obj[[i]]$srwc_tlp),
+        linewidth = 2,
+        color = "forestgreen"
+      ) +
       ggplot2::theme_classic(base_size = 18) +
       ggplot2::labs(
         y = expression(paste(Psi["p"], "(MPa)")),
@@ -102,21 +124,20 @@ plotPV <- function(obj) {
 
     pvp_list[[i]] <- pvplot
   }
-  
+
   return(pvp_list)
 }
 
-
 # #' Draw line segments on plots
-# #' 
+# #'
 # #' @param fit A fit object from a object of class PVest
 # #' @param x_range Range of independent variable
 # #' @param color Line color
 # #' @param ... Additional parameters passed to geom_segment
-# #' 
-# #' @return Segments for the segmented regression 
-# #' @export 
-# 
+# #'
+# #' @return Segments for the segmented regression
+# #' @export
+#
 # drawSegments <- function(fit, x_range, color = "black", ...) {
 #   data.frame(
 #     x = x_range[1],
