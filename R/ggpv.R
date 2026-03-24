@@ -26,14 +26,17 @@ plotPV <- function(obj) {
 
   for (i in seq_along(fits)) {
     lines_fw <- data.frame(
-      label     = c("Above TLP", "Below TLP"),
-      slope     = c(fits[[i]]$above$slope,     fits[[i]]$below$slope),
+      label = c("Above TLP", "Below TLP"),
+      slope = c(fits[[i]]$above$slope, fits[[i]]$below$slope),
       intercept = c(fits[[i]]$above$intercept, fits[[i]]$below$intercept)
     )
     lines_tlp <- data.frame(
-      label     = c("Above TLP", "Below TLP"),
-      slope     = c(fits_tlp[[i]]$above$slope,     fits_tlp[[i]]$below$slope),
-      intercept = c(fits_tlp[[i]]$above$intercept, fits_tlp[[i]]$below$intercept)
+      label = c("Above TLP", "Below TLP"),
+      slope = c(fits_tlp[[i]]$above$slope, fits_tlp[[i]]$below$slope),
+      intercept = c(
+        fits_tlp[[i]]$above$intercept,
+        fits_tlp[[i]]$below$intercept
+      )
     )
 
     psiwater <- ggplot() +
@@ -74,12 +77,18 @@ plotPV <- function(obj) {
         name = "",
         values = c("Above TLP" = "forestgreen", "Below TLP" = "black")
       ) +
+      ggplot2::geom_vline(
+        xintercept = unique(obj[[i]]$rwd_tlp),
+        linewidth = 2,
+        color = "forestgreen"
+      ) +
       ggplot2::annotate(
         "text",
-        x = max(obj[[i]]$rwd, na.rm = TRUE) - 10,
+        x = max(obj[[i]]$rwd, na.rm = TRUE),
         y = max(obj[[i]]$invpsi, na.rm = TRUE),
-        label = bquote(pi[TLP] == .(round(unique(obj[[i]]$pi_tlp), 2)) ~ MPa),
-        hjust = 0,
+        label = paste0("pi[TLP]==", round(unique(obj[[i]]$pi_tlp), 2), "~MPa"),
+        parse = TRUE,
+        hjust = 1,
         vjust = 1,
         size = 5
       ) +
@@ -98,10 +107,10 @@ plotPV <- function(obj) {
       ) +
       ggplot2::annotate(
         "text",
-        x = min(obj[[i]]$symrwd, na.rm = TRUE),
+        x = max(obj[[i]]$symrwd, na.rm = TRUE),
         y = max(obj[[i]]$prespot, na.rm = TRUE),
         label = paste("RWCtlp =", unique(obj[[i]]$srwc_tlp) |> round(2), "%"),
-        hjust = 0,
+        hjust = 1,
         vjust = 1,
         size = 5
       ) +
