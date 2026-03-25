@@ -13,11 +13,13 @@ plotPV <- function(obj) {
   pvbp <- lapply(seq_along(obj), \(x) attributes(obj[[x]])$breakpoint)
 
   splitpv <- pvest::split_all_dfs(obj, pvbp)
-  # Fit models using your function
+
+  # fits above and below tlp
   fits <- lapply(
     splitpv,
     \(df) sma_model2(df, wp = "water.potential", lw = "fresh.weight")
   )
+
   fits_tlp <- lapply(splitpv, \(df) sma_model2(df, wp = "invpsi", lw = "rwd"))
 
   # Create and return the plot
@@ -47,7 +49,7 @@ plotPV <- function(obj) {
       ) +
       ggplot2::geom_abline(
         data = lines_fw,
-        aes(slope = slope, intercept = intercept, color = label),
+        aes(slope = .data[["slope"]], intercept = .data[["intercept"]], color = .data[["label"]]),
         linewidth = 1.5
       ) +
       ggplot2::scale_color_manual(
@@ -59,7 +61,7 @@ plotPV <- function(obj) {
       ggplot2::labs(
         y = expression(paste(Psi["leaf"], " (MPa)")),
         x = "Water Mass (g)",
-        title = "Plateau effect, Saturated Water Content"
+        title = "Plateau effect, SWC"
       )
 
     invpsi_rwc <- ggplot() +
@@ -70,7 +72,11 @@ plotPV <- function(obj) {
       ) +
       ggplot2::geom_abline(
         data = lines_tlp,
-        aes(slope = slope, intercept = intercept, color = label),
+        aes(
+          slope = .data[["slope"]],
+          intercept = .data[["intercept"]],
+          color = .data[["label"]]
+        ),
         linewidth = 1.5
       ) +
       ggplot2::scale_color_manual(
