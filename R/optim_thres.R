@@ -61,11 +61,8 @@ optim_thres <- function(data, fw, wp, dm, method = "rmse") {
     invisible(performance_metric)
   }
   
-  # Optimize over threshold range
-  init_row_below <- median(1:nrow(data))|>round()
-  max_row <- nrow(data)
-  
-  objvals <- lapply(c(init_row_below:max_row), \(n) mod_perform_test(threshold = n))
+  # Optimize over all valid threshold positions (n < 4 check in mod_perform_test handles boundaries)
+  objvals <- lapply(seq_len(nrow(data)), \(n) mod_perform_test(threshold = n))
   testvals_vec <- unlist(objvals)
   
   # Get optimal threshold
