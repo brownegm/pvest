@@ -10,15 +10,23 @@ potential ($\Psi_L$; i.e., sum of leaf solute ($\Psi_s$) and pressure ($\Psi_p$)
 across dehydration states (ideally, at 0.2-0.3 MPa intervals).
 
 ## Installation
-To download the package use `install_github()` from devtools:
+To download the package use `install_github()` from devtools or pak::pak():
 
 ```{r}
-# download package
+# download package using devtools
+library(devtools)
+devtools::install_github("brownegm\pvest")
+
+# download package using pak
 library(pak)
 pak("brownegm/pvest")  
-
 ```
+You can also download the development version here: 
 
+```{r}
+library(devtools)
+devtools::install_github("brownegm\pvest@dev")
+```
 ## Usage
 
 The package contains functions for estimating individual parameters as well as all parameters. There are vignettes for usage (see `browseVignettes("pvest")`).
