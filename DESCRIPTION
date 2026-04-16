@@ -1,6 +1,6 @@
 Package: pvest
 Title: Estimate pressure volume curve parameters
-Version: 0.0.1
+Version: 0.1.0
 Author: Marvin Browne[aut,cre], Lawren Sack[aut]
 Maintainer: Marvin Browne <brownegm@gmail.com>
 Description: Provides functions for estimating parameters of a pressure volume curve. 
@@ -9,7 +9,7 @@ License: AGPL (>= 3)
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.3
 Imports: 
     dplyr, 
     rlang,

@@ -212,3 +212,80 @@ testthat::test_that("Check that the errors work", {
   #   silent = T
   # ))
 })
+
+# ---- Error-handling tests for calc_nonlin_psip and callers ----
+
+testthat::test_that("calc_nonlin_psip returns NULL and warns on bad data", {
+  bad_data <- data.frame(r = rep(0.5, 5), psip_linear = rep(0, 5))
+
+  testthat::expect_warning(
+    result <- calc_nonlin_psip(data = bad_data, pi_sat = -1.5, r_tlp = 0.9),
+    "Non-linear pressure potential model failed to fit"
+  )
+  testthat::expect_null(result)
+})
+
+testthat::test_that("calc_nonlin_psip with full=TRUE returns NULL on error", {
+  bad_data <- data.frame(r = rep(0.5, 5), psip_linear = rep(0, 5), psi_w = rep(0, 5))
+
+  testthat::expect_warning(
+    result <- calc_nonlin_psip(data = bad_data, pi_sat = -1.5, r_tlp = 0.9, full = TRUE),
+    "Non-linear pressure potential model failed to fit"
+  )
+  testthat::expect_null(result)
+})
+
+testthat::test_that("calc_nonlin_psip warning includes diagnostic details", {
+  bad_data <- data.frame(r = c(0.3, 0.4, 0.5, 0.6, 0.7), psip_linear = rep(0, 5))
+
+  captured_warn <- NULL
+  withCallingHandlers(
+    calc_nonlin_psip(data = bad_data, pi_sat = -1.5, r_tlp = 0.5),
+    warning = function(w) {
+      captured_warn <<- w
+      invokeRestart("muffleWarning")
+    }
+  )
+  msg <- conditionMessage(captured_warn)
+  testthat::expect_match(msg, "Starting values", fixed = TRUE)
+  testthat::expect_match(msg, "observations", fixed = TRUE)
+})
+
+testthat::test_that("estOsmotic.default aborts clearly on NULL model ", {
+  # temporarily mod function to make it behave differently within test (function returns NULL)
+  local_mocked_bindings(calc_nonlin_psip = function(...) NULL)
+
+  psi <- c(
+    -0.37, -0.883, -1.188, -1.698, -1.87,
+    -2.175, -2.523, -2.863, -2.925, -4.132, -4.253
+  )
+  rwc <- c(
+    97.665485, 92.887400, 91.282819, 89.642581, 85.684615,
+    84.115691, 82.404138, 81.120474, 79.515893, 75.201353, 73.668087
+  )
+  test_df <- data.frame(
+    psi = psi, rwc = rwc, rwd = 100 - rwc, neg_inv_psi = -1 / psi
+  )
+  testthat::expect_error(
+    pvest::estOsmotic(test_df, wc.index = "rwd", wp.index = "psi", n_row = 5),
+    "Non-linear pressure potential model returned"
+  )
+})
+
+testthat::test_that("estOsmotic.rwcEst aborts clearly on NULL model", {
+  local_mocked_bindings(calc_nonlin_psip = function(...) NULL) # function returns NULL
+
+  quag1 <- pvest::quag |> dplyr::filter(leaf == 1)
+  rwc_obj <- pvest::estRWC(
+    quag1,
+    fw.index = "fresh.weight",
+    wp.index = "water.potential",
+    dm.index = "dry.weight",
+    n_row = 5,
+    silent = TRUE
+  )
+  testthat::expect_error(
+    estOsmotic(rwc_obj, n_row = 5, silent = TRUE),
+    "Non-linear pressure potential model returned"
+  )
+})
