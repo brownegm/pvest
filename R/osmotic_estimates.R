@@ -35,7 +35,6 @@
 #' @importFrom utils head tail
 #' @importFrom dplyr mutate
 #' @importFrom stats predict coef
-#' @importFrom cli cli_abort cli_warn
 #' @rdname estOsmotic
 
 estOsmotic <- function(x, ...) {
@@ -119,24 +118,20 @@ estOsmotic.default <- function(
     r_tlp = r_tlp_init
   )
   if (is.null(psip_mod)) {
-    cli::cli_abort(c(
-      "Non-linear pressure potential model returned {.val NULL}.",
-      "i" = "Current {.arg n_row} = {n_row}.",
-      ">" = "Try a different {.arg n_row} value or inspect water potential values for outliers."
-    ))
+    warning(
+      "Non-linear pressure potential model failed to fit; ",
+      "try adjusting n_row or inspect water potential values."
+    )
   }
 
-  if (!psip_mod$convInfo$isConv) {
-    cli::cli_abort(c(
-      "Non-linear pressure potential model did not converge.",
-      "i" = "Current {.arg n_row} = {n_row}.",
-      ">" = "Try a different {.arg n_row} value or inspect your data."
-    ))
-  }
+  #ensure convergence
+  stopifnot(psip_mod$convInfo$isConv == TRUE)
 
   psip <- as.vector(predict(psip_mod))
 
   srwc_tlp <- coef(psip_mod)[["r_tlp"]]
+  # rwc_tlp <-
+  # sym_mod <- psip_sat/(srwc_tlp)
   pi_tlp <- pi_sat / srwc_tlp
 
   dataUpd <- x |>
@@ -261,24 +256,20 @@ estOsmotic.rwcEst <- function(x, n_row = 5, silent = T, ...) {
   )
 
   if (is.null(psip_mod)) {
-    cli::cli_abort(c(
-      "Non-linear pressure potential model returned {.val NULL}.",
-      "i" = "Current {.arg n_row} = {n_row}.",
-      ">" = "Try a different {.arg n_row} value or inspect water potential values for outliers."
-    ))
+    warning(
+      "Non-linear pressure potential model failed to fit; ",
+      "try adjusting n_row or inspect water potential values."
+    )
   }
 
-  if (!psip_mod$convInfo$isConv) {
-    cli::cli_abort(c(
-      "Non-linear pressure potential model did not converge.",
-      "i" = "Current {.arg n_row} = {n_row}.",
-      ">" = "Try a different {.arg n_row} value or inspect your data."
-    ))
-  }
+  #ensure convergence
+  stopifnot(psip_mod$convInfo$isConv == TRUE)
 
   psip <- as.vector(predict(psip_mod))
 
   srwc_tlp <- coef(psip_mod)[["r_tlp"]]
+  # rwc_tlp <-
+  # sym_mod <- psip_sat/(srwc_tlp)
   pi_tlp <- pi_sat / srwc_tlp
 
   dataUpd <- rwcEstData |>
@@ -457,71 +448,51 @@ new_osminput <- function(rwd, psi) {
 #' @export
 
 calc_nonlin_psip <- function(data, pi_sat, r_tlp, psi_w = NULL, full = FALSE) {
-  fit <- NULL
   start <- list(b = 1, r_tlp = r_tlp)
   low <- c(b = 0, r_tlp = start$r_tlp - 0.1)
   upper <- c(b = 2, r_tlp = start$r_tlp + 0.1)
 
-  handle_nlsLM_error <- function(e) {
-    msg <- conditionMessage(e)
-    detail <- c(
-      "x" = paste0("nlsLM error: ", msg),
-      "i" = paste0(
-        "Starting values: b = ", start$b,
-        ", r_tlp = ", round(start$r_tlp, 4)
-      ),
-      "i" = paste0(
-        "Bounds: b in [", low[["b"]], ", ", upper[["b"]], "], ",
-        "r_tlp in [", round(low[["r_tlp"]], 4), ", ",
-        round(upper[["r_tlp"]], 4), "]"
-      ),
-      "i" = paste0(
-        "Data: ", nrow(data), " observations, ",
-        "r range [", round(min(data$r), 4), ", ",
-        round(max(data$r), 4), "]"
-      )
-    )
-    if (grepl("singular gradient", msg, ignore.case = TRUE)) {
-      detail <- c(detail,
-        "!" = paste0(
-          "A singular gradient usually means the initial r_tlp estimate ",
-          "(", round(start$r_tlp, 4), ") is far from the true turgor loss ",
-          "point, or the data lack sufficient curvature to identify the model."
-        ),
-        ">" = "Try adjusting `n_row` or check for outliers in water potential."
-      )
-    }
-    cli::cli_warn(c(
-      "Non-linear pressure potential model failed to fit.",
-      detail
-    ))
-    return(NULL)
-  }
-
   if (full == FALSE) {
     fit <- tryCatch(
       minpack.lm::nlsLM(
+        # Model equation
         psip_linear ~ -pi_sat * pmax((r - r_tlp) / (1 - r_tlp), 0)^b,
+        # Data frame
         data = data,
         start = start,
+        # Lower bounds
         lower = low,
+        # Upper bounds
         upper = upper,
         control = minpack.lm::nls.lm.control(maxiter = 1000)
       ),
-      error = handle_nlsLM_error
+      error = function(e) {
+        message("Non-linear psip model fitting failed: ", e$message)
+        return(NULL)
+      }
     )
   } else {
-    fit <- tryCatch(
-      minpack.lm::nlsLM(
-        psi_w ~
-          (pi_sat / r) + -pi_sat * pmax((r - r_tlp) / (1 - r_tlp), 0)^b,
-        data = data,
-        start = start,
-        lower = low,
-        upper = upper,
-        control = minpack.lm::nls.lm.control(maxiter = 1000)
-      ),
-      error = handle_nlsLM_error
+    tryCatch(
+      {
+        fit <- minpack.lm::nlsLM(
+          psi_w ~
+            (pi_sat / r) + -pi_sat * pmax((r - r_tlp) / (1 - r_tlp), 0)^b,
+          # Model equation
+          data = data,
+          # Data frame
+          start = start,
+          # Lower bounds
+          lower = low,
+          # Upper bounds
+          upper = upper,
+          # Upper bounds
+          control = minpack.lm::nls.lm.control(maxiter = 1000)
+        )
+      },
+      error = function(e) {
+        message("Non-linear model fitting failed: ", e$message)
+        return(NULL)
+      }
     )
   }
   return(fit)

@@ -98,9 +98,7 @@ optim_thres <- function(data, fw, wp, dm, method = "rmse") {
 apply_optim <- function(data, input_cols, method=NULL) {
   # Check if the method is valid
   if (!method %in% c("rmse", "aicc", "r2", NULL)) {
-    cli::cli_abort(
-      "Invalid {.arg method}: {.val {method}}. Choose from {.val rmse}, {.val aicc}, or {.val r2}."
-    )
+    stop("Invalid method specified. Choose from 'rmse', 'aicc', 'r2', or leave empty for default method.")
   }
   
   optim <- switch(

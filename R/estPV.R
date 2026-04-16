@@ -21,7 +21,7 @@
 #'
 #' @import dplyr
 #' @importFrom rlang enquo as_name
-#' @importFrom cli cli_alert_info cli_abort cli_warn
+#' @importFrom cli cli_alert_info cli_abort
 #' @export
 #' @rdname estPV
 
@@ -63,11 +63,9 @@ estPV.default <- function(
     )
   }
 
-  if (!is.null(method) && !method %in% c("rmse", "aicc", "r2")) {
-    cli::cli_abort(
-      "Invalid {.arg method}: {.val {method}}. Choose from {.val rmse}, {.val aicc}, or {.val r2}."
-    )
-  }
+  # if(!is.null(method) && !method %in% c("rmse", "aicc", "r2")) {
+  #   cli::cli_abort("Invalid method specified. Choose from 'rmse', 'aicc', or 'r2'.")
+  # }
 
   # Get subgrouping
   if (!rlang::quo_is_null(sbgrp)) {
@@ -88,70 +86,50 @@ estPV.default <- function(
   raw_data_list_by_sp <- by_grp_sbgrp(data, grp, sbgrp)
 
   # list of estimates for each unique id
-  n_groups <- length(raw_data_list_by_sp)
-  est <- vector(mode = "list", length = n_groups)
+  est <- vector(mode = "list", length = length(raw_data_list_by_sp))
 
   for (id in seq_along(raw_data_list_by_sp)) {
-    leaf_id <- raw_data_list_by_sp[[id]][["ids"]] |> unique()
-    cli::cli_alert_info("Processing group {id}/{n_groups}: {leaf_id}")
+    if (!is.null(method)) {
+      opt <- apply_optim(
+        raw_data_list_by_sp[[id]],
+        input_cols = input_cols,
+        method = method
+      )
 
-    est[id] <- list(tryCatch(
-      {
-        if (!is.null(method)) {
-          opt <- apply_optim(
-            raw_data_list_by_sp[[id]],
-            input_cols = input_cols,
-            method = method
-          )
+      rows_above_below <- opt[[1]]
+    } else {
+      above_count <- nrow(raw_data_list_by_sp[[id]]) - 3
+      rows_above_below <- c(above_count, 4) # the above should include the value below tlp too
+    }
 
-          rows_above_below <- opt[[1]]
-        } else {
-          above_count <- nrow(raw_data_list_by_sp[[id]]) - 3
-          rows_above_below <- c(above_count, 4)
-        }
+    rwc <- pvest::estRWC(
+      raw_data_list_by_sp[[id]],
+      fw.index = as_name(fw),
+      wp.index = as_name(wp),
+      dm.index = as_name(dm),
+      n_row = rows_above_below[1],
+      silent = T
+    ) |>
+      pvest::estOsmotic(
+        x = _,
+        n_row = rows_above_below[2],
+        silent = T
+      )
 
-        rwc <- pvest::estRWC(
-          raw_data_list_by_sp[[id]],
-          fw.index = as_name(fw),
-          wp.index = as_name(wp),
-          dm.index = as_name(dm),
-          n_row = rows_above_below[1],
-          silent = T
-        ) |>
-          pvest::estOsmotic(
-            x = _,
-            n_row = rows_above_below[2],
-            silent = T
-          )
-
-        tlp <- pvest::estTLP(
-          data = rwc,
-          n_row_above = rows_above_below[1]
-        )
-        result <- do.call(
-          cbind,
-          list(
-            rwc$data,
-            tlp
-          )
-        )
-        attr(result, "breakpoint") <- rows_above_below
-        result
-      },
-      error = function(e) {
-        cli::cli_warn(c(
-          "Estimation failed for group {.val {leaf_id}}.",
-          "x" = conditionMessage(e),
-          "i" = "This group will be excluded from the output."
-        ))
-        return(NULL)
-      }
-    ))
-    names(est)[id] <- leaf_id
+    tlp <- pvest::estTLP(
+      data = rwc,
+      n_row_above = rows_above_below[1]
+    )
+    est[[id]] <- do.call(
+      cbind,
+      list(
+        rwc$data,
+        tlp
+      )
+    )
+    attr(est[[id]], "breakpoint") <- rows_above_below
+    names(est)[id] <- raw_data_list_by_sp[[id]]["ids"] |> unique()
   }
-
-  # Drop groups that failed
-  est <- Filter(Negate(is.null), est)
   # combine all leaf estimates into one data frame.
   output_est <- structure(
     est,
@@ -281,13 +259,13 @@ summary.estPV <- function(object, ...) {
     cat("Bulk RWD at TLP:  ", unique(est$rwd_tlp) |> round(3), units[3], "\n")
     cat(
       "Symplastic RWC at TLP:  ",
-      unique(est$srwc_tlp) |> round(3),
+      unique(est$sym_rwc_tlp) |> round(3),
       units[4],
       "\n"
     )
     cat(
       "Symplastic RWD at TLP:  ",
-      (100 - unique(est$srwc_tlp)) |> round(3),
+      unique(est$sym_rwd_tlp) |> round(3),
       units[5],
       "\n"
     )
